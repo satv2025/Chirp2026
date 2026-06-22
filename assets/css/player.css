@@ -1,11 +1,38 @@
 :root {
   --plyr-color-main: #ef008a;
-  --plyr-video-background: #12060d;
+  --plyr-video-background: #12060d00;
   --plyr-control-radius: 8px;
   --plyr-control-spacing: 8px;
 }
-.plyr { border-radius: 14px; overflow: hidden; }
-.plyr--video .plyr__controls { background: rgba(16,5,11,.92) !important; padding: 12px !important; }
-.plyr__control--overlaid { width: 56px; height: 56px; display: grid !important; place-items: center; background: #fff !important; color: var(--pink) !important; border-radius: 12px !important; box-shadow: 0 18px 34px rgba(0,0,0,.25); }
-.plyr__control--overlaid:hover { background: var(--pink) !important; color: #fff !important; }
-.plyr__menu__container { border-radius: 10px !important; background: #fff !important; color: var(--ink) !important; box-shadow: var(--shadow) !important; }
+.plyr {
+  border-radius: 2px;
+  overflow: hidden;
+}
+.plyr--video .plyr__controls {
+  background: rgb(239 103 177 / 54%) !important;
+  padding: 6px 12px 6px 12px !important;
+}
+.plyr__control--overlaid {
+  width: 56px !important;
+  height: 56px;
+  display: grid !important;
+  place-items: center;
+  background: #fff !important;
+  color: var(--pink) !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--pink);
+}
+.plyr__control--overlaid:hover {
+  background: var(--pink) !important;
+  color: #fff !important;
+}
+.plyr__menu__container {
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: var(--ink) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.plyr__control {
+  border-radius: 3px !important;
+}
