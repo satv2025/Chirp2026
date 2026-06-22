@@ -1,0 +1,56 @@
+@import url("https://solargentinotv.com.ar/assets/fonts/Gilroy/Gilroy.css");
+
+*{box-sizing:border-box;font-family:Gilroy;}
+:root{
+  --rose-25:#fffafd;
+  --rose-50:#fff3fa;
+  --rose-100:#ffe5f2;
+  --rose-200:#ffc7e2;
+  --rose-300:#ff9dcd;
+  --rose-400:#ff69b3;
+  --rose-500:#ff3f9f;
+  --rose-600:#ec197f;
+  --rose-700:#bf0d62;
+  --rose-900:#3b1227;
+  --ink:#321222;
+  --muted:#8b6076;
+  --line:#ffd4e9;
+  --card:#ffffffcc;
+  --white:#fff;
+  --shadow:0 24px 80px rgba(255,63,159,.18);
+  --shadow-soft:0 16px 50px rgba(122,38,84,.12);
+  --radius:28px;
+}
+html{scroll-behavior:smooth;background:var(--rose-50);}
+body{margin:0;min-height:100vh;background:
+  radial-gradient(circle at 12% 4%,#ffe0f0 0 18rem,transparent 32rem),
+  radial-gradient(circle at 85% 10%,#ffd1e8 0 14rem,transparent 28rem),
+  linear-gradient(180deg,var(--rose-25),var(--rose-50));
+  color:var(--ink);}
+a{color:inherit;text-decoration:none;}
+button,input,textarea,select{font:inherit;}
+button{cursor:pointer;border:0;}
+img{max-width:100%;display:block;}
+.hidden{display:none!important;}
+.container{width:min(1180px,calc(100% - 32px));margin:0 auto;}
+.logo{display:inline-flex;gap:10px;align-items:center;font-weight:950;letter-spacing:-.05em;font-size:28px;}
+.logo img{width:42px;height:42px;border-radius:14px;box-shadow:0 10px 30px rgba(255,63,159,.28);}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:#fff8fc;color:var(--rose-700);font-weight:850;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;padding:0 18px;border-radius:999px;font-weight:950;letter-spacing:-.02em;transition:.18s transform,.18s box-shadow,.18s background;white-space:nowrap;}
+.btn:hover{transform:translateY(-1px);}
+.btn.primary{background:linear-gradient(135deg,var(--rose-500),var(--rose-400));color:white;box-shadow:0 14px 34px rgba(255,63,159,.34);}
+.btn.secondary{background:white;color:var(--rose-700);border:1px solid var(--line);box-shadow:var(--shadow-soft);}
+.btn.ghost{background:transparent;color:var(--rose-700);}
+.btn.danger{background:#3b1227;color:white;}
+.input,.textarea,.select{width:100%;border:1px solid var(--line);background:#fff8fc;border-radius:18px;padding:13px 15px;color:var(--ink);outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.9);}
+.textarea{min-height:112px;resize:vertical;line-height:1.5;}
+.input:focus,.textarea:focus,.select:focus{border-color:var(--rose-400);box-shadow:0 0 0 4px rgba(255,63,159,.12);}
+.label{display:block;margin:0 0 8px;color:var(--muted);font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;}
+.card{background:var(--card);backdrop-filter:blur(16px);border:1px solid rgba(255,212,233,.9);border-radius:var(--radius);box-shadow:var(--shadow-soft);}
+.card.pad{padding:22px;}
+.toast-wrap{position:fixed;z-index:100;right:18px;bottom:18px;display:grid;gap:10px;width:min(390px,calc(100% - 36px));}
+.toast{padding:14px 16px;border-radius:18px;background:#3b1227;color:white;box-shadow:0 20px 60px rgba(59,18,39,.25);font-weight:800;line-height:1.35;}
+.toast.ok{background:linear-gradient(135deg,var(--rose-600),var(--rose-400));}.toast.bad{background:#2b0d1c;}
+.empty{padding:34px;text-align:center;color:var(--muted);}.empty b{display:block;color:var(--ink);font-size:22px;margin-bottom:8px;}
+.spinner{width:22px;height:22px;border:3px solid #ffd1e8;border-top-color:var(--rose-500);border-radius:999px;animation:spin .8s linear infinite;}@keyframes spin{to{rotate:360deg;}}
+@media(max-width:720px){.container{width:min(100% - 22px,1180px)}.btn{width:100%;}.hide-sm{display:none!important;}}
