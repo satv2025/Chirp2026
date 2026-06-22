@@ -204,20 +204,44 @@
     return out.length ? `<div class="chirp__media">${out.join("")}</div>` : "";
   }
 
+  function chirpURL(id) {
+    const clean = String(id || "").trim();
+    return clean ? `/chirp/${encodeURIComponent(clean)}` : "/chirp.html";
+  }
+
+  function getSingleChirpId() {
+    const params = new URLSearchParams(location.search);
+    const fromQuery = params.get("id") || params.get("chirp_id") || params.get("chirp");
+
+    if (fromQuery && String(fromQuery).trim()) return String(fromQuery).trim();
+
+    if (location.search && location.search.startsWith("?=")) {
+      const loose = decodeURIComponent(location.search.slice(2)).trim();
+      if (loose) return loose;
+    }
+
+    const parts = location.pathname.split("/").filter(Boolean);
+
+    if (parts[0] === "chirp" && parts[1]) return decodeURIComponent(parts[1]);
+    if (parts[0] === "chirp.html" && parts[1]) return decodeURIComponent(parts[1]);
+
+    return "";
+  }
+
   async function chirpHtml(chirp) {
     const p = chirp.profiles || {};
     return `<article class="chirp" data-chirp-id="${esc(chirp.id)}">
       <div class="chirp__grid">
         <a href="${profileURL(p.username)}"><img class="avatar" src="${esc(p.avatar_url || fallbackAvatar(p))}" alt="${esc(p.display_name || p.username || "Usuario")}"></a>
         <div>
-          <div class="chirp__meta"><a class="chirp__name" href="${profileURL(p.username)}">${esc(p.display_name || "Usuario")}</a><span>@${esc(p.username || "usuario")}</span><span>·</span><a href="/chirp.html?id=${encodeURIComponent(chirp.id)}">${ago(chirp.created_at)}</a></div>
+          <div class="chirp__meta"><a class="chirp__name" href="${profileURL(p.username)}">${esc(p.display_name || "Usuario")}</a><span>@${esc(p.username || "usuario")}</span><span>·</span><a href="${chirpURL(chirp.id)}">${ago(chirp.created_at)}</a></div>
           ${chirp.content ? `<p class="chirp__text">${linkContent(chirp.content)}</p>` : ""}
           ${await mediaHtml(chirp.chirp_media || [])}
           <div class="chirp__actions">
             <button class="action-btn js-like" title="Me gusta"><span class="action-icon action-icon-like" aria-hidden="true"></span><b>${chirp.likes_count || 0}</b></button>
             <button class="action-btn js-rechirp" title="Rechirp"><span class="action-icon action-icon-rechirp" aria-hidden="true"></span><b>${chirp.rechirps_count || 0}</b></button>
             <button class="action-btn js-bookmark" title="Guardar"><span class="action-icon action-icon-bookmark" aria-hidden="true"></span><b>${chirp.bookmarks_count || 0}</b></button>
-            <a class="action-btn" title="Respuestas" href="/chirp.html?id=${encodeURIComponent(chirp.id)}"><span class="action-icon action-icon-comment" aria-hidden="true"></span><b>${chirp.replies_count || 0}</b></a>
+            <a class="action-btn" title="Respuestas" href="${chirpURL(chirp.id)}"><span class="action-icon action-icon-comment" aria-hidden="true"></span><b>${chirp.replies_count || 0}</b></a>
           </div>
         </div>
       </div>
@@ -477,7 +501,7 @@
     box.innerHTML = data.map(n => {
       const a = n.actor || {};
       const labels = { like: "le gustó tu Chirp", reply: "te respondió", follow: "empezó a seguirte", rechirp: "rechirpeó tu Chirp", quote: "citó tu Chirp", mention: "te mencionó" };
-      return `<a class="notification-row" href="${n.chirp_id ? `/chirp.html?id=${n.chirp_id}` : `/${encodeURIComponent(a.username || "")}`}"><img class="avatar" src="${esc(a.avatar_url || fallbackAvatar(a))}" alt="${esc(a.display_name || "Usuario")}"><div><b>${esc(a.display_name || "Alguien")} ${labels[n.type] || "interactuó con vos"}</b><small>${ago(n.created_at)}</small></div><span>${n.is_read ? "" : "●"}</span></a>`;
+      return `<a class="notification-row" href="${n.chirp_id ? chirpURL(n.chirp_id) : `/${encodeURIComponent(a.username || "")}`}"><img class="avatar" src="${esc(a.avatar_url || fallbackAvatar(a))}" alt="${esc(a.display_name || "Usuario")}"><div><b>${esc(a.display_name || "Alguien")} ${labels[n.type] || "interactuó con vos"}</b><small>${ago(n.created_at)}</small></div><span>${n.is_read ? "" : "●"}</span></a>`;
     }).join("");
     await sb.from("notifications").update({ is_read: true }).eq("recipient_id", user.id).eq("is_read", false);
   }
@@ -645,9 +669,10 @@
   }
 
   async function loadSingleChirp() {
-    const id = new URLSearchParams(location.search).get("id");
+    const id = getSingleChirpId();
     const box = $("#singleChirp");
-    if (!box || !id) return box.innerHTML = empty("Falta el Chirp", "No llegó un id válido.");
+    if (!box) return;
+    if (!id) return box.innerHTML = empty("Falta el Chirp", "Abrí el Chirp desde el botón de respuestas o usá una URL tipo /chirp/ID.");
     box.innerHTML = loading("Cargando Chirp...");
     const { data, error } = await sb.from("chirps").select("*, profiles:author_id(*), chirp_media(*)").eq("id", id).single();
     if (error) return box.innerHTML = empty("No encontré ese Chirp", error.message);

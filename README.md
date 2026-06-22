@@ -40,3 +40,13 @@ npx serve -l 3000 .
 ```
 
 Si la función devuelve JSON sin `reply`, ahora lo muestra en el chat en vez de caer directo al fallback.
+
+
+## Chirp pretty route repair
+
+Arreglo aplicado sin modificar CSS de diseño.
+
+- Respuestas usan `/chirp/ID`.
+- `/chirp/ID` carga `chirp.html` y `chirp.js` lee el ID desde el pathname.
+- Se eliminó el fallback global peligroso `/** -> u.html` de `serve.json`.
+- `404.html` carga dinámicamente `chirp.html` o `u.html` según la ruta sin pisar la URL.

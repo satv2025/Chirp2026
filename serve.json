@@ -3,6 +3,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/chirp/:id",
+      "destination": "/chirp.html"
+    },
+    {
+      "source": "/chirp/**",
+      "destination": "/chirp.html"
+    },
+    {
       "source": "/login",
       "destination": "/login.html"
     },
@@ -71,15 +79,11 @@
       "destination": "/legal.html"
     },
     {
-      "source": "/chirp/*",
-      "destination": "/chirp.html"
-    },
-    {
-      "source": "/u/*",
+      "source": "/u/:username",
       "destination": "/u.html"
     },
     {
-      "source": "/**",
+      "source": "/:username",
       "destination": "/u.html"
     }
   ]

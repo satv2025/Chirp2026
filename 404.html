@@ -3,85 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#fff6fb">
-<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
-<link rel="icon" href="/assets/img/favicon-32.png" type="image/png">
-<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
-<link rel="manifest" href="/assets/img/manifest.webmanifest">
-<script src="/assets/js/device.js"></script>
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
-<link rel="stylesheet" href="/assets/css/base.css">
-<link rel="stylesheet" href="/assets/css/components.css">
-<link rel="stylesheet" href="/assets/css/landing.css">
-<link rel="stylesheet" href="/assets/css/auth.css">
-<link rel="stylesheet" href="/assets/css/app-shell.css">
-<link rel="stylesheet" href="/assets/css/feed.css">
-<link rel="stylesheet" href="/assets/css/player.css">
-<link rel="stylesheet" href="/assets/css/legal.css">
-<link rel="stylesheet" href="/assets/css/responsive.css">
-<link rel="stylesheet" href="/assets/css/icons.css">
-<link rel="stylesheet" href="/assets/css/messages.css">
-<link rel="stylesheet" href="/assets/css/chirpy.css">
-<link rel="stylesheet" href="/assets/css/profile.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-<script defer src="/assets/js/config.js"></script>
-<script defer src="/assets/js/chirp.js"></script>
-<title>Perfil público · Chirp</title>
+<title>Redirigiendo · Chirp</title>
+<script>
+(function () {
+  var path = location.pathname || "";
+  var parts = path.split("/").filter(Boolean);
+
+  var target = "/home.html";
+
+  if (parts[0] === "chirp" && parts[1]) {
+    target = "/chirp.html";
+  } else if (parts[0] === "u" && parts[1]) {
+    target = "/u.html";
+  } else if (parts.length === 1 && parts[0] && !parts[0].includes(".")) {
+    target = "/u.html";
+  }
+
+  fetch(target, { cache: "no-store" })
+    .then(function (response) {
+      if (!response.ok) throw new Error("No se pudo cargar " + target);
+      return response.text();
+    })
+    .then(function (html) {
+      document.open();
+      document.write(html);
+      document.close();
+    })
+    .catch(function () {
+      location.replace(target);
+    });
+})();
+</script>
 </head>
-<body data-page="user">
-<div class="mobile-topbar"><a class="brand" href="/home.html"><img src="/assets/img/logo-duck.png" alt="Logo de Chirp"><span>Chirp</span></a><img class="avatar js-me-avatar" alt="Tu avatar"></div>
-<div class="app-layout">
-<aside class="sidebar">
-  <div class="sidebar__card"><a class="brand" href="/home.html"><img src="/assets/img/logo-duck.png" alt="Logo de Chirp"><span>Chirp</span></a><nav class="sidebar__nav"><a class="side-link" data-route="home" href="/home.html"><span class="side-icon ui-icon ui-icon-home" aria-hidden="true"></span><span>Home</span></a>
-<a class="side-link" data-route="explore" href="/explore.html"><span class="side-icon ui-icon ui-icon-explore" aria-hidden="true"></span><span>Explorar</span></a>
-<a class="side-link" data-route="notifications" href="/notifications.html"><span class="side-icon ui-icon ui-icon-bell" aria-hidden="true"></span><span>Notificaciones</span></a>
-<a class="side-link" data-route="bookmarks" href="/bookmarks.html"><span class="side-icon ui-icon ui-icon-bookmark" aria-hidden="true"></span><span>Guardados</span></a>
-<a class="side-link" data-route="profile" href="/profile.html"><span class="side-icon ui-icon ui-icon-profile" aria-hidden="true"></span><span>Perfil</span></a>
-<a class="side-link" data-route="messages" href="/messages.html"><span class="side-icon ui-icon ui-icon-message" aria-hidden="true"></span><span>Mensajes</span></a>
-<a class="side-link" data-route="chirpy" href="/chirpy.html"><span class="side-icon ui-icon ui-icon-chirpy" aria-hidden="true"></span><span>Chirpy</span></a>
-<a class="side-link" data-route="settings" href="/settings.html"><span class="side-icon ui-icon ui-icon-settings" aria-hidden="true"></span><span>Ajustes</span></a></nav></div>
-  <a class="btn btn-primary btn-wide" href="/home.html">Chirpear</a>
-  <div class="sidebar__card">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <img class="avatar js-me-avatar" alt="Tu avatar">
-      <div style="min-width:0;"><b class="js-me-name">Tu perfil</b><small class="js-me-username" style="display:block;color:var(--muted);font-weight:850;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></small></div>
-    </div>
-    <button class="btn btn-ghost btn-wide js-logout" style="margin-top:12px;">Salir</button>
-  </div>
-</aside><main class="main-column">
-<header class="pagebar"><div><h1>Perfil público</h1><small>Explorá hashtags, Chirps y usuarios.</small></div></header>
-<section id="publicProfile"></section>
-
-<section class="public-profile-tabs card">
-  <button class="public-tab is-active" data-public-tab="chirps">Chirps</button>
-  <button class="public-tab" data-public-tab="followers">Seguidores</button>
-  <button class="public-tab" data-public-tab="following">Seguidos</button>
-</section>
-
-<section id="publicFeed" class="chirp-list" style="margin-top:12px;"></section>
-<section id="publicFollowers" class="card public-list" style="display:none;margin-top:12px;"></section>
-<section id="publicFollowing" class="card public-list" style="display:none;margin-top:12px;"></section>
-</main><aside class="rightbar">
-  <section class="card panel">
-    <div class="section-title"><div><h3>Ahora en Chirp</h3><p>Hashtags populares</p></div></div>
-    <div class="stack js-trending-tags"><div class="chip chip-muted">Cargando hashtags...</div></div>
-  </section>
-  <section class="card panel">
-    <div class="section-title"><div><h3>Atajos</h3><p>Movete rápido.</p></div></div>
-    <div class="stack">
-      <a class="btn btn-soft btn-wide" href="/settings.html">Editar perfil</a>
-      <a class="btn btn-ghost btn-wide" href="/support.html">Soporte</a>
-      <a class="btn btn-ghost btn-wide" href="/legal.html">Legal</a>
-    </div>
-  </section>
-</aside></div>
-<nav class="mobile-nav">
-  <a class="side-link" data-route="home" href="/home.html"><span class="side-icon ui-icon ui-icon-home" aria-hidden="true"></span><span>Home</span></a>
-  <a class="side-link" data-route="explore" href="/explore.html"><span class="side-icon ui-icon ui-icon-explore" aria-hidden="true"></span><span>Explorar</span></a>
-  <a class="side-link" data-route="notifications" href="/notifications.html"><span class="side-icon ui-icon ui-icon-bell" aria-hidden="true"></span><span>Notif</span></a>
-  <a class="side-link" data-route="bookmarks" href="/bookmarks.html"><span class="side-icon ui-icon ui-icon-bookmark" aria-hidden="true"></span><span>Guardados</span></a>
-  <a class="side-link" data-route="profile" href="/profile.html"><span class="side-icon ui-icon ui-icon-profile" aria-hidden="true"></span><span>Perfil</span></a>
-</nav>
-</body>
+<body>Redirigiendo…</body>
 </html>

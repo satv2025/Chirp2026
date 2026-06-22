@@ -20,42 +20,80 @@
   height: 24px;
 }
 
-.ui-icon-home { --icon-url: url("/assets/img/icons/home.svg"); }
-.ui-icon-explore { --icon-url: url("/assets/img/icons/explore.svg"); }
-.ui-icon-bell { --icon-url: url("/assets/img/icons/bell.svg"); }
-.ui-icon-bookmark { --icon-url: url("/assets/img/icons/bookmark.svg"); }
-.ui-icon-profile { --icon-url: url("/assets/img/icons/profile.svg"); }
-.ui-icon-message { --icon-url: url("/assets/img/icons/message.svg"); }
-.ui-icon-settings { --icon-url: url("/assets/img/icons/settings.svg"); }
-.ui-icon-support { --icon-url: url("/assets/img/icons/support.svg"); }
+.ui-icon-home {
+  --icon-url: url('/assets/img/icons/home.svg');
+}
+.ui-icon-explore {
+  --icon-url: url('/assets/img/icons/explore.svg');
+}
+.ui-icon-bell {
+  --icon-url: url('/assets/img/icons/bell.svg');
+}
+.ui-icon-bookmark {
+  --icon-url: url('/assets/img/icons/bookmark.svg');
+}
+.ui-icon-profile {
+  --icon-url: url('/assets/img/icons/profile.svg');
+}
+.ui-icon-message {
+  --icon-url: url('/assets/img/icons/message.svg');
+}
+.ui-icon-settings {
+  --icon-url: url('/assets/img/icons/settings.svg');
+}
+.ui-icon-support {
+  --icon-url: url('/assets/img/icons/support.svg');
+}
 
 .side-link.is-active .ui-icon-home,
-body[data-page="home"] .side-link[data-route="home"] .ui-icon-home { --icon-url: url("/assets/img/icons/home-filled.svg"); }
+body[data-page='home'] .side-link[data-route='home'] .ui-icon-home {
+  --icon-url: url('/assets/img/icons/home-filled.svg');
+}
 
 .side-link.is-active .ui-icon-explore,
-body[data-page="explore"] .side-link[data-route="explore"] .ui-icon-explore { --icon-url: url("/assets/img/icons/explore-filled.svg"); }
+body[data-page='explore'] .side-link[data-route='explore'] .ui-icon-explore {
+  --icon-url: url('/assets/img/icons/explore-filled.svg');
+}
 
 .side-link.is-active .ui-icon-bell,
-body[data-page="notifications"] .side-link[data-route="notifications"] .ui-icon-bell { --icon-url: url("/assets/img/icons/bell-filled.svg"); }
+body[data-page='notifications']
+  .side-link[data-route='notifications']
+  .ui-icon-bell {
+  --icon-url: url('/assets/img/icons/bell-filled.svg');
+}
 
 .side-link.is-active .ui-icon-bookmark,
-body[data-page="bookmarks"] .side-link[data-route="bookmarks"] .ui-icon-bookmark { --icon-url: url("/assets/img/icons/bookmark-filled.svg"); }
+body[data-page='bookmarks']
+  .side-link[data-route='bookmarks']
+  .ui-icon-bookmark {
+  --icon-url: url('/assets/img/icons/bookmark-filled.svg');
+}
 
 .side-link.is-active .ui-icon-profile,
-body[data-page="profile"] .side-link[data-route="profile"] .ui-icon-profile { --icon-url: url("/assets/img/icons/profile-filled.svg"); }
+body[data-page='profile'] .side-link[data-route='profile'] .ui-icon-profile {
+  --icon-url: url('/assets/img/icons/profile-filled.svg');
+}
 
 .side-link.is-active .ui-icon-message,
-body[data-page="messages"] .side-link[data-route="messages"] .ui-icon-message { --icon-url: url("/assets/img/icons/message-filled.svg"); }
+body[data-page='messages'] .side-link[data-route='messages'] .ui-icon-message {
+  --icon-url: url('/assets/img/icons/message-filled.svg');
+}
 
-body[data-page="home"] .side-link[data-route="home"],
-body[data-page="explore"] .side-link[data-route="explore"],
-body[data-page="notifications"] .side-link[data-route="notifications"],
-body[data-page="bookmarks"] .side-link[data-route="bookmarks"],
-body[data-page="profile"] .side-link[data-route="profile"],
-body[data-page="messages"] .side-link[data-route="messages"],
-body[data-page="chirpy"] .side-link[data-route="chirpy"],
-body[data-page="settings"] .side-link[data-route="settings"],
-body[data-page="support"] .side-link[data-route="support"] {
+.side-link:hover .ui-icon-chirpy,
+.side-link.is-active .ui-icon-chirpy {
+  filter: brightness(0) saturate(100%) invert(22%) sepia(92%) saturate(6633%)
+    hue-rotate(315deg) brightness(91%) contrast(109%) !important;
+}
+
+body[data-page='home'] .side-link[data-route='home'],
+body[data-page='explore'] .side-link[data-route='explore'],
+body[data-page='notifications'] .side-link[data-route='notifications'],
+body[data-page='bookmarks'] .side-link[data-route='bookmarks'],
+body[data-page='profile'] .side-link[data-route='profile'],
+body[data-page='messages'] .side-link[data-route='messages'],
+body[data-page='chirpy'] .side-link[data-route='chirpy'],
+body[data-page='settings'] .side-link[data-route='settings'],
+body[data-page='support'] .side-link[data-route='support'] {
   color: var(--hot);
   background: var(--card-2);
 }
@@ -66,27 +104,34 @@ body[data-page="support"] .side-link[data-route="support"] {
   background: transparent;
   -webkit-mask: none;
   mask: none;
-  background-image: url("/assets/img/logo-duck.png");
+  background-image: url('/assets/img/chirpypro.svg');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  filter: grayscale(1) brightness(0) opacity(.58);
 }
 
-.side-link:hover .ui-icon-chirpy,
-.side-link.is-active .ui-icon-chirpy,
-body[data-page="chirpy"] .side-link[data-route="chirpy"] .ui-icon-chirpy {
-  filter: brightness(0) saturate(100%) invert(19%) sepia(94%) saturate(4742%) hue-rotate(315deg) brightness(83%) contrast(108%);
+.action-icon-like {
+  --icon-url: url('/assets/img/icons/like.svg');
+}
+.action-icon-rechirp {
+  --icon-url: url('/assets/img/icons/rechirp.svg');
+}
+.action-icon-bookmark {
+  --icon-url: url('/assets/img/icons/bookmark.svg');
+}
+.action-icon-comment {
+  --icon-url: url('/assets/img/icons/comment.svg');
 }
 
-.action-icon-like { --icon-url: url("/assets/img/icons/like.svg"); }
-.action-icon-rechirp { --icon-url: url("/assets/img/icons/rechirp.svg"); }
-.action-icon-bookmark { --icon-url: url("/assets/img/icons/bookmark.svg"); }
-.action-icon-comment { --icon-url: url("/assets/img/icons/comment.svg"); }
-
-.action-btn.is-active .action-icon-like { --icon-url: url("/assets/img/icons/like-filled.svg"); }
-.action-btn.is-active .action-icon-rechirp { --icon-url: url("/assets/img/icons/rechirp-filled.svg"); }
-.action-btn.is-active .action-icon-bookmark { --icon-url: url("/assets/img/icons/bookmark-filled.svg"); }
+.action-btn.is-active .action-icon-like {
+  --icon-url: url('/assets/img/icons/like-filled.svg');
+}
+.action-btn.is-active .action-icon-rechirp {
+  --icon-url: url('/assets/img/icons/rechirp-filled.svg');
+}
+.action-btn.is-active .action-icon-bookmark {
+  --icon-url: url('/assets/img/icons/bookmark-filled.svg');
+}
 
 .action-btn {
   min-height: 42px;
@@ -99,12 +144,12 @@ body[data-page="chirpy"] .side-link[data-route="chirpy"] .ui-icon-chirpy {
   text-align: left;
 }
 
-html[data-device="mobile"] .mobile-nav .side-icon.ui-icon {
+html[data-device='mobile'] .mobile-nav .side-icon.ui-icon {
   width: 31px;
   height: 31px;
 }
 
-html[data-device="mobile"] .mobile-nav .ui-icon-chirpy {
+html[data-device='mobile'] .mobile-nav .ui-icon-chirpy {
   width: 33px;
   height: 33px;
 }

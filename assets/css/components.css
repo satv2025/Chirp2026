@@ -77,9 +77,8 @@
   background: var(--hot);
 }
 .btn-soft {
-  color: var(--hot);
-  border-color: var(--line-2);
-  background: #fff1f7;
+  color: #fff;
+  background: var(--pink);
 }
 .btn-ghost {
   color: var(--ink);
@@ -93,8 +92,7 @@
 .btn-small {
   min-height: 34px;
   padding: 0 12px;
-  font-size: 13px;
-  border-radius: 8px;
+  border-radius: 4px;
 }
 .btn-wide {
   width: 100%;
@@ -211,7 +209,8 @@
   font-weight: 950;
 }
 .chip-muted {
-  color: var(--muted);
+  color: var(--pink);
+  text-transform: uppercase;
 }
 .trending-tag {
   justify-content: space-between;
