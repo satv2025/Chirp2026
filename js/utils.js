@@ -95,11 +95,23 @@ export async function requireUser() {
   return user;
 }
 
+export async function ensureMyProfile() {
+  const user = await getSessionUser();
+  if (!user) return null;
+  try {
+    await supabase.rpc('ensure_current_user_profile');
+  } catch (error) {
+    console.warn('[Chirp] ensure_current_user_profile no disponible o falló:', error?.message || error);
+  }
+  const { data } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  return data || null;
+}
+
 export async function getMyProfile() {
   const user = await getSessionUser();
   if (!user) return null;
-  const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-  if (error) return null;
+  const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  if (error || !data) return await ensureMyProfile();
   return data;
 }
 

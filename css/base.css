@@ -110,3 +110,13 @@ textarea {
   white-space: nowrap;
   border: 0;
 }
+
+/* Less bubbly, more modern: no exaggerated rounding */
+:root {
+  --radius-xs: 5px;
+  --radius-sm: 8px;
+  --radius: 11px;
+  --radius-lg: 14px;
+  --shadow: 0 14px 34px rgba(185, 45, 112, .12);
+  --shadow-soft: 0 8px 22px rgba(185, 45, 112, .08);
+}

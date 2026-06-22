@@ -389,3 +389,89 @@
   background: #fff7fb;
   border-color: #ffc8df;
 }
+
+/* Custom form controls: native behavior, custom visuals */
+.custom-textfield {
+  width: 100%;
+  min-height: 46px;
+  max-height: 260px;
+  overflow: auto;
+  outline: 0;
+  color: var(--ink);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  caret-color: var(--pink);
+  padding: 12px 0;
+}
+
+.custom-textfield[data-multiline="true"] {
+  min-height: 106px;
+}
+
+.custom-textfield.is-empty::before {
+  content: attr(data-placeholder);
+  color: var(--soft);
+  pointer-events: none;
+}
+
+.fieldbox:has(.custom-textfield:focus) {
+  border-color: var(--pink-2);
+  box-shadow: 0 0 0 3px rgba(239, 62, 145, .11);
+  background: #fff;
+}
+
+.custom-toggle:focus-visible,
+.dropdown__button:focus-visible,
+.dropdown__item:focus-visible,
+.custom-file:focus-visible,
+.btn:focus-visible,
+.action-btn:focus-visible,
+.side-link:focus-visible {
+  outline: 3px solid rgba(239, 62, 145, .22);
+  outline-offset: 2px;
+}
+
+.custom-toggle {
+  border: 1px solid var(--line-2);
+  background: rgba(255,255,255,.72);
+  border-radius: 12px;
+  padding: 10px 12px;
+  justify-content: flex-start;
+}
+
+.custom-toggle:hover {
+  border-color: var(--pink-3);
+  background: #fff;
+}
+
+.dropdown__button:hover,
+.dropdown__item:hover {
+  border-color: var(--pink-3);
+}
+
+.native-auth-input input {
+  appearance: auto;
+}
+
+.form-hint {
+  display: block;
+  color: var(--soft);
+  font-size: 12px;
+  line-height: 1.35;
+  margin-top: 4px;
+  font-weight: 800;
+}
+.custom-textfield--secret:not(.is-empty) {
+  -webkit-text-security: disc;
+}
+.composer-visibility {
+  min-width: 132px;
+}
+.composer-visibility .dropdown__button {
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 9px;
+  background: var(--surface-2);
+  color: var(--hot);
+}

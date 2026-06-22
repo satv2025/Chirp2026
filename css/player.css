@@ -56,3 +56,24 @@
   color: var(--ink) !important;
   border-radius: 8px !important;
 }
+
+/* Social-looking Plyr, not browser-native and not default-looking */
+.chirp-video-wrap .plyr,
+.chirp-video-wrap .plyr__video-wrapper {
+  border-radius: 12px;
+}
+
+.chirp-video-wrap .plyr__control--overlaid {
+  width: 52px;
+  height: 52px;
+  border-radius: 13px !important;
+  backdrop-filter: blur(12px);
+}
+
+.chirp-video-wrap .plyr--video .plyr__controls {
+  padding: 42px 12px 12px;
+}
+
+.chirp-video-wrap .plyr__controls .plyr__control {
+  border-radius: 9px !important;
+}

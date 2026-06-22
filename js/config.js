@@ -11,5 +11,6 @@ export const APP = {
   avatarBucket: "avatars",
   bannerBucket: "banners",
   chirpLimit: 280,
-  authTimeoutMs: 30000
+  authTimeoutMs: 30000,
+  signupTimeoutMs: 90000
 };

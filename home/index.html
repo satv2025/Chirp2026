@@ -55,12 +55,12 @@
     <div class="composer__head">
       <img class="avatar js-composer-avatar" alt="Tu avatar">
       <div>
-        <div class="fieldbox"><textarea id="chirpContent" placeholder="¿Qué pinta chirpear hoy?" maxlength="280"></textarea></div>
+        <div class="fieldbox"><div class="custom-textfield" data-custom-field="#chirpContent" data-placeholder="¿Qué pinta chirpear hoy?" data-maxlength="280" data-multiline="true"></div><input id="chirpContent" type="hidden" value=""></div>
         <div class="media-preview"><div class="media-preview__bar"><b>Vista previa</b><button type="button" class="btn btn-ghost btn-small js-clear-media">Quitar</button></div><div class="media-preview__body"></div></div>
       </div>
     </div>
     <div class="composer__tools">
-      <div class="composer__left"><label class="btn btn-soft btn-small media-picker">Foto o video<input id="chirpMedia" type="file" accept="image/*,video/mp4,video/webm"></label><span class="chip js-char-count">0/280</span></div>
+      <div class="composer__left"><label class="btn btn-soft btn-small media-picker" tabindex="0">Foto o video<input id="chirpMedia" type="file" accept="image/*,video/mp4,video/webm"></label><input id="chirpVisibility" type="hidden" value="public"><div class="dropdown composer-visibility" data-dropdown="#chirpVisibility"><button class="dropdown__button btn-small" type="button"><span data-dropdown-label>Público</span><span>⌄</span></button><div class="dropdown__menu"><button type="button" class="dropdown__item is-selected" data-value="public">Público</button><button type="button" class="dropdown__item" data-value="followers">Seguidores</button></div></div><span class="chip js-char-count">0/280</span></div>
       <button class="btn btn-primary" type="submit">Chirpear</button>
     </div>
   </form>

@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient.js';
-import { showToast } from './utils.js';
+import { showToast, ensureMyProfile } from './utils.js';
 
 async function finish() {
   const { data, error } = await supabase.auth.getSession();
@@ -9,6 +9,7 @@ async function finish() {
     return;
   }
   if (data.session) {
+    await ensureMyProfile();
     showToast('Cuenta lista', 'Bienvenida a Chirp.');
     setTimeout(() => location.href = '/home/', 700);
     return;

@@ -1,6 +1,6 @@
 import { APP } from './config.js';
 import { supabase } from './supabaseClient.js';
-import { $, showToast, setButtonLoading, withTimeout, logSecurityEvent, escapeHtml } from './utils.js';
+import { $, showToast, setButtonLoading, withTimeout, logSecurityEvent, escapeHtml, ensureMyProfile } from './utils.js';
 import { initCustomControls, bindErrorBoundary } from './ui.js';
 import { reportAuthError } from './auth-errors.js';
 
@@ -37,7 +37,7 @@ async function signUp(email, password, displayName) {
       emailRedirectTo: APP.authCallback,
       data: { display_name: displayName }
     }
-  }), APP.authTimeoutMs, 'Crear tu cuenta');
+  }), APP.signupTimeoutMs || APP.authTimeoutMs, 'Crear tu cuenta');
 }
 
 $('#loginForm')?.addEventListener('submit', async event => {
@@ -49,6 +49,7 @@ $('#loginForm')?.addEventListener('submit', async event => {
   try {
     const { error } = await signIn(email, password);
     if (error) throw error;
+    await ensureMyProfile();
     showToast('Entraste a Chirp', 'Volviendo a tu timeline.');
     location.href = nextUrl;
   } catch (error) {
@@ -68,11 +69,20 @@ $('#registerForm')?.addEventListener('submit', async event => {
   const email = $('#registerEmail').value.trim();
   const password = $('#registerPassword').value;
   try {
-    const { error } = await signUp(email, password, displayName);
+    if (!displayName) throw new Error('Escribí tu nombre.');
+    const { data, error } = await signUp(email, password, displayName);
     if (error) throw error;
-    showToast('Cuenta creada', 'Te mandamos un email para confirmar tu cuenta.');
-    $('.js-register-done')?.classList.remove('hidden');
     clearInlineMessage('.js-register-error');
+    if (data?.session) {
+      await ensureMyProfile();
+      showToast('Cuenta creada', 'Ya podés chirpear.');
+      $('.js-register-done')?.classList.remove('hidden');
+      setInlineMessage('.js-register-done', 'Cuenta creada', 'Ya estás adentro. Te llevamos al timeline.', '', 'success');
+      setTimeout(() => { location.href = '/home/'; }, 700);
+    } else {
+      showToast('Cuenta creada', 'Te mandamos un email para confirmar tu cuenta.');
+      $('.js-register-done')?.classList.remove('hidden');
+    }
   } catch (error) {
     const info = reportAuthError(error, 'signup');
     showToast(info.title, info.message, 'error');

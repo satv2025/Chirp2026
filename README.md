@@ -1,11 +1,11 @@
-# Chirp Rosin Social
+# Chirp Rosin Custom Native
 
-Versión multi-page real, sin SPA y sin `#` en las rutas.
+Versión multi-page real, sin SPA, sin `#` en rutas, con diseño rosa moderno y controles custom.
 
 ## Correr local
 
 ```bash
-cd chirp-rosin-social
+cd chirp-rosin-custom-native
 npx serve -l 3000 .
 ```
 
@@ -19,7 +19,7 @@ http://localhost:3000/home/
 
 ## Deploy en Vercel
 
-Subí la carpeta completa. El proyecto incluye `vercel.json` con `cleanUrls` y rewrites específicos para:
+Subí la carpeta completa. Incluye `vercel.json` con `cleanUrls` y rewrites específicos para:
 
 - `/u/:username`
 - `/chirp/:id`
@@ -40,9 +40,9 @@ Usa el Project URL directo:
 https://kdohnkpykpcmnoyxhkte.supabase.co
 ```
 
-Esto evita el 504 que venía de `https://db.chirp.com.ar/auth/v1/signup`.
+Esto evita depender de `db.chirp.com.ar` para Auth mientras el custom domain no esté fino.
 
-## SQL
+## SQL importante
 
 Pegá este archivo en Supabase SQL Editor:
 
@@ -50,13 +50,40 @@ Pegá este archivo en Supabase SQL Editor:
 supabase/chirp-fix-patch.sql
 ```
 
-Crea/ajusta:
+Además de los ajustes anteriores, ahora incluye:
 
-- `security_events`
-- `support_tickets`
-- columnas `storage_bucket` y `storage_path` para media
-- buckets `avatars`, `banners`, `chirp-media`
-- policies de Storage sin tocar `alter table storage.objects enable row level security`
+- `handle_new_user()` seguro: el trigger ya no debería bloquear el signup si falla `profiles` o `account_settings`.
+- `ensure_current_user_profile()`: función RPC para crear/reparar el perfil del usuario logueado desde el frontend.
+- `security_events` y `support_tickets`.
+- buckets/policies para `avatars`, `banners`, `chirp-media`.
+- policies de Storage sin usar `alter table storage.objects enable row level security`.
+
+## Auth / crear cuenta
+
+El registro usa `supabase.auth.signUp()` con timeout más largo para signup.
+
+Si `Confirm email` está OFF, al crear cuenta redirige al timeline.
+Si `Confirm email` está ON, muestra el mensaje para revisar el correo.
+
+Si vuelve a tardar mucho, el problema suele estar en SMTP/Confirm email, no en la UI.
+
+## Controles nativos vs custom
+
+- Login y registro usan inputs nativos para email/password/nombre, por seguridad, autocompletado y accesibilidad.
+- El resto de campos visibles de la app usan controles custom:
+  - composer de Chirps con `div.contenteditable` custom.
+  - búsqueda custom.
+  - settings custom.
+  - soporte custom.
+  - dropdown custom con teclado.
+  - switch custom con teclado.
+  - upload custom con input file invisible.
+- No hay `<select>` ni checkbox nativo visible.
+
+## Media
+
+- Fotos: se muestran como media social normal, estilizadas con CSS.
+- Videos: usan Plyr estilizado rosa, con look de player social, sin controles nativos visibles.
 
 ## Emails
 
@@ -72,23 +99,11 @@ Asuntos sugeridos:
 emails/SUBJECTS.md
 ```
 
-Todos los emails usan:
+Todos los emails usan solo:
 
 ```css
 font-family:'Google Sans';
 ```
-
-sin fallback.
-
-## Diseño
-
-- Rosa moderno, más limpio.
-- Bordes moderados: nada exageradamente redondeado.
-- No se usan `<select>` ni inputs checkbox nativos visibles.
-- Los toggles/dropdowns son componentes custom con `div`/`button`.
-- Los botones de archivo son custom; el input file queda invisible dentro del label.
-- Las fotos se muestran como media social normal con CSS.
-- Los videos usan Plyr estilizado rosa, sin controles nativos de HTML.
 
 ## Storage paths esperados
 
@@ -110,18 +125,4 @@ https://chirp.com.ar
 Redirect URLs:
 https://chirp.com.ar/**
 http://localhost:3000/**
-```
-
-## Registro y errores de Auth
-
-Esta versión muestra los errores reales de Supabase Auth en el formulario de registro y en la consola del navegador.
-
-Si aparece `email rate limit exceeded`, el problema está en Authentication → Rate Limits.
-Si aparece timeout o 504, revisá Authentication → Logs, SMTP y triggers de signup.
-El timeout visual del frontend está en `js/config.js` como `authTimeoutMs: 30000`.
-
-Para probar en local:
-
-```bash
-npx serve -l 3000 .
 ```

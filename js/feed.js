@@ -4,7 +4,7 @@ import {
   $, $$, escapeHtml, timeAgo, fallbackAvatar, requireUser, getMyProfile, hydrateAvatar,
   publicOrSignedUrl, showToast, setButtonLoading, limitText, readPathTail
 } from './utils.js';
-import { initAppShell, initCustomControls, initFilePreview, initPlyr, bindErrorBoundary } from './ui.js';
+import { initAppShell, initCustomControls, initFilePreview, initPlyr, bindErrorBoundary, setCustomTextValue } from './ui.js';
 
 bindErrorBoundary();
 initCustomControls();
@@ -39,11 +39,11 @@ async function routeInit() {
 
 async function initComposer() {
   hydrateAvatar($('.js-composer-avatar'), myProfile);
-  const textarea = $('#chirpContent');
+  const contentInput = $('#chirpContent');
   const counter = $('.js-char-count');
-  textarea?.addEventListener('input', () => {
-    textarea.value = limitText(textarea.value);
-    if (counter) counter.textContent = `${textarea.value.length}/${APP.chirpLimit}`;
+  contentInput?.addEventListener('input', () => {
+    contentInput.value = limitText(contentInput.value);
+    if (counter) counter.textContent = `${contentInput.value.length}/${APP.chirpLimit}`;
   });
 
   $('#composerForm')?.addEventListener('submit', async event => {
@@ -51,17 +51,18 @@ async function initComposer() {
     const button = event.submitter;
     setButtonLoading(button, true, 'Chirpeando...');
     try {
-      const content = textarea.value.trim();
+      const content = contentInput.value.trim();
       const file = $('#chirpMedia')?.files?.[0] || null;
+      const visibility = $('#chirpVisibility')?.value || 'public';
       if (!content && !file) throw new Error('Escribí algo o subí una foto/video.');
       const { data: chirp, error } = await supabase
         .from('chirps')
-        .insert({ author_id: currentUser.id, content, visibility: 'public' })
+        .insert({ author_id: currentUser.id, content, visibility })
         .select('*')
         .single();
       if (error) throw error;
       if (file) await uploadChirpMedia(chirp.id, file);
-      textarea.value = '';
+      setCustomTextValue('#chirpContent', '');
       $('#chirpMedia').value = '';
       $('.media-preview')?.classList.remove('is-active');
       $('.media-preview__body').innerHTML = '';
@@ -174,7 +175,7 @@ async function initExplore() {
   input?.addEventListener('input', debounce(run, 350));
   const paramsQ = new URLSearchParams(location.search).get('q');
   if (paramsQ) {
-    input.value = paramsQ;
+    setCustomTextValue('#exploreSearch', paramsQ);
     run();
   } else {
     results.innerHTML = emptyState('Explorá Chirp', 'Encontrá gente, temas y conversaciones nuevas.');
@@ -206,9 +207,9 @@ async function loadUserProfile() {
 }
 
 async function initSettings() {
-  $('#settingsName').value = myProfile?.display_name || '';
-  $('#settingsUsername').value = myProfile?.username || '';
-  $('#settingsBio').value = myProfile?.bio || '';
+  setCustomTextValue('#settingsName', myProfile?.display_name || '');
+  setCustomTextValue('#settingsUsername', myProfile?.username || '');
+  setCustomTextValue('#settingsBio', myProfile?.bio || '');
   $('#privateValue').value = String(Boolean(myProfile?.is_private));
   const toggle = $('[data-toggle="#privateValue"]');
   toggle?.setAttribute('aria-checked', String(Boolean(myProfile?.is_private)));
@@ -224,6 +225,8 @@ async function initSettings() {
         bio: $('#settingsBio').value.trim(),
         is_private: $('#privateValue').value === 'true'
       };
+      if (!update.display_name) throw new Error('El nombre no puede quedar vacío.');
+      if (!/^[a-zA-Z0-9_]{3,30}$/.test(update.username)) throw new Error('El usuario debe tener 3 a 30 caracteres: letras, números o guión bajo.');
       const { error } = await supabase.from('profiles').update(update).eq('id', currentUser.id);
       if (error) throw error;
       showToast('Perfil actualizado', 'Tus cambios ya están guardados.');
@@ -242,7 +245,9 @@ async function initSettings() {
     const button = event.submitter;
     setButtonLoading(button, true, 'Enviando...');
     try {
-      const { error } = await supabase.auth.updateUser({ email: $('#newEmail').value.trim() });
+      const email = $('#newEmail').value.trim();
+      if (!email || !email.includes('@')) throw new Error('Escribí un email válido.');
+      const { error } = await supabase.auth.updateUser({ email });
       if (error) throw error;
       showToast('Confirmá tu email', 'Te mandamos un enlace para confirmar el cambio.');
     } catch (error) {
@@ -257,7 +262,9 @@ async function initSettings() {
     const button = event.submitter;
     setButtonLoading(button, true, 'Actualizando...');
     try {
-      const { error } = await supabase.auth.updateUser({ password: $('#newPassword').value });
+      const password = $('#newPassword').value;
+      if (!password || password.length < 6) throw new Error('La contraseña tiene que tener al menos 6 caracteres.');
+      const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
       showToast('Contraseña cambiada', 'Tu cuenta quedó actualizada.');
     } catch (error) {
@@ -295,13 +302,18 @@ async function initSupport() {
     const button = event.submitter;
     setButtonLoading(button, true, 'Enviando...');
     try {
+      const subject = $('#supportSubject').value.trim();
+      const message = $('#supportMessage').value.trim();
+      if (!subject || !message) throw new Error('Completá asunto y mensaje.');
       const { error } = await supabase.from('support_tickets').insert({
         user_id: currentUser.id,
-        subject: $('#supportSubject').value.trim(),
-        message: $('#supportMessage').value.trim()
+        subject,
+        message
       });
       if (error) throw error;
       showToast('Soporte recibido', 'Lo dejamos guardado.');
+      setCustomTextValue('#supportSubject', '');
+      setCustomTextValue('#supportMessage', '');
       event.target.reset();
     } catch (error) {
       showToast('No se pudo enviar', error.message, 'error');

@@ -196,3 +196,133 @@ grant select, insert on public.support_tickets to authenticated;
 -- =========================================================
 -- FIN
 -- =========================================================
+
+-- =========================================================
+-- SIGNUP FIX: el trigger de auth.users NO debe bloquear registros.
+-- Compatible con el SQL base de Chirp usado para crear profiles/account_settings.
+-- =========================================================
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  generated_username text;
+  generated_display_name text;
+begin
+  generated_username := 'user_' || substr(replace(new.id::text, '-', ''), 1, 24);
+
+  generated_display_name := left(
+    coalesce(
+      nullif(new.raw_user_meta_data->>'display_name', ''),
+      nullif(new.raw_user_meta_data->>'name', ''),
+      nullif(split_part(coalesce(new.email, ''), '@', 1), ''),
+      'Nuevo usuario'
+    ),
+    50
+  );
+
+  begin
+    insert into public.profiles (
+      id,
+      username,
+      display_name,
+      avatar_url
+    )
+    values (
+      new.id,
+      generated_username,
+      generated_display_name,
+      new.raw_user_meta_data->>'avatar_url'
+    )
+    on conflict (id) do nothing;
+  exception
+    when others then
+      raise warning 'Chirp handle_new_user/profiles failed for user %: %', new.id, sqlerrm;
+  end;
+
+  begin
+    insert into public.account_settings (user_id)
+    values (new.id)
+    on conflict (user_id) do nothing;
+  exception
+    when others then
+      raise warning 'Chirp handle_new_user/account_settings failed for user %: %', new.id, sqlerrm;
+  end;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+
+create trigger on_auth_user_created
+after insert on auth.users
+for each row
+execute function public.handle_new_user();
+
+create or replace function public.ensure_current_user_profile()
+returns public.profiles
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  current_user_id uuid := auth.uid();
+  jwt jsonb := auth.jwt();
+  email_text text := coalesce(jwt->>'email', '');
+  generated_username text;
+  generated_display_name text;
+  profile_row public.profiles;
+begin
+  if current_user_id is null then
+    raise exception 'Not authenticated';
+  end if;
+
+  generated_username := 'user_' || substr(replace(current_user_id::text, '-', ''), 1, 24);
+
+  generated_display_name := left(
+    coalesce(
+      nullif(jwt->'user_metadata'->>'display_name', ''),
+      nullif(jwt->'user_metadata'->>'name', ''),
+      nullif(split_part(email_text, '@', 1), ''),
+      'Nuevo usuario'
+    ),
+    50
+  );
+
+  insert into public.profiles (
+    id,
+    username,
+    display_name,
+    avatar_url
+  )
+  values (
+    current_user_id,
+    generated_username,
+    generated_display_name,
+    jwt->'user_metadata'->>'avatar_url'
+  )
+  on conflict (id) do nothing;
+
+  insert into public.account_settings (user_id)
+  values (current_user_id)
+  on conflict (user_id) do nothing;
+
+  select *
+  into profile_row
+  from public.profiles
+  where id = current_user_id;
+
+  return profile_row;
+end;
+$$;
+
+grant execute on function public.ensure_current_user_profile() to authenticated;
+
+-- Permisos mínimos extra por si el proyecto quedó con grants estrictos.
+grant insert on public.profiles to authenticated;
+grant select on public.profiles to anon, authenticated;
+grant select on public.account_settings to authenticated;

@@ -53,9 +53,9 @@
 <section class="grid-two">
   <form id="profileSettingsForm" class="card panel form-grid">
     <div class="section-title"><div><h2>Perfil</h2><p>Tu nombre, usuario y bio.</p></div></div>
-    <label class="field"><span>Nombre</span><div class="fieldbox"><input id="settingsName" maxlength="50" required></div></label>
-    <label class="field"><span>Usuario</span><div class="fieldbox"><input id="settingsUsername" maxlength="30" required></div></label>
-    <label class="field"><span>Bio</span><div class="fieldbox"><textarea id="settingsBio" maxlength="280"></textarea></div></label>
+    <label class="field"><span>Nombre</span><div class="fieldbox"><div class="custom-textfield" data-custom-field="#settingsName" data-placeholder="Tu nombre visible" data-maxlength="50"></div><input id="settingsName" type="hidden" value=""></div></label>
+    <label class="field"><span>Usuario</span><div class="fieldbox"><div class="custom-textfield" data-custom-field="#settingsUsername" data-placeholder="tu_usuario" data-maxlength="30"></div><input id="settingsUsername" type="hidden" value=""></div><small class="form-hint">Solo letras, números y guión bajo.</small></label>
+    <label class="field"><span>Bio</span><div class="fieldbox"><div class="custom-textfield" data-custom-field="#settingsBio" data-placeholder="Contá algo de vos" data-maxlength="280" data-multiline="true"></div><input id="settingsBio" type="hidden" value=""></div></label>
     <input id="privateValue" type="hidden" value="false">
     <button type="button" class="custom-toggle" role="switch" aria-checked="false" data-toggle="#privateValue"><span class="custom-toggle__track"><span class="custom-toggle__knob"></span></span><b>Cuenta privada</b></button>
     <button class="btn btn-primary" type="submit">Guardar perfil</button>
@@ -67,12 +67,12 @@
   </section>
   <form id="emailSettingsForm" class="card panel form-grid">
     <div class="section-title"><div><h2>Email</h2><p>Supabase te manda confirmación.</p></div></div>
-    <label class="field"><span>Nuevo email</span><div class="fieldbox"><input id="newEmail" type="email" placeholder="nuevo@email.com" required></div></label>
+    <label class="field"><span>Nuevo email</span><div class="fieldbox"><div class="custom-textfield" data-custom-field="#newEmail" data-placeholder="nuevo@email.com" data-maxlength="120"></div><input id="newEmail" type="hidden" value=""></div></label>
     <button class="btn btn-primary" type="submit">Cambiar email</button>
   </form>
   <form id="passwordSettingsForm" class="card panel form-grid">
     <div class="section-title"><div><h2>Contraseña</h2><p>Cambiá tu acceso.</p></div></div>
-    <label class="field"><span>Nueva contraseña</span><div class="fieldbox"><input id="newPassword" type="password" minlength="6" required></div></label>
+    <label class="field"><span>Nueva contraseña</span><div class="fieldbox"><div class="custom-textfield custom-textfield--secret" data-custom-field="#newPassword" data-placeholder="Mínimo 6 caracteres" data-maxlength="120"></div><input id="newPassword" type="hidden" value=""></div></label>
     <button class="btn btn-primary" type="submit">Cambiar contraseña</button>
   </form>
 </section>
