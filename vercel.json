@@ -1,17 +1,106 @@
 {
+  "redirects": [
+    {
+      "source": "/login.html",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/signin.html",
+      "destination": "/signin",
+      "permanent": true
+    },
+    {
+      "source": "/register.html",
+      "destination": "/register",
+      "permanent": true
+    },
+    {
+      "source": "/signup.html",
+      "destination": "/signup",
+      "permanent": true
+    },
+    {
+      "source": "/reset.html",
+      "destination": "/reset",
+      "permanent": true
+    },
+    {
+      "source": "/update-password.html",
+      "destination": "/update-password",
+      "permanent": true
+    },
+    {
+      "source": "/auth-callback.html",
+      "destination": "/auth/callback",
+      "permanent": true
+    },
+    {
+      "source": "/home.html",
+      "destination": "/home",
+      "permanent": true
+    },
+    {
+      "source": "/explore.html",
+      "destination": "/explore",
+      "permanent": true
+    },
+    {
+      "source": "/notifications.html",
+      "destination": "/notifications",
+      "permanent": true
+    },
+    {
+      "source": "/bookmarks.html",
+      "destination": "/bookmarks",
+      "permanent": true
+    },
+    {
+      "source": "/profile.html",
+      "destination": "/profile",
+      "permanent": true
+    },
+    {
+      "source": "/settings.html",
+      "destination": "/settings",
+      "permanent": true
+    },
+    {
+      "source": "/support.html",
+      "destination": "/support",
+      "permanent": true
+    },
+    {
+      "source": "/messages.html",
+      "destination": "/messages",
+      "permanent": true
+    },
+    {
+      "source": "/chirpy.html",
+      "destination": "/chirpy",
+      "permanent": true
+    },
+    {
+      "source": "/legal.html",
+      "destination": "/legal",
+      "permanent": true
+    },
+    {
+      "source": "/embed.html",
+      "destination": "/embed",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/chirp/:id",
       "destination": "/chirp.html"
     },
     {
-<<<<<<< HEAD
       "source": "/embed",
       "destination": "/embed.html"
     },
     {
-=======
->>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
       "source": "/embed/:id",
       "destination": "/embed.html"
     },

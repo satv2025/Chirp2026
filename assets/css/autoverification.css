@@ -91,21 +91,28 @@
   flex: 0 0 auto;
 }
 
-.chirpcheck-badge--blue img,
-.verification-badge:not([class*="chirpcheck-badge--"]) img {
-  filter: none;
+/* Pink es la insignia inicial */
+.chirpcheck-badge--pink img,
+.verification-badge:not([class*='chirpcheck-badge--']) img {
+  filter: contrast(1) saturate(1) hue-rotate(262deg);
+}
+
+/* Compatibilidad por si aparece alguna clase vieja blue */
+.chirpcheck-badge--blue img {
+  filter: contrast(1) saturate(1) hue-rotate(262deg);
 }
 
 .chirpcheck-badge--orange img {
-  filter: hue-rotate(178deg) saturate(1.8) brightness(1.14);
+  filter: contrast(0.6) saturate(0.8) hue-rotate(69deg);
 }
 
 .chirpcheck-badge--red img {
-  filter: hue-rotate(112deg) saturate(2.2) brightness(1.02);
+  filter: contrast(1) saturate(1) hue-rotate(52deg);
 }
 
+/* Gold usa PNG propio, sin filtros */
 .chirpcheck-badge--gold img {
-  filter: sepia(1) saturate(4.6) hue-rotate(354deg) brightness(1.17) contrast(1.05);
+  filter: none;
 }
 
 .chirpcheck-tier-grid {
@@ -137,7 +144,11 @@
 
 .chirpcheck-tier.is-active {
   border-color: rgba(239, 0, 138, 0.28);
-  box-shadow: 0 12px 30px rgba(239, 0, 138, 0.10);
+  box-shadow: 0 12px 30px rgba(239, 0, 138, 0.1);
+}
+
+.chirpcheck-tier--pink.is-active {
+  border-color: rgba(239, 0, 138, 0.34);
 }
 
 .chirpcheck-tier--orange.is-active {
@@ -150,5 +161,9 @@
 
 .chirpcheck-tier--gold.is-active {
   border-color: rgba(219, 165, 32, 0.48);
-  background: linear-gradient(135deg, rgba(255,255,255,.82), rgba(255, 235, 168, .32));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.82),
+    rgba(255, 235, 168, 0.32)
+  );
 }
