@@ -14,6 +14,15 @@
     return;
   }
 
+  if (parts[0] === "embed") {
+    if (parts[1]) {
+      location.replace("/embed.html?chirp=" + encodeURIComponent(decodeURIComponent(parts[1])));
+    } else {
+      location.replace("/embed.html" + (location.search || ""));
+    }
+    return;
+  }
+
   if (parts[0] === "u" && parts[1]) {
     location.replace("/u.html?username=" + encodeURIComponent(decodeURIComponent(parts[1])));
     return;

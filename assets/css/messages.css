@@ -116,3 +116,39 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* Badges de mensajes recibidos */
+.dm-row__main {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.dm-count-badge,
+.nav-number-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--pink);
+  font-size: 12px;
+  font-weight: 950;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(239, 0, 138, .22);
+}
+
+.dm-count-badge {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.nav-number-badge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+}

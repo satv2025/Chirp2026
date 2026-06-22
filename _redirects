@@ -1,4 +1,6 @@
 /chirp/* /chirp.html 200
+/embed /embed.html 200
+/embed/* /embed.html 200
 /login /login.html 200
 /signin /signin.html 200
 /register /register.html 200

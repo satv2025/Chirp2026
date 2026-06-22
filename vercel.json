@@ -5,6 +5,14 @@
       "destination": "/chirp.html"
     },
     {
+      "source": "/embed",
+      "destination": "/embed.html"
+    },
+    {
+      "source": "/embed/:id",
+      "destination": "/embed.html"
+    },
+    {
       "source": "/login",
       "destination": "/login.html"
     },

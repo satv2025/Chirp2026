@@ -121,3 +121,20 @@ Para bloquear autoverificación de un perfil:
 profiles.is_verified = false
 profiles.verification_status = rejected
 ```
+
+## Editar, borrar y compartir Chirps
+
+Esta versión agrega acciones por publicación:
+
+- **Editar**: visible solo para el autor del Chirp.
+- **Borrar**: visible solo para el autor, usando borrado lógico con `deleted_at` cuando la columna existe.
+- **Compartir**: copia link directo y genera iframe para insertar.
+- **Embed**: `embed.html?chirp=ID` renderiza una tarjeta limpia para usar dentro de un iframe.
+
+Antes de probar en Supabase, ejecutar:
+
+```sql
+supabase-chirp-actions.sql
+```
+
+El SQL agrega `updated_at`, `deleted_at`, policies de edición/borrado para el autor y lectura pública para embeds de Chirps públicos.
