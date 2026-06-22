@@ -19,6 +19,8 @@
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 
+  const VERIFIED_ICON_SRC = "/assets/img/icons/verified.svg";
+
   let settingsCache = null;
   let userCache = null;
   let profileCache = null;
@@ -32,7 +34,7 @@
   }
 
   function badgeHTML(label = "Verificado") {
-    return `<span class="verification-badge" title="${esc(label)}" aria-label="${esc(label)}"></span>`;
+    return `<span class="verification-badge" title="${esc(label)}" aria-label="${esc(label)}"><img src="${VERIFIED_ICON_SRC}" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>`;
   }
 
   function usernameFromProfileURL(href = "") {
@@ -46,10 +48,10 @@
         "reset.html", "update-password.html", "auth-callback.html", "home.html",
         "explore.html", "notifications.html", "bookmarks.html", "profile.html",
         "settings.html", "support.html", "messages.html", "chirpy.html",
-        "chirp.html", "legal.html", "u.html", "404.html",
+        "chirp.html", "embed.html", "legal.html", "u.html", "404.html",
         "login", "signin", "register", "signup", "reset", "update-password",
         "auth", "home", "explore", "notifications", "bookmarks", "profile",
-        "settings", "support", "messages", "chirpy", "chirp", "legal", "u",
+        "settings", "support", "messages", "chirpy", "chirp", "embed", "legal", "u",
         "assets", "api", "favicon.ico"
       ]);
 

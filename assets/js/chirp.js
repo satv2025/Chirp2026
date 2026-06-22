@@ -20,6 +20,11 @@
 
   let user = null;
   let profile = null;
+  let dmIncomingCounts = new Map();
+  let dmIncomingTotal = 0;
+  let dmReadAtColumnSupported = true;
+
+  const DM_READ_STORAGE_PREFIX = "chirp:dm:last-read";
 
   function normalizedPath() { return location.pathname || "/"; }
 
@@ -96,6 +101,156 @@
     $$(".js-me-username").forEach(el => el.textContent = profile?.username ? `@${profile.username}` : "");
     $$(".js-me-avatar").forEach(el => el.src = profile?.avatar_url || fallbackAvatar(profile));
     $$(".js-composer-avatar").forEach(el => el.src = profile?.avatar_url || fallbackAvatar(profile));
+  }
+
+  function badgeCountLabel(count = 0) {
+    const n = Number(count || 0);
+    if (!Number.isFinite(n) || n <= 0) return "";
+    return n > 99 ? "99+" : String(n);
+  }
+
+  function renderNumberBadge(count, className = "number-badge") {
+    const label = badgeCountLabel(count);
+    return label ? `<span class="${className}" aria-label="${label} mensajes sin leer">${label}</span>` : "";
+  }
+
+  function updateMessagesNavBadge(count = dmIncomingTotal) {
+    const label = badgeCountLabel(count);
+    $$(".side-link[data-route='messages']").forEach(link => {
+      let badge = $(".nav-number-badge", link);
+
+      if (!label) {
+        badge?.remove();
+        return;
+      }
+
+      if (!badge) {
+        badge = document.createElement("span");
+        badge.className = "nav-number-badge";
+        link.appendChild(badge);
+      }
+
+      badge.textContent = label;
+      badge.setAttribute("aria-label", `${label} mensajes sin leer`);
+    });
+  }
+
+  function dmReadStorageKey(peerId) {
+    return `${DM_READ_STORAGE_PREFIX}:${user?.id || "anon"}:${peerId}`;
+  }
+
+  function messageTimeMs(value) {
+    const ms = new Date(value || 0).getTime();
+    return Number.isFinite(ms) ? ms : 0;
+  }
+
+  function getLocalDmReadAt(peerId) {
+    if (!peerId || !user) return 0;
+    try {
+      const saved = localStorage.getItem(dmReadStorageKey(peerId));
+      const numeric = Number(saved || 0);
+      if (Number.isFinite(numeric) && numeric > 0) return numeric;
+      return messageTimeMs(saved);
+    } catch (_error) {
+      return 0;
+    }
+  }
+
+  function setLocalDmReadAt(peerId, value = new Date()) {
+    if (!peerId || !user) return;
+    const ms = value instanceof Date ? value.getTime() : messageTimeMs(value);
+    if (!Number.isFinite(ms) || ms <= 0) return;
+    try {
+      localStorage.setItem(dmReadStorageKey(peerId), String(ms));
+    } catch (_error) {
+      // Sin localStorage, se usa Supabase/read_at si está disponible.
+    }
+  }
+
+  function readAtColumnMissing(error) {
+    const text = `${error?.message || ""} ${error?.details || ""} ${error?.hint || ""}`.toLowerCase();
+    return text.includes("read_at") || text.includes("column") || error?.code === "42703";
+  }
+
+  function rowIsUnreadDm(row) {
+    const senderId = row?.sender_id;
+    if (!senderId || senderId === user.id) return false;
+    if (Object.prototype.hasOwnProperty.call(row, "read_at") && row.read_at) return false;
+    const localReadAt = getLocalDmReadAt(senderId);
+    return messageTimeMs(row.created_at) > localReadAt;
+  }
+
+  async function refreshIncomingDmBadges() {
+    if (!user) return new Map();
+
+    const fields = dmReadAtColumnSupported ? "sender_id, created_at, read_at" : "sender_id, created_at";
+    let { data, error } = await sb
+      .from("direct_messages")
+      .select(fields)
+      .eq("receiver_id", user.id);
+
+    if (error && dmReadAtColumnSupported && readAtColumnMissing(error)) {
+      dmReadAtColumnSupported = false;
+      ({ data, error } = await sb
+        .from("direct_messages")
+        .select("sender_id, created_at")
+        .eq("receiver_id", user.id));
+    }
+
+    if (error) {
+      console.warn("[Chirp messages] no pude contar mensajes sin leer", error);
+      dmIncomingCounts = new Map();
+      dmIncomingTotal = 0;
+      updateMessagesNavBadge(0);
+      return dmIncomingCounts;
+    }
+
+    const counts = new Map();
+    (data || []).forEach(row => {
+      if (!rowIsUnreadDm(row)) return;
+      const senderId = row.sender_id;
+      counts.set(senderId, (counts.get(senderId) || 0) + 1);
+    });
+
+    dmIncomingCounts = counts;
+    dmIncomingTotal = [...counts.values()].reduce((total, current) => total + current, 0);
+    updateMessagesNavBadge(dmIncomingTotal);
+    return dmIncomingCounts;
+  }
+
+  async function markDmThreadAsRead(peerId, messages = []) {
+    if (!user || !peerId) return;
+
+    const latestIncoming = (messages || [])
+      .filter(msg => msg.sender_id === peerId && msg.receiver_id === user.id)
+      .reduce((latest, msg) => Math.max(latest, messageTimeMs(msg.created_at)), 0);
+
+    setLocalDmReadAt(peerId, latestIncoming ? new Date(latestIncoming) : new Date());
+
+    if (dmReadAtColumnSupported) {
+      let { error } = await sb.rpc("mark_dm_thread_read", { peer: peerId });
+
+      if (error) {
+        ({ error } = await sb
+          .from("direct_messages")
+          .update({ read_at: new Date().toISOString() })
+          .eq("receiver_id", user.id)
+          .eq("sender_id", peerId)
+          .is("read_at", null));
+      }
+
+      if (error) {
+        if (readAtColumnMissing(error)) {
+          dmReadAtColumnSupported = false;
+        } else {
+          console.warn("[Chirp messages] no pude marcar DM como leído", error);
+        }
+      }
+    }
+
+    dmIncomingCounts.delete(peerId);
+    dmIncomingTotal = [...dmIncomingCounts.values()].reduce((total, current) => total + current, 0);
+    updateMessagesNavBadge(dmIncomingTotal);
   }
 
   function initShell() {
@@ -209,6 +364,122 @@
     return clean ? `/chirp/${encodeURIComponent(clean)}` : "/chirp.html";
   }
 
+  function absoluteURL(path = "/") {
+    try { return new URL(path, location.origin).toString(); }
+    catch (_error) { return path; }
+  }
+
+  function chirpShareURL(id) {
+    return absoluteURL(chirpURL(id));
+  }
+
+  function chirpEmbedURL(id) {
+    const clean = String(id || "").trim();
+    return absoluteURL(clean ? `/embed.html?chirp=${encodeURIComponent(clean)}` : "/embed.html");
+  }
+
+  function chirpIframeCode(id) {
+    return `<iframe src="${chirpEmbedURL(id)}" width="100%" height="360" style="border:0;max-width:640px;" loading="lazy" title="Chirp insertado"></iframe>`;
+  }
+
+  async function copyText(text, success = "Copiado") {
+    const value = String(text || "");
+    if (!value) return;
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        const area = document.createElement("textarea");
+        area.value = value;
+        area.setAttribute("readonly", "");
+        area.style.position = "fixed";
+        area.style.left = "-9999px";
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+      }
+      toast(success, "Listo para pegar donde quieras.");
+    } catch (_error) {
+      toast("No pude copiar", "Seleccioná el texto y copialo manualmente.", "error");
+    }
+  }
+
+  function ensureShareModal() {
+    let modal = $("#chirpShareModal");
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "chirpShareModal";
+    modal.className = "chirp-share-modal";
+    modal.setAttribute("aria-hidden", "true");
+    modal.innerHTML = `
+      <div class="chirp-share-modal__backdrop js-share-close"></div>
+      <section class="chirp-share-modal__box" role="dialog" aria-modal="true" aria-labelledby="chirpShareTitle">
+        <div class="section-title">
+          <div>
+            <h2 id="chirpShareTitle">Compartir Chirp</h2>
+            <p>Copiá el link o el iframe para insertarlo en otra web.</p>
+          </div>
+          <button class="btn btn-ghost btn-small js-share-close" type="button">Cerrar</button>
+        </div>
+        <label class="field">
+          <span>Link directo</span>
+          <div class="share-copy-row">
+            <input id="chirpShareLink" readonly>
+            <button class="btn btn-soft btn-small js-copy-share-link" type="button">Copiar</button>
+          </div>
+        </label>
+        <label class="field">
+          <span>Iframe para insertar</span>
+          <textarea id="chirpShareIframe" class="share-code" readonly rows="4"></textarea>
+        </label>
+        <div class="chirp-share-modal__actions">
+          <button class="btn btn-soft btn-small js-copy-share-iframe" type="button">Copiar iframe</button>
+          <button class="btn btn-ghost btn-small js-native-share" type="button">Compartir del dispositivo</button>
+        </div>
+      </section>`;
+    document.body.appendChild(modal);
+
+    $$(".js-share-close", modal).forEach(btn => btn.addEventListener("click", () => closeShareModal()));
+    $(".js-copy-share-link", modal)?.addEventListener("click", () => copyText($("#chirpShareLink", modal)?.value, "Link copiado"));
+    $(".js-copy-share-iframe", modal)?.addEventListener("click", () => copyText($("#chirpShareIframe", modal)?.value, "Iframe copiado"));
+    $(".js-native-share", modal)?.addEventListener("click", async () => {
+      const url = $("#chirpShareLink", modal)?.value || "";
+      if (!navigator.share) return copyText(url, "Link copiado");
+      try { await navigator.share({ title: "Chirp", url }); }
+      catch (_error) { /* El usuario canceló o el navegador no permitió compartir. */ }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && modal.classList.contains("is-open")) closeShareModal();
+    });
+
+    return modal;
+  }
+
+  function closeShareModal() {
+    const modal = $("#chirpShareModal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  function openShareModal(chirpId) {
+    const modal = ensureShareModal();
+    const link = chirpShareURL(chirpId);
+    const iframe = chirpIframeCode(chirpId);
+    const linkInput = $("#chirpShareLink", modal);
+    const iframeInput = $("#chirpShareIframe", modal);
+    if (linkInput) linkInput.value = link;
+    if (iframeInput) iframeInput.value = iframe;
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    linkInput?.focus();
+    linkInput?.select();
+  }
+
   function getSingleChirpId() {
     const params = new URLSearchParams(location.search);
     const fromQuery = params.get("id") || params.get("chirp_id") || params.get("chirp");
@@ -224,24 +495,43 @@
 
     if (parts[0] === "chirp" && parts[1]) return decodeURIComponent(parts[1]);
     if (parts[0] === "chirp.html" && parts[1]) return decodeURIComponent(parts[1]);
+    if (parts[0] === "embed" && parts[1]) return decodeURIComponent(parts[1]);
+    if (parts[0] === "embed.html" && parts[1]) return decodeURIComponent(parts[1]);
 
     return "";
   }
 
   async function chirpHtml(chirp) {
     const p = chirp.profiles || {};
-    return `<article class="chirp" data-chirp-id="${esc(chirp.id)}">
-      <div class="chirp__grid">
-        <a href="${profileURL(p.username)}"><img class="avatar" src="${esc(p.avatar_url || fallbackAvatar(p))}" alt="${esc(p.display_name || p.username || "Usuario")}"></a>
-        <div>
-          <div class="chirp__meta"><a class="chirp__name" href="${profileURL(p.username)}">${esc(p.display_name || "Usuario")}</a><span>@${esc(p.username || "usuario")}</span><span>·</span><a href="${chirpURL(chirp.id)}">${ago(chirp.created_at)}</a></div>
-          ${chirp.content ? `<p class="chirp__text">${linkContent(chirp.content)}</p>` : ""}
-          ${await mediaHtml(chirp.chirp_media || [])}
-          <div class="chirp__actions">
+    const isEmbed = page === "embed";
+    const isOwn = Boolean(user?.id && chirp.author_id === user.id);
+    const displayName = p.display_name || "Usuario";
+    const username = p.username || "usuario";
+    const content = chirp.content || "";
+    const hasEditedAt = chirp.updated_at && chirp.created_at && new Date(chirp.updated_at).getTime() > new Date(chirp.created_at).getTime() + 1000;
+    const socialActions = !isEmbed ? `
             <button class="action-btn js-like" title="Me gusta"><span class="action-icon action-icon-like" aria-hidden="true"></span><b>${chirp.likes_count || 0}</b></button>
             <button class="action-btn js-rechirp" title="Rechirp"><span class="action-icon action-icon-rechirp" aria-hidden="true"></span><b>${chirp.rechirps_count || 0}</b></button>
             <button class="action-btn js-bookmark" title="Guardar"><span class="action-icon action-icon-bookmark" aria-hidden="true"></span><b>${chirp.bookmarks_count || 0}</b></button>
-            <a class="action-btn" title="Respuestas" href="${chirpURL(chirp.id)}"><span class="action-icon action-icon-comment" aria-hidden="true"></span><b>${chirp.replies_count || 0}</b></a>
+            <a class="action-btn" title="Respuestas" href="${chirpURL(chirp.id)}"><span class="action-icon action-icon-comment" aria-hidden="true"></span><b>${chirp.replies_count || 0}</b></a>` : "";
+    const ownerActions = isOwn && !isEmbed ? `
+            <button class="action-btn js-edit-chirp" type="button" title="Editar Chirp">Editar</button>
+            <button class="action-btn action-btn-danger js-delete-chirp" type="button" title="Borrar Chirp">Borrar</button>` : "";
+    const shareAction = !isEmbed ? `
+            <button class="action-btn js-share-chirp" type="button" title="Compartir Chirp">Compartir</button>` : `
+            <a class="action-btn" target="_blank" rel="noopener" href="${chirpShareURL(chirp.id)}">Ver en Chirp</a>`;
+
+    return `<article class="chirp${isEmbed ? " chirp-embed-card" : ""}" data-chirp-id="${esc(chirp.id)}" data-author-id="${esc(chirp.author_id || "")}" data-content="${esc(content)}">
+      <div class="chirp__grid">
+        <a href="${profileURL(username)}" target="${isEmbed ? "_blank" : "_self"}" rel="${isEmbed ? "noopener" : ""}"><img class="avatar" src="${esc(p.avatar_url || fallbackAvatar(p))}" alt="${esc(displayName)}"></a>
+        <div class="chirp__body">
+          <div class="chirp__meta"><a class="chirp__name" href="${profileURL(username)}" target="${isEmbed ? "_blank" : "_self"}" rel="${isEmbed ? "noopener" : ""}">${esc(displayName)}</a><span>@${esc(username)}</span><span>·</span><a href="${chirpURL(chirp.id)}" target="${isEmbed ? "_blank" : "_self"}" rel="${isEmbed ? "noopener" : ""}">${ago(chirp.created_at)}</a>${hasEditedAt ? `<span>· editado</span>` : ""}</div>
+          ${content ? `<p class="chirp__text">${linkContent(content)}</p>` : ""}
+          ${await mediaHtml(chirp.chirp_media || [])}
+          <div class="chirp__actions">
+            ${socialActions}
+            ${shareAction}
+            ${ownerActions}
           </div>
         </div>
       </div>
@@ -309,10 +599,189 @@
   function bindActions(root) {
     root.querySelectorAll(".chirp").forEach(card => {
       const id = card.dataset.chirpId;
-      $(".js-like", card)?.addEventListener("click", () => toggleJoin("likes", { user_id: user.id, chirp_id: id }, card, ".js-like"));
-      $(".js-rechirp", card)?.addEventListener("click", () => toggleJoin("rechirps", { user_id: user.id, chirp_id: id }, card, ".js-rechirp"));
-      $(".js-bookmark", card)?.addEventListener("click", () => toggleJoin("bookmarks", { user_id: user.id, chirp_id: id }, card, ".js-bookmark"));
+
+      if (user?.id) {
+        $(".js-like", card)?.addEventListener("click", () => toggleJoin("likes", { user_id: user.id, chirp_id: id }, card, ".js-like"));
+        $(".js-rechirp", card)?.addEventListener("click", () => toggleJoin("rechirps", { user_id: user.id, chirp_id: id }, card, ".js-rechirp"));
+        $(".js-bookmark", card)?.addEventListener("click", () => toggleJoin("bookmarks", { user_id: user.id, chirp_id: id }, card, ".js-bookmark"));
+        $(".js-edit-chirp", card)?.addEventListener("click", () => startEditChirp(card));
+        $(".js-delete-chirp", card)?.addEventListener("click", () => deleteChirp(card));
+      }
+
+      $(".js-share-chirp", card)?.addEventListener("click", () => openShareModal(id));
     });
+  }
+
+  function insertAfter(reference, node) {
+    if (!reference?.parentNode) return;
+    reference.parentNode.insertBefore(node, reference.nextSibling);
+  }
+
+  function restoreChirpText(card, content) {
+    let textEl = $(".chirp__text", card);
+    const body = $(".chirp__body", card);
+    const meta = $(".chirp__meta", card);
+
+    if (!content) {
+      textEl?.remove();
+      card.dataset.content = "";
+      return;
+    }
+
+    if (!textEl) {
+      textEl = document.createElement("p");
+      textEl.className = "chirp__text";
+      if (meta) insertAfter(meta, textEl);
+      else body?.prepend(textEl);
+    }
+
+    textEl.innerHTML = linkContent(content);
+    textEl.hidden = false;
+    card.dataset.content = content;
+  }
+
+  function startEditChirp(card) {
+    if (!user?.id || card.dataset.authorId !== user.id) return toast("No autorizado", "Solo podés editar tus propios Chirps.", "error");
+    if ($(".chirp-edit-form", card)) return;
+
+    const current = card.dataset.content || "";
+    const body = $(".chirp__body", card);
+    const textEl = $(".chirp__text", card);
+    const meta = $(".chirp__meta", card);
+
+    const form = document.createElement("form");
+    form.className = "chirp-edit-form";
+    form.innerHTML = `
+      <textarea class="chirp-edit-form__textarea" maxlength="${CFG.chirpLimit}" placeholder="Editá tu Chirp...">${esc(current)}</textarea>
+      <div class="chirp-edit-form__bar">
+        <span class="form-hint js-edit-count">${current.length}/${CFG.chirpLimit}</span>
+        <div class="chirp-edit-form__actions">
+          <button class="btn btn-ghost btn-small js-cancel-edit" type="button">Cancelar</button>
+          <button class="btn btn-primary btn-small" type="submit">Guardar</button>
+        </div>
+      </div>`;
+
+    if (textEl) {
+      textEl.hidden = true;
+      insertAfter(textEl, form);
+    } else if (meta) {
+      insertAfter(meta, form);
+    } else {
+      body?.prepend(form);
+    }
+
+    const textarea = $(".chirp-edit-form__textarea", form);
+    const counter = $(".js-edit-count", form);
+    textarea?.focus();
+    textarea?.setSelectionRange(textarea.value.length, textarea.value.length);
+    textarea?.addEventListener("input", () => {
+      textarea.value = limit(textarea.value);
+      if (counter) counter.textContent = `${textarea.value.length}/${CFG.chirpLimit}`;
+    });
+
+    $(".js-cancel-edit", form)?.addEventListener("click", () => {
+      form.remove();
+      if (textEl) textEl.hidden = false;
+    });
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      const next = limit(textarea?.value || "").trim();
+      const hasMedia = Boolean($(".chirp__media", card));
+      if (!next && !hasMedia) return toast("Chirp vacío", "Dejá texto o multimedia para poder guardarlo.", "error");
+
+      const btn = event.submitter;
+      btn.disabled = true;
+      btn.textContent = "Guardando...";
+
+      try {
+        await updateChirpContent(card.dataset.chirpId, next);
+        await syncEntities(card.dataset.chirpId);
+        restoreChirpText(card, next);
+        form.remove();
+        markChirpAsEdited(card);
+        toast("Chirp actualizado", "Los cambios ya quedaron guardados.");
+      } catch (error) {
+        toast("No se pudo editar", error.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Guardar";
+      }
+    });
+  }
+
+  function missingColumn(error, column) {
+    const text = `${error?.message || ""} ${error?.details || ""} ${error?.hint || ""}`.toLowerCase();
+    return text.includes(String(column).toLowerCase()) || error?.code === "42703";
+  }
+
+  async function updateChirpContent(chirpId, content) {
+    const payload = { content, updated_at: new Date().toISOString() };
+    let { error } = await sb
+      .from("chirps")
+      .update(payload)
+      .eq("id", chirpId)
+      .eq("author_id", user.id);
+
+    if (error && missingColumn(error, "updated_at")) {
+      ({ error } = await sb
+        .from("chirps")
+        .update({ content })
+        .eq("id", chirpId)
+        .eq("author_id", user.id));
+    }
+
+    if (error) throw error;
+    scheduleRealtimeRefresh("chirps:edit");
+  }
+
+  function markChirpAsEdited(card) {
+    const meta = $(".chirp__meta", card);
+    if (!meta || $(".chirp-edited-mark", meta)) return;
+    const mark = document.createElement("span");
+    mark.className = "chirp-edited-mark";
+    mark.textContent = "· editado";
+    meta.appendChild(mark);
+  }
+
+  async function deleteChirp(card) {
+    if (!user?.id || card.dataset.authorId !== user.id) return toast("No autorizado", "Solo podés borrar tus propios Chirps.", "error");
+    const ok = confirm("¿Borrar este Chirp? Va a dejar de verse en el timeline.");
+    if (!ok) return;
+
+    const btn = $(".js-delete-chirp", card);
+    btn && (btn.disabled = true);
+
+    try {
+      let { error } = await sb
+        .from("chirps")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", card.dataset.chirpId)
+        .eq("author_id", user.id);
+
+      if (error && missingColumn(error, "deleted_at")) {
+        ({ error } = await sb
+          .from("chirps")
+          .delete()
+          .eq("id", card.dataset.chirpId)
+          .eq("author_id", user.id));
+      }
+
+      if (error) throw error;
+
+      card.remove();
+      toast("Chirp borrado", "Ya no aparece publicado.");
+      scheduleRealtimeRefresh("chirps:delete");
+
+      if (page === "chirp" && $("#singleChirp") && !$("#singleChirp .chirp")) {
+        $("#singleChirp").innerHTML = empty("Chirp borrado", "Esta publicación ya no está disponible.");
+        $("#replyComposer") && ($("#replyComposer").innerHTML = "");
+        $("#replyList") && ($("#replyList").innerHTML = "");
+      }
+    } catch (error) {
+      toast("No se pudo borrar", error.message, "error");
+      btn && (btn.disabled = false);
+    }
   }
 
   async function toggleJoin(table, row, card, selector) {
@@ -397,6 +866,7 @@
       const rendered = [];
       for (const c of chirps) rendered.push(await chirpHtml(c));
       box.innerHTML = `<section class="hashtag-feed"><div class="hashtag-filter-head"><h2>#${esc(clean)}</h2><p>Filtro directo por hashtag · ${chirps.length || hashtag.chirps_count || 0} Chirps.</p></div><div class="chirp-list">${rendered.join("") || empty("Sin Chirps visibles", "El hashtag existe, pero no hay publicaciones visibles.")}</div></section>`;
+      await hydrateMyChirpActions(box, chirps.map(c => c.id));
       bindActions(box);
       initPlyr(box);
     } catch (e) {
@@ -532,10 +1002,10 @@
       "reset.html", "update-password.html", "auth-callback.html", "home.html",
       "explore.html", "notifications.html", "bookmarks.html", "profile.html",
       "settings.html", "support.html", "messages.html", "chirpy.html",
-      "chirp.html", "legal.html", "u.html", "404.html",
+      "chirp.html", "embed.html", "legal.html", "u.html", "404.html",
       "login", "signin", "register", "signup", "reset", "update-password",
       "auth", "home", "explore", "notifications", "bookmarks", "profile",
-      "settings", "support", "messages", "chirpy", "chirp", "legal", "u",
+      "settings", "support", "messages", "chirpy", "chirp", "embed", "legal", "u",
       "assets", "api", "favicon.ico"
     ]);
 
@@ -814,6 +1284,39 @@
     await loadReplies(id);
   }
 
+  async function loadEmbedChirp() {
+    const id = getSingleChirpId();
+    const box = $("#embedChirp");
+    if (!box) return;
+
+    if (!id) {
+      box.innerHTML = empty("Falta el Chirp", "Usá un iframe con /embed.html?chirp=ID.");
+      return;
+    }
+
+    box.innerHTML = loading("Cargando Chirp...");
+
+    const { data, error } = await sb
+      .from("chirps")
+      .select("*, profiles:author_id(*), chirp_media(*)")
+      .eq("id", id)
+      .is("deleted_at", null)
+      .maybeSingle();
+
+    if (error) {
+      box.innerHTML = empty("No pude cargar el Chirp", error.message);
+      return;
+    }
+
+    if (!data) {
+      box.innerHTML = empty("Chirp no disponible", "Puede estar borrado o privado.");
+      return;
+    }
+
+    await renderChirps(box, [data]);
+    document.title = `${data.profiles?.display_name || "Chirp"} · Chirp insertado`;
+  }
+
   async function uploadProfileImage(inputId, bucket, column) {
     const input = document.getElementById(inputId);
     input?.addEventListener("change", async () => {
@@ -1077,12 +1580,15 @@
     $("#dmPeerUser") && ($("#dmPeerUser").textContent = targetProfile?.username ? `@${targetProfile.username}` : "DM privado");
     $("#dmPeerAvatar") && ($("#dmPeerAvatar").src = targetProfile?.avatar_url || fallbackAvatar(targetProfile));
     await loadDmMessages();
+    await loadDmThreads();
   }
 
-  function dmRow(profile) {
-    return `<button class="dm-row" data-user-id="${esc(profile.id)}" data-username="${esc(profile.username || "")}">
+  function dmRow(profile, receivedCount = 0) {
+    const isActive = profile.id && profile.id === activeDmUser;
+    return `<button class="dm-row${isActive ? " is-active" : ""}" data-user-id="${esc(profile.id)}" data-username="${esc(profile.username || "")}">
       <img class="avatar" src="${esc(profile.avatar_url || fallbackAvatar(profile))}" alt="${esc(profile.display_name || "Usuario")}">
-      <span><b>${esc(profile.display_name || "Usuario")}</b><small>@${esc(profile.username || "")}</small></span>
+      <span class="dm-row__main"><b>${esc(profile.display_name || "Usuario")}</b><small>@${esc(profile.username || "")}</small></span>
+      ${renderNumberBadge(receivedCount, "dm-count-badge")}
     </button>`;
   }
 
@@ -1096,7 +1602,7 @@
     }
     const { data, error } = await sb.from("profiles").select("*").or(`username.ilike.%${q}%,display_name.ilike.%${q}%`).neq("id", user.id).limit(8);
     if (error) return box.innerHTML = `<div class="notice notice-error"><strong>Error</strong><span>${esc(error.message)}</span></div>`;
-    box.innerHTML = (data || []).map(dmRow).join("") || `<div class="chip chip-muted">Sin usuarios</div>`;
+    box.innerHTML = (data || []).map(profile => dmRow(profile, dmIncomingCounts.get(profile.id) || 0)).join("") || `<div class="chip chip-muted">Sin usuarios</div>`;
     bindDmRows(box);
   }
 
@@ -1118,17 +1624,21 @@
   async function loadDmThreads() {
     const box = $("#dmThreads");
     if (!box) return;
+    await refreshIncomingDmBadges();
     const { data, error } = await sb.rpc("get_dm_threads");
     if (error) {
       box.innerHTML = `<div class="chip chip-muted">Sin chats todavía</div>`;
       return;
     }
-    box.innerHTML = (data || []).map(row => dmRow({
-      id: row.peer_id,
-      username: row.peer_username,
-      display_name: row.peer_display_name,
-      avatar_url: row.peer_avatar_url
-    })).join("") || `<div class="chip chip-muted">Sin chats todavía</div>`;
+    box.innerHTML = (data || []).map(row => {
+      const peer = {
+        id: row.peer_id,
+        username: row.peer_username,
+        display_name: row.peer_display_name,
+        avatar_url: row.peer_avatar_url
+      };
+      return dmRow(peer, dmIncomingCounts.get(peer.id) || 0);
+    }).join("") || `<div class="chip chip-muted">Sin chats todavía</div>`;
     bindDmRows(box);
   }
 
@@ -1149,9 +1659,13 @@
       <small>${ago(msg.created_at)}</small>
     </div>`).join("") || `<div class="empty"><strong>Nuevo chat</strong><span>Mandá el primer mensaje.</span></div>`;
     box.scrollTop = box.scrollHeight;
+
+    await markDmThreadAsRead(activeDmUser, data || []);
+    await refreshIncomingDmBadges();
   }
 
   async function initMessages() {
+    await refreshIncomingDmBadges();
     const qUser = new URLSearchParams(location.search).get("user");
     if (qUser) {
       const { data } = await sb.from("profiles").select("*").eq("username", qUser).maybeSingle();
@@ -1179,6 +1693,7 @@
         body
       });
       if (error) return toast("No se pudo enviar", error.message, "error");
+      await refreshIncomingDmBadges();
       await loadDmMessages();
       await loadDmThreads();
     });
@@ -1338,6 +1853,7 @@
         if (page === "bookmarks") await loadBookmarks();
         if (page === "notifications") await loadNotifications();
         if (page === "messages") {
+          await refreshIncomingDmBadges();
           await loadDmThreads();
           if (activeDmUser) await loadDmMessages();
         }
@@ -1401,11 +1917,17 @@
 
     initAuth();
 
+    if (page === "embed") {
+      await loadEmbedChirp();
+      return;
+    }
+
     const privatePages = ["home","explore","notifications","bookmarks","profile","settings","support","user","chirp","messages","chirpy"];
     if (privatePages.includes(page)) {
       await requireUser();
       initShell();
       await loadTrending();
+      await refreshIncomingDmBadges();
       initRealtimeCounts();
     }
 
