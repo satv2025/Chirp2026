@@ -211,8 +211,9 @@
   border-radius: 999px;
   border: 1px solid var(--line-2);
   background: rgba(255, 255, 255, 0.82);
-  color: var(--hot);
+  color: var(--pink) !important;
   font-weight: 950;
+  text-transform: uppercase;
 }
 .chip-muted {
   color: var(--muted);
