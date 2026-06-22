@@ -24,6 +24,13 @@
 <link rel="stylesheet" href="/assets/css/chirpy.css">
 <link rel="stylesheet" href="/assets/css/autoverification.css">
 <link rel="stylesheet" href="/assets/css/profile.css">
+<style>
+.fieldbox--password{position:relative;}
+.fieldbox--password input{padding-right:48px;}
+.password-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:inline-grid;place-items:center;width:36px;height:36px;padding:0;border:0;background:transparent;color:var(--pink);line-height:0;cursor:pointer;border-radius:999px;}
+.password-toggle:hover,.password-toggle:focus-visible{background:color-mix(in srgb,var(--pink) 12%,transparent);outline:none;}
+.password-toggle svg{display:block;pointer-events:none;}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script defer src="/assets/js/config.js"></script>
@@ -34,7 +41,7 @@
 <body data-page="auth">
 <div class="auth-layout"><section class="auth-art"><div class="auth-art__inner"><div><a class="brand" href="/"><img src="/assets/img/logo-duck.png" alt="Logo de Chirp"><span>Chirp</span></a><h1>Chirp, más simple y más social.</h1><p>Entrá, armá tu perfil y empezá a chirpear sin vueltas.</p></div><img src="/assets/img/logo-duck.png" alt="Patito Chirp" style="width:150px;justify-self:end;opacity:.88;"></div></section><main class="auth-panel"><section class="card auth-card"><a class="brand" href="/"><img src="/assets/img/logo-duck.png" alt="Logo de Chirp"><span>Chirp</span></a><h1>Entrar a Chirp</h1><p>Volvé a tu timeline y seguí chirpeando.</p><form id="loginForm" class="form-grid">
 <label class="field"><span>Email</span><div class="fieldbox"><input id="loginEmail" type="email" autocomplete="email" required placeholder="vos@email.com"></div></label>
-<label class="field"><span>Contraseña</span><div class="fieldbox"><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña"></div></label>
+<label class="field"><span>Contraseña</span><div class="fieldbox fieldbox--password"><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Tu contraseña"><button class="password-toggle js-password-toggle" data-password-toggle="#loginPassword" aria-controls="loginPassword" aria-label="Mostrar contraseña" aria-pressed="false"></button></div></label>
 <button class="btn btn-primary btn-wide" type="submit">Entrar</button>
 </form>
 <form id="magicForm" class="form-grid" style="margin-top:14px;">
