@@ -1,26 +1,41 @@
-.chirpy-pro {
-  display: grid;
-  gap: 14px;
+body[data-page='chirpy'] .app-layout {
+  width: min(1680px, calc(100% - 32px));
+  grid-template-columns: var(--sidebar) minmax(0, 1fr);
 }
 
+body[data-page='chirpy'] .main-column {
+  min-width: 0;
+  max-width: none;
+}
+
+body[data-page='chirpy'] .rightbar {
+  display: none;
+}
+
+.chirpy-pro {
+  display: grid;
+  gap: 16px;
+}
+
+/* INTRODUCCIÓN PRIMERO */
 .chirpy-pro-hero {
   position: relative;
-  display: none;
   overflow: hidden;
   display: grid;
-  grid-template-columns: 170px minmax(0, 1fr);
+  grid-template-columns: 150px minmax(0, 1fr);
   gap: 22px;
   align-items: center;
-  min-height: 260px;
+  min-height: 12px;
+  padding: 10px;
   background:
     radial-gradient(
       circle at 10% 0%,
-      rgba(159, 0, 153, 0.2),
+      rgba(159, 0, 153, 0.18),
       transparent 22rem
     ),
     radial-gradient(
       circle at 100% 15%,
-      rgba(239, 0, 138, 0.14),
+      rgba(239, 0, 138, 0.12),
       transparent 24rem
     ),
     rgba(255, 255, 255, 0.94);
@@ -41,19 +56,19 @@
 
 .chirpy-orb {
   position: relative;
-  width: 160px;
-  height: 160px;
+  width: 148px;
+  height: 148px;
   display: grid;
   place-items: center;
   border-radius: 4px;
   background: #fff;
   border: 1px solid var(--line-2);
-  box-shadow: 0 24px 44px rgba(159, 0, 153, 0.15);
+  box-shadow: 0 22px 42px rgba(159, 0, 153, 0.14);
 }
 
 .chirpy-orb img {
-  width: 138px;
-  height: 138px;
+  width: 126px;
+  height: 126px;
   object-fit: contain;
   z-index: 1;
 }
@@ -90,16 +105,16 @@
 
 .chirpy-pro-hero h2 {
   margin: 14px 0 8px;
-  font-size: clamp(42px, 6vw, 72px);
+  font-size: 29px;
   line-height: 0.9;
-  letter-spacing: -0.075em;
+  letter-spacing: -0.02em;
 }
 
 .chirpy-pro-hero p {
-  max-width: 720px;
+  max-width: 980px;
   margin: 0 0 16px;
   color: var(--muted);
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.52;
 }
 
@@ -109,25 +124,48 @@
   gap: 8px;
 }
 
+/* DESPUÉS DE LA INTRO: CHIRPY GIGANTE */
 .chirpy-main {
   display: grid;
-  grid-template-columns: 290px minmax(0, 1fr);
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
+.chirpy-chat-pro {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 580px;
+  max-height: 574px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
+.chirpy-chat-giant {
+  min-width: 0;
+}
+
+/* INFO SECUNDARIA DEBAJO */
 .chirpy-side {
-  align-self: start;
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  opacity: 0.92;
 }
 
 .chirpy-side h3 {
-  margin: 0 0 12px;
+  grid-column: 1 / -1;
+  margin: 0;
   font-size: 22px;
   letter-spacing: -0.04em;
 }
 
 .chirpy-capability {
-  padding: 12px 0;
-  border-top: 1px solid var(--line-2);
+  padding: 12px;
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.72);
 }
 
 .chirpy-capability b {
@@ -143,22 +181,15 @@
   font-size: 14px;
 }
 
-.chirpy-chat-pro {
-  min-height: 650px;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  overflow: hidden;
-}
-
 .chirpy-chat-head {
-  min-height: 76px;
-  padding: 14px 16px;
+  min-height: 82px;
+  padding: 16px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid var(--line-2);
-  background: rgba(255, 250, 252, 0.86);
+  background: rgba(255, 250, 252, 0.88);
 }
 
 .chirpy-mini {
@@ -168,11 +199,11 @@
 
 .chirpy-messages {
   min-height: 0;
-  padding: 18px;
+  padding: 24px;
   overflow: auto;
   display: grid;
   align-content: start;
-  gap: 12px;
+  gap: 16px;
   background:
     radial-gradient(circle at 0 0, rgba(159, 0, 153, 0.08), transparent 20rem),
     radial-gradient(
@@ -184,13 +215,13 @@
 }
 
 .chirpy-message {
-  max-width: min(82%, 720px);
+  max-width: min(88%, 1080px);
   display: grid;
   gap: 8px;
 }
 
 .chirpy-message.bot {
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: 48px minmax(0, 1fr);
 }
 
 .chirpy-message.user {
@@ -198,18 +229,19 @@
 }
 
 .chirpy-message img {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
 }
 
 .chirpy-message > div {
-  padding: 12px 14px;
+  padding: 14px 16px;
   border: 1px solid var(--line-2);
-  border-radius: 14px;
+  border-radius: 16px;
   background: #fff6fb;
   color: var(--text);
-  line-height: 1.55;
+  line-height: 1.6;
+  font-size: 16px;
 }
 
 .chirpy-message.user > div {
@@ -229,12 +261,23 @@
 }
 
 .chirpy-compose {
-  padding: 12px;
+  padding: 16px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
+  gap: 12px;
   border-top: 1px solid var(--line-2);
-  background: rgba(255, 250, 252, 0.86);
+  background: rgba(255, 250, 252, 0.9);
+}
+
+.chirpy-compose input,
+.chirpy-compose textarea {
+  min-height: 52px;
+  font-size: 16px;
+}
+
+.chirpy-compose .btn {
+  min-height: 52px;
+  padding-inline: 20px;
 }
 
 .chirpy-thinking {
@@ -250,38 +293,74 @@
   0% {
     content: '';
   }
+
   33% {
     content: '.';
   }
+
   66% {
     content: '..';
   }
+
   100% {
     content: '...';
   }
 }
 
-@media (max-width: 860px) {
-  .chirpy-pro-hero,
-  .chirpy-main {
-    grid-template-columns: 1fr;
-  }
-
-  .chirpy-orb {
-    width: 132px;
-    height: 132px;
-  }
-
-  .chirpy-orb img {
-    width: 112px;
-    height: 112px;
+@media (max-width: 1200px) {
+  body[data-page='chirpy'] .app-layout {
+    width: min(100%, calc(100% - 24px));
   }
 
   .chirpy-side {
-    display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chirpy-chat-pro {
+    min-height: 620px;
+    max-height: none;
+  }
+}
+
+@media (max-width: 860px) {
+  body[data-page='chirpy'] .app-layout {
+    grid-template-columns: 1fr;
+    width: min(100%, calc(100% - 18px));
+  }
+
+  .chirpy-pro-hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .chirpy-orb {
+    width: 118px;
+    height: 118px;
+  }
+
+  .chirpy-orb img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .chirpy-chat-pro {
+    aspect-ratio: auto;
+    min-height: calc(100vh - 120px);
+  }
+
+  .chirpy-messages {
+    padding: 14px;
+  }
+
+  .chirpy-message {
+    max-width: 94%;
   }
 
   .chirpy-compose {
+    grid-template-columns: 1fr;
+  }
+
+  .chirpy-side {
     grid-template-columns: 1fr;
   }
 }
