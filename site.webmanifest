@@ -1,0 +1,16 @@
+{
+  "name": "Chirp Pink Pro",
+  "short_name": "Chirp",
+  "description": "Red social rosa para chirpear.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff3fa",
+  "theme_color": "#ff4fa3",
+  "icons": [
+    {
+      "src": "assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

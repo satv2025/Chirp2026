@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ff4fa3" />
+    <meta name="description" content="Chirp, una red social rosa para chirpear." />
+    <title>Chirp · Chirpeá en rosa</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/app-icon.svg" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div id="toastRoot" class="toast-root" aria-live="polite" aria-atomic="true"></div>
+
+    <main id="authView" class="auth-view hidden">
+      <section class="auth-hero" aria-label="Bienvenida a Chirp">
+        <div class="brand-card glass-card">
+          <img src="assets/duck-logo.svg" alt="Chirp" class="brand-duck" />
+          <p class="eyebrow">Chirp social</p>
+          <h1>Chirpeá lo que pensás, con flow rosa.</h1>
+          <p class="hero-copy">
+            Una mini red social tipo Twitter: perfiles, feed, likes, rechirps,
+            guardados, respuestas, notificaciones, avatar y banner.
+          </p>
+          <div class="hero-pills" aria-label="Funciones">
+            <span>Auth real</span>
+            <span>Supabase</span>
+            <span>Storage</span>
+            <span>Realtime</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="auth-panel glass-card" aria-label="Ingresar o crear cuenta">
+        <div class="auth-tabs" role="tablist" aria-label="Autenticación">
+          <button class="tab-button active" type="button" data-auth-tab="login">Entrar</button>
+          <button class="tab-button" type="button" data-auth-tab="signup">Crear cuenta</button>
+          <button class="tab-button" type="button" data-auth-tab="reset">Recuperar</button>
+        </div>
+
+        <form id="loginForm" class="auth-form" data-auth-form="login">
+          <h2>Volviste, crack</h2>
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" placeholder="vos@mail.com" required />
+          </label>
+          <label>
+            Contraseña
+            <input name="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
+          </label>
+          <button class="primary-button" type="submit">Entrar a Chirp</button>
+        </form>
+
+        <form id="signupForm" class="auth-form hidden" data-auth-form="signup">
+          <h2>Creá tu cuenta</h2>
+          <label>
+            Nombre visible
+            <input name="display_name" type="text" maxlength="50" placeholder="SKB" required />
+          </label>
+          <label>
+            Usuario
+            <input name="username" type="text" maxlength="30" pattern="[A-Za-z0-9_]{3,30}" placeholder="skb_chirp" required />
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" placeholder="vos@mail.com" required />
+          </label>
+          <label>
+            Contraseña
+            <input name="password" type="password" minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres" required />
+          </label>
+          <button class="primary-button" type="submit">Crear cuenta</button>
+        </form>
+
+        <form id="resetForm" class="auth-form hidden" data-auth-form="reset">
+          <h2>Recuperar contraseña</h2>
+          <p class="muted">Te mandamos el enlace al email que usás en Chirp.</p>
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" placeholder="vos@mail.com" required />
+          </label>
+          <button class="primary-button" type="submit">Enviar recuperación</button>
+        </form>
+      </section>
+    </main>
+
+    <main id="appView" class="app-view hidden">
+      <aside class="sidebar glass-card" aria-label="Navegación principal">
+        <a class="logo-row" href="#home" data-section-link="home" aria-label="Ir al inicio">
+          <img src="assets/duck-logo.svg" alt="" />
+          <span>Chirp</span>
+        </a>
+
+        <nav class="main-nav">
+          <button class="nav-link active" type="button" data-section-link="home">🏠 Inicio</button>
+          <button class="nav-link" type="button" data-section-link="explore">🔎 Explorar</button>
+          <button class="nav-link" type="button" data-section-link="profile">🐥 Perfil</button>
+          <button class="nav-link" type="button" data-section-link="notifications">🔔 Notis</button>
+          <button class="nav-link" type="button" data-section-link="settings">⚙️ Ajustes</button>
+        </nav>
+
+        <button id="sidebarComposeButton" class="primary-button wide" type="button">Chirpear</button>
+
+        <div id="miniProfile" class="mini-profile skeleton-card">
+          <div class="avatar skeleton"></div>
+          <div>
+            <strong>Cargando...</strong>
+            <span>@usuario</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="content-shell glass-card" aria-live="polite">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="sectionEyebrow">Tu feed</p>
+            <h1 id="sectionTitle">Inicio</h1>
+          </div>
+          <div class="topbar-actions">
+            <button id="refreshButton" class="icon-button" type="button" title="Actualizar">↻</button>
+            <button id="logoutButton" class="ghost-button" type="button">Salir</button>
+          </div>
+        </header>
+
+        <section id="homeSection" class="app-section active" data-section="home">
+          <article class="composer-card">
+            <div class="composer-top">
+              <img id="composerAvatar" class="avatar" src="assets/avatar-placeholder.svg" alt="Tu avatar" />
+              <textarea id="chirpContent" maxlength="280" placeholder="¿Qué querés chirpear?"></textarea>
+            </div>
+            <div id="mediaPreview" class="media-preview hidden"></div>
+            <div class="composer-actions">
+              <label class="file-pill">
+                <input id="chirpMediaInput" type="file" accept="image/*,video/mp4,video/webm,audio/*" />
+                📎 Media
+              </label>
+              <select id="chirpVisibility" aria-label="Visibilidad del Chirp">
+                <option value="public">Público</option>
+                <option value="followers">Seguidores</option>
+                <option value="private">Privado</option>
+              </select>
+              <span id="charCount" class="char-count">0/280</span>
+              <button id="postChirpButton" class="primary-button" type="button">Chirpear</button>
+            </div>
+          </article>
+
+          <div id="feedList" class="feed-list"></div>
+        </section>
+
+        <section id="exploreSection" class="app-section" data-section="explore">
+          <form id="searchForm" class="search-box">
+            <input id="searchInput" type="search" placeholder="Buscar @usuarios, #hashtags o texto" />
+            <button class="primary-button" type="submit">Buscar</button>
+          </form>
+          <div id="exploreResults" class="feed-list"></div>
+        </section>
+
+        <section id="profileSection" class="app-section" data-section="profile">
+          <article class="profile-card">
+            <div id="profileBanner" class="profile-banner"></div>
+            <div class="profile-body">
+              <img id="profileAvatar" class="profile-avatar" src="assets/avatar-placeholder.svg" alt="Avatar" />
+              <div class="profile-meta">
+                <h2 id="profileName">Tu perfil</h2>
+                <p id="profileUsername">@usuario</p>
+                <p id="profileBio" class="muted">Sin bio todavía.</p>
+                <div class="profile-stats">
+                  <span><strong id="profileChirpsCount">0</strong> Chirps</span>
+                  <span><strong id="profileFollowersCount">0</strong> seguidores</span>
+                  <span><strong id="profileFollowingCount">0</strong> siguiendo</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <form id="profileForm" class="settings-grid">
+            <label>
+              Usuario
+              <input name="username" type="text" maxlength="30" pattern="[A-Za-z0-9_]{3,30}" />
+            </label>
+            <label>
+              Nombre visible
+              <input name="display_name" type="text" maxlength="50" />
+            </label>
+            <label class="span-2">
+              Bio
+              <textarea name="bio" maxlength="280"></textarea>
+            </label>
+            <label>
+              Web
+              <input name="website" type="url" placeholder="https://..." />
+            </label>
+            <label>
+              Ubicación
+              <input name="location" type="text" maxlength="80" />
+            </label>
+            <label class="switch-row">
+              Cuenta privada
+              <input name="is_private" type="checkbox" />
+            </label>
+            <label class="file-card">
+              Avatar
+              <input id="avatarInput" type="file" accept="image/*" />
+            </label>
+            <label class="file-card">
+              Banner
+              <input id="bannerInput" type="file" accept="image/*" />
+            </label>
+            <button class="primary-button span-2" type="submit">Guardar perfil</button>
+          </form>
+
+          <h3 class="section-subtitle">Tus Chirps</h3>
+          <div id="profileChirps" class="feed-list"></div>
+        </section>
+
+        <section id="notificationsSection" class="app-section" data-section="notifications">
+          <div class="section-actions">
+            <button id="markNotificationsButton" class="ghost-button" type="button">Marcar todas leídas</button>
+          </div>
+          <div id="notificationsList" class="notification-list"></div>
+        </section>
+
+        <section id="settingsSection" class="app-section" data-section="settings">
+          <div class="settings-stack">
+            <form id="accountForm" class="settings-grid">
+              <h2 class="span-2">Cuenta</h2>
+              <label>
+                Nuevo email
+                <input name="email" type="email" placeholder="nuevo@mail.com" />
+              </label>
+              <label>
+                Nuevo teléfono
+                <input name="phone" type="tel" placeholder="+549..." />
+              </label>
+              <label class="span-2">
+                Nueva contraseña
+                <input name="password" type="password" minlength="6" placeholder="Mínimo 6 caracteres" />
+              </label>
+              <button class="primary-button span-2" type="submit">Actualizar auth</button>
+            </form>
+
+            <form id="appSettingsForm" class="settings-grid">
+              <h2 class="span-2">Preferencias</h2>
+              <label>
+                Tema
+                <select name="theme">
+                  <option value="system">Sistema</option>
+                  <option value="light">Claro</option>
+                  <option value="dark">Oscuro</option>
+                </select>
+              </label>
+              <label>
+                Idioma
+                <select name="language">
+                  <option value="es">Español</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+              <label class="switch-row">
+                Notificaciones por email
+                <input name="email_notifications" type="checkbox" />
+              </label>
+              <label class="switch-row">
+                Notificaciones push
+                <input name="push_notifications" type="checkbox" />
+              </label>
+              <button class="primary-button span-2" type="submit">Guardar ajustes</button>
+            </form>
+          </div>
+        </section>
+      </section>
+
+      <aside class="rightbar glass-card" aria-label="Panel lateral">
+        <section>
+          <h2>Trending rosa</h2>
+          <div id="trendingTags" class="tag-list"></div>
+        </section>
+        <section>
+          <h2>Tips</h2>
+          <p class="muted">Usá <strong>@usuario</strong> para mencionar y <strong>#tema</strong> para crear hashtags.</p>
+          <a class="tool-link" href="tools/favicon-generator.html" target="_blank" rel="noreferrer">Abrir generador de favicon 🐥</a>
+        </section>
+      </aside>
+    </main>
+
+    <template id="chirpTemplate">
+      <article class="chirp-card">
+        <img class="avatar chirp-avatar" src="assets/avatar-placeholder.svg" alt="" />
+        <div class="chirp-main">
+          <header class="chirp-header">
+            <div>
+              <strong class="chirp-name"></strong>
+              <span class="chirp-user"></span>
+              <span class="chirp-date"></span>
+            </div>
+            <button class="icon-button chirp-delete hidden" type="button" title="Borrar">×</button>
+          </header>
+          <p class="chirp-content"></p>
+          <div class="chirp-media-slot"></div>
+          <footer class="chirp-actions">
+            <button type="button" data-action="reply">💬 <span class="replies-count">0</span></button>
+            <button type="button" data-action="rechirp">🔁 <span class="rechirps-count">0</span></button>
+            <button type="button" data-action="like">💗 <span class="likes-count">0</span></button>
+            <button type="button" data-action="bookmark">🔖</button>
+          </footer>
+          <form class="reply-form hidden">
+            <input name="reply" maxlength="280" placeholder="Responder con un Chirp..." />
+            <button type="submit">Responder</button>
+          </form>
+        </div>
+      </article>
+    </template>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

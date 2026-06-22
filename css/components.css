@@ -1,0 +1,361 @@
+.composer-card,
+.profile-card,
+.settings-grid,
+.search-box,
+.notification-item,
+.chirp-card {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: 0 12px 28px rgba(237, 47, 138, 0.08);
+}
+
+.composer-card {
+  display: grid;
+  gap: 0.85rem;
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.composer-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.composer-top textarea {
+  min-height: 120px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.52);
+  font-size: 1.05rem;
+}
+
+.composer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.file-pill input,
+.file-card input {
+  display: none;
+}
+
+.file-pill {
+  min-height: 42px;
+}
+
+.composer-actions select {
+  width: auto;
+  min-width: 140px;
+  padding-block: 0.72rem;
+}
+
+.char-count {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.media-preview {
+  overflow: hidden;
+  border: 1px dashed var(--pink-300);
+  border-radius: var(--radius-md);
+  background: rgba(255, 225, 241, 0.55);
+  padding: 0.65rem;
+}
+
+.media-preview img,
+.media-preview video {
+  width: 100%;
+  max-height: 320px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.media-preview audio {
+  width: 100%;
+}
+
+.feed-list {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.empty-state {
+  border: 1px dashed var(--pink-300);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.54);
+  padding: 2rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.chirp-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.8rem;
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  animation: card-in 240ms ease both;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chirp-main {
+  min-width: 0;
+}
+
+.chirp-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.chirp-name {
+  color: var(--ink);
+}
+
+.chirp-user,
+.chirp-date {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.chirp-content {
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.chirp-content a {
+  color: var(--pink-700);
+  font-weight: 900;
+}
+
+.chirp-media-slot {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.chirp-media-slot img,
+.chirp-media-slot video {
+  width: 100%;
+  max-height: 520px;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  background: var(--pink-100);
+}
+
+.chirp-media-slot audio {
+  width: 100%;
+}
+
+.chirp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.chirp-actions button,
+.reply-form button {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--muted);
+  padding: 0.55rem 0.75rem;
+  font-weight: 900;
+  transition: background var(--speed), color var(--speed), transform var(--speed);
+}
+
+.chirp-actions button:hover,
+.chirp-actions button.active,
+.reply-form button:hover {
+  background: var(--pink-100);
+  color: var(--pink-700);
+  transform: translateY(-1px);
+}
+
+.reply-form {
+  display: flex;
+  gap: 0.55rem;
+  margin-top: 0.7rem;
+}
+
+.reply-form input {
+  min-height: 42px;
+  padding-block: 0.65rem;
+}
+
+.profile-card {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.profile-banner {
+  min-height: 170px;
+  background:
+    radial-gradient(circle at 24% 24%, rgba(255, 255, 255, 0.45), transparent 11rem),
+    linear-gradient(135deg, var(--pink-300), var(--pink-700));
+  background-position: center;
+  background-size: cover;
+}
+
+.profile-body {
+  display: flex;
+  gap: 1rem;
+  padding: 0 1rem 1.2rem;
+}
+
+.profile-avatar {
+  width: 116px;
+  height: 116px;
+  flex: 0 0 auto;
+  margin-top: -58px;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--pink-100);
+  box-shadow: 0 20px 40px rgba(237, 47, 138, 0.22);
+}
+
+.profile-meta h2 {
+  margin: 0.75rem 0 0.1rem;
+  font-size: 1.8rem;
+  letter-spacing: -0.05em;
+}
+
+.profile-meta p {
+  margin: 0.25rem 0;
+}
+
+.profile-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 0.7rem;
+  color: var(--muted);
+}
+
+.profile-stats strong {
+  color: var(--pink-800);
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.settings-grid h2 {
+  margin: 0;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.switch-row {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem !important;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.6);
+  padding: 0.85rem 1rem;
+}
+
+.switch-row input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--pink-600);
+}
+
+.file-card {
+  min-height: 96px;
+  align-content: center;
+  justify-items: center;
+  border: 1px dashed var(--pink-300);
+  border-radius: var(--radius-md);
+  background: rgba(255, 225, 241, 0.48);
+  text-align: center;
+  cursor: pointer;
+}
+
+.search-box {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.section-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.notification-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.notification-item {
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.notification-item.unread {
+  border-color: var(--pink-400);
+  background: rgba(255, 225, 241, 0.8);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.55rem 0.72rem;
+  color: var(--pink-700);
+  font-weight: 900;
+}
+
+.settings-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--pink-100), #fff, var(--pink-100));
+  background-size: 200% 100%;
+  animation: shimmer 1.35s infinite linear;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}

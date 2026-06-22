@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Chirp pink duck</title>
+  <desc id="desc">Un patito rosa de Chirp.</desc>
+  <defs>
+    <linearGradient id="body" x1="38" y1="32" x2="214" y2="224" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffc1df"/>
+      <stop offset="0.48" stop-color="#ff4fa3"/>
+      <stop offset="1" stop-color="#cf1670"/>
+    </linearGradient>
+    <linearGradient id="beak" x1="151" y1="101" x2="231" y2="144" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffe082"/>
+      <stop offset="1" stop-color="#ff9f43"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#cf1670" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <rect width="256" height="256" rx="70" fill="#fff3fa"/>
+  <circle cx="62" cy="58" r="18" fill="#ffe1f1"/>
+  <circle cx="210" cy="52" r="10" fill="#ffc1df"/>
+  <path filter="url(#shadow)" d="M61 141c0-51 42-92 94-92 32 0 58 14 76 37 8 10 2 25-11 26l-22 3c16 15 26 37 26 61 0 44-35 80-79 80H75c-35 0-63-28-63-63 0-29 20-53 49-60v8Z" fill="url(#body)" transform="translate(8 -20) scale(.9)"/>
+  <path d="M151 113c20 0 47 4 70 19 5 3 5 11 0 14-20 12-48 17-70 14 6-15 6-31 0-47Z" fill="url(#beak)"/>
+  <circle cx="135" cy="92" r="11" fill="#321325"/>
+  <circle cx="139" cy="88" r="3" fill="#fff"/>
+  <path d="M78 149c16 25 52 33 79 18" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="14" opacity=".48"/>
+  <path d="M82 195c18 12 49 12 67 0" fill="none" stroke="#a70f59" stroke-linecap="round" stroke-width="10" opacity=".38"/>
+</svg>

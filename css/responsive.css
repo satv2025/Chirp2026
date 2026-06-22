@@ -1,0 +1,142 @@
+@media (max-width: 1180px) {
+  .app-view {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+
+  .rightbar {
+    display: none;
+  }
+}
+
+@media (max-width: 840px) {
+  .auth-view {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-card h1 {
+    font-size: clamp(2.8rem, 14vw, 5rem);
+  }
+
+  .app-view {
+    grid-template-columns: 1fr;
+    width: min(100% - 0.75rem, 760px);
+    padding-bottom: 6rem;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 30;
+    inset: auto 0.5rem 0.5rem;
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    border-radius: 28px;
+    padding: 0.55rem;
+  }
+
+  .logo-row,
+  .mini-profile,
+  #sidebarComposeButton {
+    display: none;
+  }
+
+  .main-nav {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.25rem;
+    margin: 0;
+  }
+
+  .nav-link {
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.45rem;
+    font-size: 0;
+  }
+
+  .nav-link::first-letter {
+    font-size: 1.1rem;
+  }
+
+  .content-shell {
+    min-height: calc(100vh - 1rem);
+  }
+
+  .topbar {
+    border-radius: 28px 28px 0 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .auth-view {
+    width: min(100% - 0.75rem, 520px);
+    padding: 0.5rem 0;
+  }
+
+  .brand-card,
+  .auth-panel,
+  .content-shell {
+    border-radius: 24px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    padding: 0.85rem;
+  }
+
+  .topbar-actions {
+    gap: 0.35rem;
+  }
+
+  .topbar h1 {
+    font-size: 1.35rem;
+  }
+
+  .app-section {
+    padding: 0.75rem;
+  }
+
+  .composer-top,
+  .chirp-card,
+  .profile-body {
+    gap: 0.65rem;
+  }
+
+  .chirp-card {
+    grid-template-columns: 1fr;
+  }
+
+  .chirp-avatar {
+    display: none;
+  }
+
+  .composer-actions,
+  .search-box,
+  .reply-form {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .composer-actions select,
+  .composer-actions .primary-button,
+  .file-pill {
+    width: 100%;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .span-2 {
+    grid-column: span 1;
+  }
+
+  .profile-body {
+    flex-direction: column;
+  }
+
+  .profile-avatar {
+    width: 96px;
+    height: 96px;
+    margin-top: -48px;
+  }
+}
