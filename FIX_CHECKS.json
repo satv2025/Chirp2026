@@ -1,11 +1,12 @@
 {
   "node_check": 0,
   "node_stderr": "",
-  "css_changed": [],
-  "chirpURL_pretty": true,
-  "getSingleChirpId": true,
-  "links_use_helper": true,
-  "reads_path": true,
-  "serve_has_no_global_fallback": true,
-  "emails_present": true
+  "css_changed": {},
+  "has_replyComposerCard": true,
+  "has_replyComposer": true,
+  "has_replyListCard": true,
+  "has_replyList": true,
+  "has_reply_js": true,
+  "calls_reply_render": true,
+  "has_sql": true
 }

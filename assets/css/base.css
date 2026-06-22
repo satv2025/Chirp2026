@@ -12,8 +12,8 @@
   --card-2: #fff1f7;
   --line: #efd0df;
   --line-2: #f5dce8;
-  --ink: #24111c;
-  --text: #341724;
+  --ink: #ef008a;
+  --text: #482138;
   --muted: #77586a;
   --soft: #a78999;
   --pink: #ef008a;
@@ -38,7 +38,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  color: var(--text);
+  color: var(--pink);
   background:
     radial-gradient(
       circle at 12% 0%,

@@ -42,11 +42,6 @@
   color: var(--hot);
   background: var(--card-2);
 }
-
-.side-link:hover .ui-icon-chirpy,
-.side-link.is-active .ui-icon-chirpy {
-  filter: unset !important;
-}
 .side-icon {
   width: 26px;
   display: grid;

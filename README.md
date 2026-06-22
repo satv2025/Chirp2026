@@ -50,3 +50,26 @@ Arreglo aplicado sin modificar CSS de diseño.
 - `/chirp/ID` carga `chirp.html` y `chirp.js` lee el ID desde el pathname.
 - Se eliminó el fallback global peligroso `/** -> u.html` de `serve.json`.
 - `404.html` carga dinámicamente `chirp.html` o `u.html` según la ruta sin pisar la URL.
+
+
+## Respuestas dentro del Chirp
+
+Incluye:
+- URL linda `/chirp/ID`.
+- Composer dentro de `chirp.html` para responder al Chirp.
+- Lista de respuestas debajo del Chirp.
+- Realtime para `chirp_replies`.
+- SQL en `supabase-replies.sql`.
+
+Ejecutar `supabase-replies.sql` en Supabase SQL Editor antes de probar respuestas.
+
+
+## Contenedores visibles de respuestas
+
+`chirp.html` ahora incluye:
+- `#replyComposerCard`
+- `#replyComposer`
+- `#replyListCard`
+- `#replyList`
+
+No se modificó ningún CSS.

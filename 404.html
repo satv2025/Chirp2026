@@ -9,29 +9,22 @@
   var path = location.pathname || "";
   var parts = path.split("/").filter(Boolean);
 
-  var target = "/home.html";
-
   if (parts[0] === "chirp" && parts[1]) {
-    target = "/chirp.html";
-  } else if (parts[0] === "u" && parts[1]) {
-    target = "/u.html";
-  } else if (parts.length === 1 && parts[0] && !parts[0].includes(".")) {
-    target = "/u.html";
+    location.replace("/chirp.html?id=" + encodeURIComponent(decodeURIComponent(parts[1])));
+    return;
   }
 
-  fetch(target, { cache: "no-store" })
-    .then(function (response) {
-      if (!response.ok) throw new Error("No se pudo cargar " + target);
-      return response.text();
-    })
-    .then(function (html) {
-      document.open();
-      document.write(html);
-      document.close();
-    })
-    .catch(function () {
-      location.replace(target);
-    });
+  if (parts[0] === "u" && parts[1]) {
+    location.replace("/u.html?username=" + encodeURIComponent(decodeURIComponent(parts[1])));
+    return;
+  }
+
+  if (parts.length === 1 && parts[0] && !parts[0].includes(".")) {
+    location.replace("/u.html?username=" + encodeURIComponent(decodeURIComponent(parts[0])));
+    return;
+  }
+
+  location.replace("/home.html");
 })();
 </script>
 </head>

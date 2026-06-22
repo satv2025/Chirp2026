@@ -62,41 +62,47 @@
     background 0.14s ease,
     border-color 0.14s ease;
 }
-.btn:hover {
-  transform: translateY(-1px);
-}
+
 .btn:active {
   transform: translateY(0);
 }
+
 .btn-primary {
   color: #fff;
   background: var(--pink);
   box-shadow: 0 12px 24px rgba(239, 0, 138, 0.22);
 }
+
 .btn-primary:hover {
   background: var(--hot);
 }
+
 .btn-soft {
   color: #fff;
   background: var(--pink);
 }
+
 .btn-ghost {
   color: var(--ink);
   border-color: var(--line-2);
   background: rgba(255, 255, 255, 0.74);
 }
+
 .btn-dark {
   color: #fff;
   background: var(--ink);
 }
+
 .btn-small {
-  min-height: 34px;
+  min-height: 36px;
   padding: 0 12px;
   border-radius: 4px;
 }
+
 .btn-wide {
   width: 100%;
 }
+
 .btn[disabled],
 .btn.is-loading {
   opacity: 0.65;
@@ -209,8 +215,7 @@
   font-weight: 950;
 }
 .chip-muted {
-  color: var(--pink);
-  text-transform: uppercase;
+  color: var(--muted);
 }
 .trending-tag {
   justify-content: space-between;

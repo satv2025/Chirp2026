@@ -1,6 +1,6 @@
 .composer {
   position: relative;
-  z-index: 60;
+  z-index: 100;
   overflow: visible;
   padding: 16px;
 }
@@ -9,7 +9,7 @@
 .card:has(.composer),
 .panel:has(.composer) {
   position: relative;
-  z-index: 60;
+  z-index: 100;
   overflow: visible;
 }
 
@@ -28,7 +28,7 @@
 
 .composer__tools {
   position: relative;
-  z-index: 70;
+  z-index: 120;
   overflow: visible;
   display: flex;
   justify-content: space-between;
@@ -41,7 +41,7 @@
 
 .composer__left {
   position: relative;
-  z-index: 70;
+  z-index: 120;
   overflow: visible;
   display: flex;
   align-items: center;
@@ -58,19 +58,18 @@
   position: absolute;
   inset: 0;
   opacity: 0;
-  background: #ff00ea;
   cursor: pointer;
 }
 
 .dropdown {
   position: relative;
-  z-index: 70;
+  z-index: 130;
   overflow: visible;
   display: inline-block;
 }
 
 .dropdown.is-open {
-  z-index: 9000;
+  z-index: 1000;
 }
 
 .dropdown__button {
@@ -80,7 +79,6 @@
   gap: 8px;
   padding: 0 12px;
   border-radius: 4px;
-  border: 1px solid var(--line-2);
   background: var(--pink);
   font-weight: 950;
   color: #fff;
@@ -90,14 +88,14 @@
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  z-index: 99999;
+  z-index: 1001;
   min-width: 170px;
   display: none;
+  padding: 6px;
   border: 1px solid var(--line-2);
   border-radius: 4px;
   background: var(--pink);
   box-shadow: var(--shadow);
-  color: #fff;
 }
 
 .dropdown.is-open .dropdown__menu {
@@ -110,14 +108,14 @@
   display: flex;
   align-items: center;
   padding: 0 10px;
-  border-radius: 0;
   font-weight: 850;
+  color: #fff;
 }
 
 .dropdown__item:hover,
 .dropdown__item.is-selected {
   color: #fff;
-  background: #f687ec;
+  background: #ff8ccf;
 }
 
 .media-preview {
