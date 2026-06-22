@@ -1,37 +1,30 @@
-# Chirp Rosin MPA + mails Supabase
+# Chirp Rosin Social
 
-App multi-page real para Chirp, sin SPA, sin hash `#`, con rutas por carpetas y `vercel.json`.
+Versión multi-page real, sin SPA y sin `#` en las rutas.
 
-## Probar local
+## Correr local
 
 ```bash
-cd chirp-rosin-mail-mpa
+cd chirp-rosin-social
 npx serve -l 3000 .
 ```
 
-Rutas locales que funcionan directo:
+Abrí:
 
-- `/`
-- `/login/`
-- `/register/`
-- `/reset/`
-- `/auth/callback/`
-- `/update-password/`
-- `/home/`
-- `/explore/`
-- `/notifications/`
-- `/bookmarks/`
-- `/profile/`
-- `/settings/`
-- `/u/` local con `?username=usuario`
-- `/chirp/` local con `?id=uuid`
+```txt
+http://localhost:3000/
+http://localhost:3000/register/
+http://localhost:3000/home/
+```
 
-En Vercel también funcionan:
+## Deploy en Vercel
+
+Subí la carpeta completa. El proyecto incluye `vercel.json` con `cleanUrls` y rewrites específicos para:
 
 - `/u/:username`
 - `/chirp/:id`
 
-porque están en `vercel.json` como rewrites específicos, no como SPA fallback global.
+No hay fallback global de SPA.
 
 ## Supabase
 
@@ -41,59 +34,45 @@ La conexión está en:
 js/config.js
 ```
 
-Ya está seteada con:
+Usa el Project URL directo:
 
 ```txt
-https://db.chirp.com.ar
+https://kdohnkpykpcmnoyxhkte.supabase.co
 ```
+
+Esto evita el 504 que venía de `https://db.chirp.com.ar/auth/v1/signup`.
 
 ## SQL
 
 Pegá este archivo en Supabase SQL Editor:
 
 ```txt
-supabase/chirp-complete-patch.sql
+supabase/chirp-fix-patch.sql
 ```
 
-Este patch:
+Crea/ajusta:
 
-- no desactiva RLS;
-- no ejecuta `alter table storage.objects enable row level security`;
-- agrega `security_events`;
-- agrega `support_requests`;
-- mejora el trigger de creación de perfil;
-- crea perfiles/settings faltantes para usuarios existentes;
-- crea/fija buckets de Storage;
-- crea/fija policies de Storage;
-- deja listo el flujo de reset/update password y soporte.
+- `security_events`
+- `support_tickets`
+- columnas `storage_bucket` y `storage_path` para media
+- buckets `avatars`, `banners`, `chirp-media`
+- policies de Storage sin tocar `alter table storage.objects enable row level security`
 
-## Templates de email
+## Emails
 
-Los HTML están en:
+Los templates están en:
 
 ```txt
 emails/
 ```
 
-Pegar manualmente en:
+Asuntos sugeridos:
 
 ```txt
-Supabase Dashboard > Authentication > Email Templates
+emails/SUBJECTS.md
 ```
 
-Incluye:
-
-- `confirm-signup.html`
-- `invite.html`
-- `magic-link.html`
-- `change-email-confirm.html`
-- `reset-password.html`
-- `otp.html`
-- `password-changed.html`
-- `email-changed.html`
-- `SUBJECTS.md`
-
-Todos usan solamente:
+Todos los emails usan:
 
 ```css
 font-family:'Google Sans';
@@ -101,43 +80,48 @@ font-family:'Google Sans';
 
 sin fallback.
 
-## Redirect URLs recomendadas en Supabase
+## Diseño
 
-En Authentication > URL Configuration:
+- Rosa moderno, más limpio.
+- Bordes moderados: nada exageradamente redondeado.
+- No se usan `<select>` ni inputs checkbox nativos visibles.
+- Los toggles/dropdowns son componentes custom con `div`/`button`.
+- Los botones de archivo son custom; el input file queda invisible dentro del label.
+- Las fotos se muestran como media social normal con CSS.
+- Los videos usan Plyr estilizado rosa, sin controles nativos de HTML.
+
+## Storage paths esperados
 
 ```txt
-Site URL: https://tu-dominio.vercel.app
+avatars/{user_id}/avatar-*.webp
+banners/{user_id}/banner-*.webp
+chirp-media/{user_id}/{chirp_id}/archivo.mp4
+chirp-media/{user_id}/{chirp_id}/archivo.webp
+```
+
+## Configuración de Auth recomendada
+
+En Supabase → Authentication → URL Configuration:
+
+```txt
+Site URL:
+https://chirp.com.ar
+
 Redirect URLs:
-http://localhost:3000/**
-https://tu-dominio.vercel.app/**
 https://chirp.com.ar/**
+http://localhost:3000/**
 ```
 
-Para reset password, la app usa:
+## Registro y errores de Auth
 
-```txt
-/auth/callback/?next=/update-password/
+Esta versión muestra los errores reales de Supabase Auth en el formulario de registro y en la consola del navegador.
+
+Si aparece `email rate limit exceeded`, el problema está en Authentication → Rate Limits.
+Si aparece timeout o 504, revisá Authentication → Logs, SMTP y triggers de signup.
+El timeout visual del frontend está en `js/config.js` como `authTimeoutMs: 30000`.
+
+Para probar en local:
+
+```bash
+npx serve -l 3000 .
 ```
-
-## Storage paths
-
-Usar estas rutas:
-
-```txt
-avatars/{user_id}/avatar.ext
-banners/{user_id}/banner.ext
-chirp-media/{user_id}/{chirp_id}/archivo.ext
-```
-
-## Mails y funciones
-
-La app contempla:
-
-- confirmación de cuenta;
-- magic link;
-- recuperación de contraseña;
-- pantalla para crear nueva contraseña;
-- cambio de email desde ajustes;
-- cambio de contraseña desde ajustes;
-- eventos de seguridad en `security_events`;
-- formulario de soporte en `support_requests`.

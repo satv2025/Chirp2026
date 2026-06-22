@@ -1,1 +1,111 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ff4aa6"><link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml"><link rel="manifest" href="/assets/brand/manifest.webmanifest"><link rel="stylesheet" href="/css/base.css"><link rel="stylesheet" href="/css/app.css"><title>Ajustes — Chirp</title></head><body><div id="app-shell" class="app-shell"><main id="main" class="main"><section class="settings-grid"><form id="profile-settings" class="panel form-grid"><h3>Perfil</h3><label><span class="label">Usuario</span><input class="input" name="username" required></label><label><span class="label">Nombre</span><input class="input" name="display_name" maxlength="50" required></label><label><span class="label">Bio</span><textarea class="textarea" name="bio" maxlength="280"></textarea></label><label><span class="label">Web</span><input class="input" name="website"></label><label><span class="label">Ubicación</span><input class="input" name="location"></label><label class="file-pill">🐣 Avatar<input name="avatar" type="file" accept="image/*"></label><label class="file-pill">🌸 Banner<input name="banner" type="file" accept="image/*"></label><label><input name="is_private" type="checkbox"> Cuenta privada</label><button class="btn primary">Guardar perfil</button></form><form id="account-settings" class="panel form-grid"><h3>Preferencias</h3><label><span class="label">Tema</span><select class="select" name="theme"><option value="system">Sistema</option><option value="light">Claro</option><option value="dark">Oscuro</option></select></label><label><input name="email_notifications" type="checkbox"> Notificaciones por email</label><label><input name="push_notifications" type="checkbox"> Notificaciones push</label><button class="btn primary">Guardar preferencias</button></form><form id="email-form" class="panel form-grid"><h3>Cambiar email</h3><label><span class="label">Email actual</span><input class="input" name="current_email" disabled></label><label><span class="label">Nuevo email</span><input class="input" name="new_email" type="email" required></label><button class="btn primary">Enviar confirmación</button></form><form id="password-form" class="panel form-grid"><h3>Cambiar contraseña</h3><label><span class="label">Nueva contraseña</span><input class="input" name="password" type="password" minlength="8" required></label><label><span class="label">Repetir contraseña</span><input class="input" name="password_confirm" type="password" minlength="8" required></label><button class="btn primary">Cambiar contraseña</button></form><form id="support-form" class="panel form-grid"><h3>Soporte</h3><label><span class="label">Tipo</span><select class="select" name="type"><option value="account">Cuenta</option><option value="security">Seguridad</option><option value="bug">Error</option><option value="other">Otra cosa</option></select></label><label><span class="label">Asunto</span><input class="input" name="subject" required></label><label><span class="label">Mensaje</span><textarea class="textarea" name="message" required></textarea></label><button class="btn primary">Enviar a soporte</button></form></section></main><aside class="rightbar"></aside></div><script type="module" src="/js/pages/settings.js"></script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fff6fb">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/layout.css">
+<link rel="stylesheet" href="/css/feed.css">
+<link rel="stylesheet" href="/css/player.css">
+<link rel="stylesheet" href="/css/responsive.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
+
+<title>Ajustes · Chirp</title>
+</head>
+<body data-page="settings">
+
+<div class="mobile-topbar"><a class="brand" href="/home/"><img src="/assets/logo.svg" alt="Chirp"><span>Chirp</span></a><img class="avatar js-me-avatar" alt="Tu avatar"></div>
+<div class="app-layout">
+<aside class="sidebar">
+  <div class="sidebar__card">
+    <a class="brand" href="/home/"><img src="/assets/logo.svg" alt="Chirp"><span>Chirp</span></a>
+    <nav class="sidebar__nav">
+      <a class="side-link" data-route="home" href="/home/"><span class="side-icon">⌂</span><span>Home</span></a>
+      <a class="side-link" data-route="explore" href="/explore/"><span class="side-icon">⌕</span><span>Explorar</span></a>
+      <a class="side-link" data-route="notifications" href="/notifications/"><span class="side-icon">♡</span><span>Notificaciones</span></a>
+      <a class="side-link" data-route="bookmarks" href="/bookmarks/"><span class="side-icon">◇</span><span>Guardados</span></a>
+      <a class="side-link" data-route="profile" href="/profile/"><span class="side-icon">◉</span><span>Perfil</span></a>
+      <a class="side-link" data-route="settings" href="/settings/"><span class="side-icon">⚙</span><span>Ajustes</span></a>
+    </nav>
+  </div>
+  <a class="btn btn-primary btn-wide" href="/home/">Chirpear</a>
+  <div class="sidebar__card">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img class="avatar js-me-avatar" alt="Tu avatar">
+      <div style="min-width:0;">
+        <b class="js-me-name">Tu perfil</b>
+        <small class="js-me-username" style="display:block;color:var(--muted);font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></small>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-wide js-logout" style="margin-top:12px;">Salir</button>
+  </div>
+</aside>
+
+<main class="main-column">
+  <header class="pagebar"><div><h1>Ajustes</h1><small>Controlá tu cuenta.</small></div></header>
+  
+<section class="grid-two">
+  <form id="profileSettingsForm" class="card panel form-grid">
+    <div class="section-title"><div><h2>Perfil</h2><p>Tu nombre, usuario y bio.</p></div></div>
+    <label class="field"><span>Nombre</span><div class="fieldbox"><input id="settingsName" maxlength="50" required></div></label>
+    <label class="field"><span>Usuario</span><div class="fieldbox"><input id="settingsUsername" maxlength="30" required></div></label>
+    <label class="field"><span>Bio</span><div class="fieldbox"><textarea id="settingsBio" maxlength="280"></textarea></div></label>
+    <input id="privateValue" type="hidden" value="false">
+    <button type="button" class="custom-toggle" role="switch" aria-checked="false" data-toggle="#privateValue"><span class="custom-toggle__track"><span class="custom-toggle__knob"></span></span><b>Cuenta privada</b></button>
+    <button class="btn btn-primary" type="submit">Guardar perfil</button>
+  </form>
+  <section class="card panel form-grid">
+    <div class="section-title"><div><h2>Imágenes</h2><p>Subí avatar y banner con botones custom.</p></div></div>
+    <label class="btn btn-soft media-picker">Cambiar avatar<input id="avatarUpload" type="file" accept="image/*"></label>
+    <label class="btn btn-soft media-picker">Cambiar banner<input id="bannerUpload" type="file" accept="image/*"></label>
+  </section>
+  <form id="emailSettingsForm" class="card panel form-grid">
+    <div class="section-title"><div><h2>Email</h2><p>Supabase te manda confirmación.</p></div></div>
+    <label class="field"><span>Nuevo email</span><div class="fieldbox"><input id="newEmail" type="email" placeholder="nuevo@email.com" required></div></label>
+    <button class="btn btn-primary" type="submit">Cambiar email</button>
+  </form>
+  <form id="passwordSettingsForm" class="card panel form-grid">
+    <div class="section-title"><div><h2>Contraseña</h2><p>Cambiá tu acceso.</p></div></div>
+    <label class="field"><span>Nueva contraseña</span><div class="fieldbox"><input id="newPassword" type="password" minlength="6" required></div></label>
+    <button class="btn btn-primary" type="submit">Cambiar contraseña</button>
+  </form>
+</section>
+
+</main>
+<aside class="rightbar">
+  <section class="card panel">
+    <div class="section-title"><div><h3>Hoy en Chirp</h3><p>Un rincón rosa para decir lo que pinta.</p></div></div>
+    <div class="stack">
+      <a class="chip" href="/explore/?q=rosin">#rosin</a>
+      <a class="chip" href="/explore/?q=mood">#mood</a>
+      <a class="chip" href="/explore/?q=patito">#patito</a>
+    </div>
+  </section>
+  <section class="card panel">
+    <div class="section-title"><div><h3>Atajos</h3><p>Movete rápido.</p></div></div>
+    <div class="stack">
+      <a class="btn btn-soft btn-wide" href="/settings/">Editar perfil</a>
+      <a class="btn btn-ghost btn-wide" href="/support/">Soporte</a>
+    </div>
+  </section>
+</aside>
+
+</div>
+<nav class="mobile-nav">
+  <a class="side-link" data-route="home" href="/home/"><span class="side-icon">⌂</span><span>Home</span></a>
+  <a class="side-link" data-route="explore" href="/explore/"><span class="side-icon">⌕</span><span>Explorar</span></a>
+  <a class="side-link" data-route="notifications" href="/notifications/"><span class="side-icon">♡</span><span>Notif</span></a>
+  <a class="side-link" data-route="bookmarks" href="/bookmarks/"><span class="side-icon">◇</span><span>Guardados</span></a>
+  <a class="side-link" data-route="profile" href="/profile/"><span class="side-icon">◉</span><span>Perfil</span></a>
+</nav>
+
+
+<script type="module" src="/js/feed.js"></script>
+</body>
+</html>

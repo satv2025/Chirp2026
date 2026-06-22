@@ -1,29 +1,16 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/u/:username", "destination": "/u/index.html" },
+    { "source": "/chirp/:id", "destination": "/chirp/index.html" }
+  ],
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/u/:username",
-      "destination": "/u/index.html"
-    },
-    {
-      "source": "/chirp/:id",
-      "destination": "/chirp/index.html"
     }
   ]
 }

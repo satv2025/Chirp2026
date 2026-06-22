@@ -1,0 +1,244 @@
+.composer {
+  padding: 14px;
+}
+
+.composer__head {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.composer__tools {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-2);
+}
+
+.composer__left,
+.composer__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.media-picker {
+  position: relative;
+  overflow: hidden;
+}
+
+.media-picker input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.media-preview {
+  display: none;
+  margin-top: 12px;
+  border: 1px solid var(--line-2);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.media-preview.is-active {
+  display: block;
+}
+
+.media-preview__bar {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--line-2);
+}
+
+.media-preview__body {
+  padding: 10px;
+}
+
+.media-preview img,
+.media-preview video {
+  width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #13060d;
+}
+
+.chirp-list {
+  display: grid;
+  gap: 12px;
+}
+
+.chirp {
+  padding: 14px;
+  background: rgba(255,255,255,.9);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.chirp__grid {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.chirp__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--soft);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.chirp__name {
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.chirp__text {
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+  line-height: 1.55;
+  font-size: 16px;
+}
+
+.chirp__media {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.chirp-photo {
+  width: 100%;
+  max-height: 620px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid var(--line-2);
+  background: #140811;
+  box-shadow: 0 12px 28px rgba(49, 16, 33, .08);
+}
+
+.chirp-video-wrap {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line-2);
+  background: #12060d;
+  box-shadow: 0 12px 28px rgba(49, 16, 33, .08);
+}
+
+.chirp__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.action-btn {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border-radius: 10px;
+  color: var(--muted);
+  font-weight: 900;
+  border: 1px solid transparent;
+}
+
+.action-btn:hover,
+.action-btn.is-active {
+  color: var(--hot);
+  background: var(--surface-2);
+  border-color: var(--line-2);
+}
+
+.profile-cover {
+  position: relative;
+  min-height: 220px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--line-2);
+  background: linear-gradient(135deg, #ffd1e6, #ff5aa8, #341021);
+}
+
+.profile-cover img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.profile-card {
+  margin-top: -44px;
+  position: relative;
+  padding: 0 18px 18px;
+}
+
+.profile-card__top {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.profile-card h2 {
+  margin: 12px 0 2px;
+  font-size: 28px;
+  letter-spacing: -.05em;
+}
+
+.profile-card p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.stat-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.stat-row strong {
+  color: var(--ink);
+}
+
+.user-row,
+.notification-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--line-2);
+}
+
+.user-row:last-child,
+.notification-row:last-child {
+  border-bottom: 0;
+}
+
+.user-row b,
+.notification-row b {
+  display: block;
+}
+
+.user-row small,
+.notification-row small {
+  color: var(--muted);
+  font-weight: 800;
+}

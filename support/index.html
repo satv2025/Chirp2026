@@ -16,9 +16,9 @@
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
 
-<title>Perfil público · Chirp</title>
+<title>Soporte · Chirp</title>
 </head>
-<body data-page="user">
+<body data-page="support">
 
 <div class="mobile-topbar"><a class="brand" href="/home/"><img src="/assets/logo.svg" alt="Chirp"><span>Chirp</span></a><img class="avatar js-me-avatar" alt="Tu avatar"></div>
 <div class="app-layout">
@@ -48,8 +48,15 @@
 </aside>
 
 <main class="main-column">
-  <header class="pagebar"><div><h1>Perfil</h1><small>Cuenta pública.</small></div></header>
-  <section id="publicProfile"></section><section id="publicFeed" class="chirp-list" style="margin-top:12px;"></section>
+  <header class="pagebar"><div><h1>Soporte</h1><small>Cuidamos tu cuenta.</small></div></header>
+  
+<form id="supportForm" class="card panel form-grid">
+  <div class="section-title"><div><h2>Soporte</h2><p>Contanos qué pasó con tu cuenta.</p></div></div>
+  <label class="field"><span>Asunto</span><div class="fieldbox"><input id="supportSubject" required placeholder="Ej: No puedo entrar"></div></label>
+  <label class="field"><span>Mensaje</span><div class="fieldbox"><textarea id="supportMessage" required placeholder="Detalles del problema"></textarea></div></label>
+  <button class="btn btn-primary" type="submit">Enviar a soporte</button>
+</form>
+
 </main>
 <aside class="rightbar">
   <section class="card panel">

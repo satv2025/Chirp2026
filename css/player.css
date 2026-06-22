@@ -1,0 +1,58 @@
+:root {
+  --plyr-color-main: #ef3e91;
+  --plyr-video-background: #12060d;
+  --plyr-control-radius: 10px;
+  --plyr-control-spacing: 8px;
+  --plyr-video-control-color: #fff5fa;
+  --plyr-video-control-color-hover: #ffffff;
+  --plyr-video-control-background-hover: rgba(239, 62, 145, .9);
+  --plyr-font-size-base: 14px;
+}
+
+.plyr {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.plyr--video {
+  background: #12060d;
+}
+
+.plyr--video .plyr__controls {
+  padding: 34px 12px 12px;
+  background: linear-gradient(180deg, transparent, rgba(18,6,13,.82) 46%, rgba(18,6,13,.96));
+}
+
+.plyr__control--overlaid {
+  width: 58px;
+  height: 58px;
+  display: grid !important;
+  place-items: center;
+  background: rgba(255,255,255,.94) !important;
+  color: var(--pink) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 16px 36px rgba(0,0,0,.25);
+}
+
+.plyr__control--overlaid:hover {
+  background: var(--pink) !important;
+  color: #fff !important;
+}
+
+.plyr__progress input[type=range],
+.plyr__volume input[type=range] {
+  color: var(--pink-2);
+}
+
+.plyr__menu__container {
+  border-radius: 12px !important;
+  background: #fff !important;
+  color: var(--ink) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.plyr__tooltip {
+  background: #fff !important;
+  color: var(--ink) !important;
+  border-radius: 8px !important;
+}
