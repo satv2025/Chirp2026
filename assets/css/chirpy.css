@@ -1,6 +1,6 @@
 body[data-page='chirpy'] .app-layout {
   width: min(1680px, calc(100% - 32px));
-  grid-template-columns: var(--sidebar) minmax(0, 1fr);
+  grid-template-columns: var(--sidebar) minmax(0, 1fr) minmax(250px, 290px);
 }
 
 body[data-page='chirpy'] .main-column {
@@ -9,7 +9,9 @@ body[data-page='chirpy'] .main-column {
 }
 
 body[data-page='chirpy'] .rightbar {
-  display: none;
+  display: grid;
+  align-self: start;
+  gap: 14px;
 }
 
 .chirpy-pro {
@@ -22,11 +24,11 @@ body[data-page='chirpy'] .rightbar {
   position: relative;
   overflow: hidden;
   display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
-  gap: 22px;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 10px;
   align-items: center;
-  min-height: 12px;
-  padding: 10px;
+  min-height: 0;
+  padding: 6px 8px;
   background:
     radial-gradient(
       circle at 10% 0%,
@@ -56,28 +58,28 @@ body[data-page='chirpy'] .rightbar {
 
 .chirpy-orb {
   position: relative;
-  width: 148px;
-  height: 148px;
+  width: 50px;
+  height: 50px;
   display: grid;
   place-items: center;
   border-radius: 4px;
   background: #fff;
   border: 1px solid var(--line-2);
-  box-shadow: 0 22px 42px rgba(159, 0, 153, 0.14);
+  box-shadow: 0 8px 18px rgba(159, 0, 153, 0.1);
 }
 
 .chirpy-orb img {
-  width: 126px;
-  height: 126px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
   z-index: 1;
 }
 
 .chirpy-orb span {
   position: absolute;
-  inset: -8px;
+  inset: -3px;
   border-radius: 4px;
-  border: 2px solid rgba(159, 0, 153, 0.1);
+  border: 1px solid rgba(159, 0, 153, 0.08);
   pointer-events: none;
 }
 
@@ -85,78 +87,70 @@ body[data-page='chirpy'] .rightbar {
   width: max-content;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 34px;
-  padding: 0 12px;
+  gap: 6px;
+  min-height: 22px;
+  padding: 0 8px;
   border-radius: 999px;
   border: 1px solid var(--line-2);
   background: #fff;
   color: var(--hot);
+  font-size: 11px;
   font-weight: 950;
 }
 
 .status-dot {
-  width: 9px;
-  height: 9px;
+  width: 6px;
+  height: 6px;
   border-radius: 999px;
   background: #17b978;
-  box-shadow: 0 0 0 4px rgba(23, 185, 120, 0.12);
+  box-shadow: 0 0 0 2px rgba(23, 185, 120, 0.12);
 }
 
 .chirpy-pro-hero h2 {
-  margin: 14px 0 8px;
-  font-size: 29px;
-  line-height: 0.9;
+  margin: 4px 0 2px;
+  font-size: 20px;
+  line-height: 0.95;
   letter-spacing: -0.02em;
 }
 
 .chirpy-pro-hero p {
   max-width: 980px;
-  margin: 0 0 16px;
+  margin: 0 0 5px;
   color: var(--muted);
-  font-size: 15px;
-  line-height: 1.52;
+  font-size: 12px;
+  line-height: 1.25;
 }
 
 .quick-help {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px;
 }
 
-/* DESPUÉS DE LA INTRO: CHIRPY GIGANTE */
+.chirpy-pro-hero .chip {
+  min-height: 22px;
+  padding: 0 8px;
+  font-size: 10px;
+}
+
+/* MAIN SOLO CHAT */
 .chirpy-main {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
 }
 
-.chirpy-chat-pro {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  min-height: 580px;
-  max-height: 574px;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  overflow: hidden;
-}
-
-.chirpy-chat-giant {
-  min-width: 0;
-}
-
-/* INFO SECUNDARIA DEBAJO */
+/* QUÉ PUEDE HACER EN RIGHTBAR */
 .chirpy-side {
-  align-self: stretch;
+  align-self: start;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 10px;
   opacity: 0.92;
 }
 
 .chirpy-side h3 {
-  grid-column: 1 / -1;
-  margin: 0;
+  margin: 0 0 2px;
   font-size: 22px;
   letter-spacing: -0.04em;
 }
@@ -179,6 +173,22 @@ body[data-page='chirpy'] .rightbar {
   color: var(--muted);
   line-height: 1.45;
   font-size: 14px;
+}
+
+/* CHAT GIGANTE */
+.chirpy-chat-pro {
+  width: 100%;
+  height: 654px;
+  min-height: 748px;
+  max-height: 748px;
+  aspect-ratio: auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
+.chirpy-chat-giant {
+  min-width: 0;
 }
 
 .chirpy-chat-head {
@@ -257,7 +267,6 @@ body[data-page='chirpy'] .rightbar {
 
 .chirpy-message p {
   margin: 0;
-  white-space: pre-wrap;
 }
 
 .chirpy-compose {
@@ -310,15 +319,17 @@ body[data-page='chirpy'] .rightbar {
 @media (max-width: 1200px) {
   body[data-page='chirpy'] .app-layout {
     width: min(100%, calc(100% - 24px));
+    grid-template-columns: var(--sidebar) minmax(0, 1fr);
   }
 
-  .chirpy-side {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  body[data-page='chirpy'] .rightbar {
+    display: none;
   }
 
   .chirpy-chat-pro {
-    min-height: 620px;
-    max-height: none;
+    height: 654px;
+    min-height: 654px;
+    max-height: 654px;
   }
 }
 
@@ -331,21 +342,23 @@ body[data-page='chirpy'] .rightbar {
   .chirpy-pro-hero {
     grid-template-columns: 1fr;
     min-height: auto;
+    padding: 8px;
   }
 
   .chirpy-orb {
-    width: 118px;
-    height: 118px;
+    width: 62px;
+    height: 62px;
   }
 
   .chirpy-orb img {
-    width: 100px;
-    height: 100px;
+    width: 52px;
+    height: 52px;
   }
 
   .chirpy-chat-pro {
-    aspect-ratio: auto;
+    height: auto;
     min-height: calc(100vh - 120px);
+    max-height: none;
   }
 
   .chirpy-messages {
@@ -359,8 +372,8 @@ body[data-page='chirpy'] .rightbar {
   .chirpy-compose {
     grid-template-columns: 1fr;
   }
+}
 
-  .chirpy-side {
-    grid-template-columns: 1fr;
-  }
+.pagebar {
+  display: none;
 }

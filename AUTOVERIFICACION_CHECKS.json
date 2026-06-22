@@ -1,0 +1,11 @@
+{
+  "node_check_autoverification_js": 0,
+  "node_stderr": "",
+  "existing_css_changed": {},
+  "has_sql": true,
+  "has_new_css": true,
+  "has_new_js": true,
+  "settings_has_panel": true,
+  "html_files_with_include": 20,
+  "html_files_total": 21
+}

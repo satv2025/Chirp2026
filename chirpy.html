@@ -13,7 +13,7 @@
 
     <script src="/assets/js/device.js"></script>
 
-    <link rel="stylesheet" href="/assets/css/satvplyr.css">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
     <link rel="stylesheet" href="/assets/css/base.css">
     <link rel="stylesheet" href="/assets/css/components.css">
     <link rel="stylesheet" href="/assets/css/landing.css">
@@ -26,11 +26,13 @@
     <link rel="stylesheet" href="/assets/css/icons.css">
     <link rel="stylesheet" href="/assets/css/messages.css">
     <link rel="stylesheet" href="/assets/css/chirpy.css">
+    <link rel="stylesheet" href="/assets/css/autoverification.css">
     <link rel="stylesheet" href="/assets/css/profile.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
     <script defer src="/assets/js/config.js"></script>
+    <script defer src="/assets/js/autoverification.js"></script>
     <script defer src="/assets/js/chirp.js"></script>
 
     <title>Chirpy · Chirp</title>
@@ -85,7 +87,7 @@
               <span>Mensajes</span>
             </a>
 
-            <a class="side-link" data-route="chirpy" href="/chirpy.html">
+            <a class="side-link is-active" data-route="chirpy" href="/chirpy.html">
               <span class="side-icon ui-icon ui-icon-chirpy" aria-hidden="true"></span>
               <span>Chirpy</span>
             </a>
@@ -112,43 +114,9 @@
 
           <button class="btn btn-ghost btn-wide js-logout" style="margin-top:12px;">Salir</button>
         </div>
-
-        <section class="sidebar__card">
-          <div class="section-title">
-            <div>
-              <h3>Ahora en Chirp</h3>
-              <p>Hashtags populares</p>
-            </div>
-          </div>
-
-          <div class="stack js-trending-tags">
-            <div class="chip chip-muted">Cargando hashtags...</div>
-          </div>
-        </section>
-
-        <section class="sidebar__card">
-          <div class="section-title">
-            <div>
-              <h3>Atajos</h3>
-              <p>Movete rápido.</p>
-            </div>
-          </div>
-
-          <div class="stack">
-            <a class="btn btn-soft btn-wide" href="/settings.html">Editar perfil</a>
-            <a class="btn btn-ghost btn-wide" href="/support.html">Soporte</a>
-            <a class="btn btn-ghost btn-wide" href="/legal.html">Legal</a>
-          </div>
-        </section>
       </aside>
 
-      <main class="main-column main-column-chirpy">
-        <header class="pagebar">
-          <div>
-            <h1>Chirpy</h1>
-            <small>Tu asistente para usar Chirp.</small>
-          </div>
-        </header>
+      <main class="main-column">
 
         <section class="chirpy-pro">
           <section class="card panel chirpy-pro-hero">
@@ -166,8 +134,8 @@
               <h2>Chirpy te ayuda en Chirp.</h2>
 
               <p>
-                Preguntale sobre hashtags, Chirps, usuarios, perfiles, mensajes privados,
-                privacidad, bloqueos, seguridad o cualquier problema dentro de la plataforma.
+                Preguntale sobre hashtags, Chirps, usuarios, perfiles, DM, privacidad,
+                bloqueos, seguridad o cualquier problema dentro de la plataforma.
               </p>
 
               <div class="quick-help">
@@ -191,7 +159,7 @@
             </div>
           </section>
 
-          <section class="chirpy-main chirpy-main-focus">
+          <section class="chirpy-main">
             <section class="card chirpy-chat-pro chirpy-chat-giant">
               <header class="chirpy-chat-head">
                 <div class="dm-peer">
@@ -212,10 +180,8 @@
 
                   <div>
                     <b>Chirpy</b>
-                    <p>
-                      Hola. Soy Chirpy, el asistente de Chirp. Escribime tu duda y te respondo
-                      con una ayuda generada para tu caso.
-                    </p>
+                    <p>Hola. Soy Chirpy, el asistente de Chirp. Escribime tu duda y te respondo con una ayuda generada
+                      para tu caso.</p>
                   </div>
                 </div>
               </div>
@@ -228,33 +194,63 @@
                 <button class="btn btn-primary" type="submit">Enviar</button>
               </form>
             </section>
-
-            <section class="card panel chirpy-side chirpy-side-bottom">
-              <h3>Qué puede hacer</h3>
-
-              <div class="chirpy-capability">
-                <b>Responder dudas</b>
-                <span>Te explica funciones de Chirp con contexto.</span>
-              </div>
-
-              <div class="chirpy-capability">
-                <b>Guiarte paso a paso</b>
-                <span>Te dice dónde tocar y qué revisar.</span>
-              </div>
-
-              <div class="chirpy-capability">
-                <b>Ayudar con seguridad</b>
-                <span>Bloqueos, privacidad, reportes y cuenta.</span>
-              </div>
-
-              <div class="chirpy-capability">
-                <b>Modo IA</b>
-                <span>Usa backend generativo cuando está configurado.</span>
-              </div>
-            </section>
           </section>
         </section>
       </main>
+
+      <aside class="rightbar">
+        <section class="card panel chirpy-side">
+          <h3>Qué puede hacer</h3>
+
+          <div class="chirpy-capability">
+            <b>Responder dudas</b>
+            <span>Te explica funciones de Chirp con contexto.</span>
+          </div>
+
+          <div class="chirpy-capability">
+            <b>Guiarte paso a paso</b>
+            <span>Te dice dónde tocar y qué revisar.</span>
+          </div>
+
+          <div class="chirpy-capability">
+            <b>Ayudar con seguridad</b>
+            <span>Bloqueos, privacidad, reportes y cuenta.</span>
+          </div>
+
+          <div class="chirpy-capability">
+            <b>Modo IA</b>
+            <span>Usa backend generativo cuando está configurado.</span>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="section-title">
+            <div>
+              <h3>Ahora en Chirp</h3>
+              <p>Hashtags populares</p>
+            </div>
+          </div>
+
+          <div class="stack js-trending-tags">
+            <div class="chip chip-muted">Cargando hashtags...</div>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <div class="section-title">
+            <div>
+              <h3>Atajos</h3>
+              <p>Movete rápido.</p>
+            </div>
+          </div>
+
+          <div class="stack">
+            <a class="btn btn-soft btn-wide" href="/settings.html">Editar perfil</a>
+            <a class="btn btn-ghost btn-wide" href="/support.html">Soporte</a>
+            <a class="btn btn-ghost btn-wide" href="/legal.html">Legal</a>
+          </div>
+        </section>
+      </aside>
     </div>
 
     <nav class="mobile-nav">

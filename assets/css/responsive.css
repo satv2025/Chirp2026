@@ -1,39 +1,137 @@
 @media (max-width: 1120px) {
-  .app-layout { grid-template-columns: 86px minmax(0,1fr); }
-  .rightbar { display: none; }
-  .side-link { justify-content: center; padding: 0; }
-  .side-link span:not(.side-icon), .sidebar .brand span, .sidebar__card .js-me-name, .sidebar__card .js-me-username { display: none; }
-  .sidebar .brand { justify-content: center; }
+  .app-layout {
+    grid-template-columns: 86px minmax(0, 1fr);
+  }
+  .rightbar {
+    display: none;
+  }
+  .side-link {
+    justify-content: center;
+    padding: 0;
+  }
+  .side-link span:not(.side-icon),
+  .sidebar .brand span,
+  .sidebar__card .js-me-name,
+  .sidebar__card .js-me-username {
+    display: none;
+  }
+  .sidebar .brand {
+    justify-content: center;
+  }
 }
 @media (max-width: 860px) {
-  .hero-grid, .auth-layout, .feature-grid, .grid-two, .form-split { grid-template-columns: 1fr; }
-  .auth-art { display: none; }
-  .auth-panel { padding: 18px; }
-  .feature-grid { padding-top: 24px; }
+  .hero-grid,
+  .auth-layout,
+  .feature-grid,
+  .grid-two,
+  .form-split {
+    grid-template-columns: 1fr;
+  }
+  .auth-art {
+    display: none;
+  }
+  .auth-panel {
+    padding: 18px;
+  }
+  .feature-grid {
+    padding-top: 24px;
+  }
 }
 @media (max-width: 720px) {
-  html[data-device="mobile"] .app-layout { width: min(100%, calc(100% - 18px)); display: block; }
-  html[data-device="mobile"] .sidebar, html[data-device="mobile"] .rightbar { display: none !important; }
-  html[data-device="mobile"] .mobile-topbar {
-    position: sticky; top: 0; z-index: 80; display: flex !important; align-items: center; justify-content: space-between;
-    min-height: 74px; margin: 0 -9px 12px; padding: 10px 14px; background: rgba(255,250,252,.94);
-    border-bottom: 1px solid var(--line-2); box-shadow: 0 10px 24px rgba(128,28,78,.08); backdrop-filter: blur(18px);
+  html[data-device='mobile'] .app-layout {
+    width: min(100%, calc(100% - 18px));
+    display: block;
   }
-  html[data-device="mobile"] .mobile-topbar .brand img { width: 52px; height: 52px; }
-  html[data-device="mobile"] .mobile-nav {
-    position: fixed; left: 10px; right: 10px; bottom: max(10px, env(safe-area-inset-bottom)); z-index: 90;
-    display: grid !important; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 7px; padding: 9px;
-    border: 1px solid var(--line-2); border-radius: 18px; background: rgba(255,255,255,.96); box-shadow: var(--shadow); backdrop-filter: blur(18px);
+  html[data-device='mobile'] .sidebar,
+  html[data-device='mobile'] .rightbar {
+    display: none !important;
   }
-  html[data-device="mobile"] .mobile-nav .side-link { min-height: 64px; display: grid; place-items: center; align-content: center; gap: 4px; padding: 8px 3px; border-radius: 13px; font-size: 11px; }
-  html[data-device="mobile"] .mobile-nav .side-icon { width: auto; font-size: 23px; }
-  html[data-device="mobile"] .mobile-nav span:not(.side-icon) { display: block !important; font-size: 10.5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  html[data-device="mobile"] .main-column { padding: 0 0 calc(110px + env(safe-area-inset-bottom)); }
-  html[data-device="mobile"] .pagebar { min-height: 76px; border-radius: 14px; }
-  html[data-device="mobile"] .composer__tools { flex-direction: column; align-items: stretch; }
-  html[data-device="mobile"] .composer__tools > .btn, html[data-device="mobile"] .composer__tools button[type="submit"] { width: 100%; }
-  html[data-device="mobile"] .chirp__actions { display: grid; grid-template-columns: repeat(4,1fr); }
-  html[data-device="mobile"] .action-btn { background: var(--card-2); border-color: var(--line-2); }
-  html[data-device="mobile"] .toast-stack { left: 10px; right: 10px; bottom: calc(104px + env(safe-area-inset-bottom)); }
-  html[data-device="mobile"] .toast { width: 100%; }
+  html[data-device='mobile'] .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 74px;
+    margin: 0 -9px 12px;
+    padding: 10px 14px;
+    background: rgba(255, 250, 252, 0.94);
+    border-bottom: 1px solid var(--line-2);
+    box-shadow: 0 10px 24px rgba(128, 28, 78, 0.08);
+    backdrop-filter: blur(18px);
+  }
+  html[data-device='mobile'] .mobile-topbar .brand img {
+    width: 52px;
+    height: 52px;
+  }
+  html[data-device='mobile'] .mobile-nav {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 90;
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 7px;
+    padding: 9px;
+    border: 1px solid var(--line-2);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+  }
+  html[data-device='mobile'] .mobile-nav .side-link {
+    min-height: 64px;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 4px;
+    padding: 8px 3px;
+    border-radius: 13px;
+    font-size: 11px;
+  }
+  html[data-device='mobile'] .mobile-nav .side-icon {
+    width: auto;
+    font-size: 23px;
+  }
+  html[data-device='mobile'] .mobile-nav span:not(.side-icon) {
+    display: block !important;
+    font-size: 10.5px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  html[data-device='mobile'] .main-column {
+    padding: 0 0 calc(110px + env(safe-area-inset-bottom));
+  }
+  html[data-device='mobile'] .pagebar {
+    min-height: 76px;
+    border-radius: 14px;
+  }
+  html[data-device='mobile'] .composer__tools {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  html[data-device='mobile'] .composer__tools > .btn,
+  html[data-device='mobile'] .composer__tools button[type='submit'] {
+    width: 100%;
+  }
+  html[data-device='mobile'] .chirp__actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  html[data-device='mobile'] .action-btn {
+    background: var(--card-2);
+    border-color: var(--line-2);
+  }
+  html[data-device='mobile'] .toast-stack {
+    left: 10px;
+    right: 10px;
+    bottom: calc(104px + env(safe-area-inset-bottom));
+  }
+  html[data-device='mobile'] .toast {
+    width: 100%;
+  }
 }

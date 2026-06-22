@@ -1,0 +1,91 @@
+/* Chirp · Autoverificación
+   Solo agrega estilos nuevos. No modifica el diseño base. */
+
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.05em;
+  height: 1.05em;
+  margin-left: 6px;
+  vertical-align: -0.12em;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--pink);
+  box-shadow: 0 6px 14px rgba(239, 0, 138, 0.18);
+  font-size: 0.78em;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.verification-badge::before {
+  content: '✓';
+}
+
+.verification-card {
+  overflow: hidden;
+}
+
+.verification-card__body {
+  display: grid;
+  gap: 12px;
+}
+
+.verification-card__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.verification-card__status strong {
+  color: var(--ink);
+}
+
+.verification-card__status span {
+  color: var(--muted);
+  font-weight: 850;
+}
+
+.verification-meter {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.verification-meter__bar {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--pink), var(--pink-2));
+  transition: width 0.25s ease;
+}
+
+.verification-card__numbers {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.verification-card__note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.verification-card.is-verified {
+  border-color: rgba(239, 0, 138, 0.22);
+  background:
+    radial-gradient(circle at 0 0, rgba(239, 0, 138, 0.08), transparent 18rem),
+    var(--card);
+}
+
+.verification-card.is-verified .verification-meter__bar {
+  width: 100%;
+}

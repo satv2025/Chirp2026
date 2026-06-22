@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg width="800px" height="800px" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
-  <path fill="#000000" d="M18.5 40a6 6 0 0 0-4.243 10.243l18.814 18.813A10 10 0 0 1 36 76.127V126c0 14.359 11.641 26 26 26h84c14.359 0 26-11.641 26-26V66c0-14.36-11.641-26-26-26H18.5Z"/>
-  <path fill="#FFFFFF" d="M66 78h76a6 6 0 0 1 0 12H66a6 6 0 0 1 0-12Zm0 24h44a6 6 0 0 1 0 12H66a6 6 0 0 1 0-12Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 192 192">
+  <defs>
+    <mask id="cutout-text" maskUnits="userSpaceOnUse">
+      <rect width="192" height="192" fill="white"/>
+      <path fill="black" d="M66 78h76a6 6 0 0 1 0 12H66a6 6 0 0 1 0-12Zm0 24h44a6 6 0 0 1 0 12H66a6 6 0 0 1 0-12Z"/>
+    </mask>
+  </defs>
+  <path fill="#000000" mask="url(#cutout-text)" d="M18.5 40a6 6 0 0 0-4.243 10.243l18.814 18.813A10 10 0 0 1 36 76.127V126c0 14.359 11.641 26 26 26h84c14.359 0 26-11.641 26-26V66c0-14.36-11.641-26-26-26H18.5Z"/>
 </svg>

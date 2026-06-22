@@ -1,96 +1,66 @@
 <!doctype html>
 <html lang="es">
-
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#fff6fb">
-    <link rel="icon" href="/assets/img/favicon.ico" sizes="any">
-    <link rel="icon" href="/assets/img/favicon-32.png" type="image/png">
-    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
-    <link rel="manifest" href="/assets/img/manifest.webmanifest">
-    <script src="/assets/js/device.js"></script>
-    <link rel="stylesheet" href="/assets/css/satvplyr.css">
-    <link rel="stylesheet" href="/assets/css/base.css">
-    <link rel="stylesheet" href="/assets/css/components.css">
-    <link rel="stylesheet" href="/assets/css/landing.css">
-    <link rel="stylesheet" href="/assets/css/auth.css">
-    <link rel="stylesheet" href="/assets/css/app-shell.css">
-    <link rel="stylesheet" href="/assets/css/feed.css">
-    <link rel="stylesheet" href="/assets/css/player.css">
-    <link rel="stylesheet" href="/assets/css/legal.css">
-    <link rel="stylesheet" href="/assets/css/responsive.css">
-    <link rel="stylesheet" href="/assets/css/icons.css">
-    <link rel="stylesheet" href="/assets/css/messages.css">
-    <link rel="stylesheet" href="/assets/css/chirpy.css">
-    <link rel="stylesheet" href="/assets/css/profile.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-    <script defer src="/assets/js/config.js"></script>
-    <script defer src="/assets/js/chirp.js"></script>
-    <title>Chirp · Social rosa</title>
-  </head>
-
-  <body>
-    <header class="site-header">
-      <div class="shell site-header__inner"><a class="brand" href="/"><img src="/assets/img/logo-duck.png"
-            alt="Logo de Chirp"><span>Chirp</span></a>
-        <nav class="navline">
-          <a class="navlink" href="/legal.html">Legal</a>
-          <a class="navlink" href="/login.html">Entrar</a>
-          <a class="btn btn-primary" href="/register.html">Crear cuenta</a>
-        </nav>
-      </div>
-    </header>
-    <main>
-      <section class="landing-hero">
-        <div class="shell hero-grid">
-          <div>
-            <div class="hero-kicker">🐣 Simple, rosa, social</div>
-            <h1 class="hero-title">Chirpeá con onda, <span>sin sistema raro.</span></h1>
-            <p class="hero-copy">Una versión más directa de Chirp: varios HTML reales, un CSS principal, un JS principal
-              y una interfaz más limpia, grande y social.</p>
-            <div class="hero-actions"><a class="btn btn-primary" href="/register.html">Crear cuenta</a><a
-                class="btn btn-ghost" href="/login.html">Ya tengo cuenta</a></div>
-          </div>
-          <div class="preview-board">
-            <img class="preview-logo" src="/assets/img/logo-duck.png" alt="Patito de Chirp">
-            <div class="preview-feed">
-              <div class="preview-top"><b>Timeline</b><span class="chip">en vivo</span></div>
-              <article class="preview-post">
-                <div class="avatar"></div>
-                <div><b>Luna</b>
-                  <p style="margin:6px 0;color:var(--muted);line-height:1.45;">Nueva versión más simple, más clara y más
-                    usable.</p>
-                  <div class="preview-media"></div>
-                </div>
-              </article>
-              <article class="preview-post">
-                <div class="avatar"></div>
-                <div><b>Milo</b>
-                  <p style="margin:6px 0;color:var(--muted);line-height:1.45;">Hashtags populares, player plano, mobile
-                    prolijo.</p>
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="shell feature-grid">
-        <div class="card feature-card"><span class="chip">01</span><b>HTML reales</b>
-          <p>Páginas separadas sin sistema complejo de partials ni router raro.</p>
-        </div>
-        <div class="card feature-card"><span class="chip">02</span><b>UI mejorada</b>
-          <p>Más contenido, mejor jerarquía y menos redondeo exagerado.</p>
-        </div>
-        <div class="card feature-card"><span class="chip">03</span><b>Social completo</b>
-          <p>Chirps, media, hashtags, perfiles, notificaciones y soporte.</p>
-        </div>
-        <div class="card feature-card"><span class="chip">04</span><b>Producción</b>
-          <p>Auth, emails, legal, SMTP y patches SQL incluidos.</p>
-        </div>
-      </section>
-    </main>
-  </body>
-
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fff6fb">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" href="/assets/img/favicon-32.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/assets/img/manifest.webmanifest">
+<script src="/assets/js/device.js"></script>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<link rel="stylesheet" href="/assets/css/landing.css">
+<link rel="stylesheet" href="/assets/css/auth.css">
+<link rel="stylesheet" href="/assets/css/app-shell.css">
+<link rel="stylesheet" href="/assets/css/feed.css">
+<link rel="stylesheet" href="/assets/css/player.css">
+<link rel="stylesheet" href="/assets/css/legal.css">
+<link rel="stylesheet" href="/assets/css/responsive.css">
+<link rel="stylesheet" href="/assets/css/icons.css">
+<link rel="stylesheet" href="/assets/css/messages.css">
+<link rel="stylesheet" href="/assets/css/chirpy.css">
+<link rel="stylesheet" href="/assets/css/autoverification.css">
+<link rel="stylesheet" href="/assets/css/profile.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script defer src="/assets/js/config.js"></script>
+<script defer src="/assets/js/autoverification.js"></script>
+<script defer src="/assets/js/chirp.js"></script>
+<title>Chirp · Social rosa</title>
+</head>
+<body>
+<header class="site-header"><div class="shell site-header__inner"><a class="brand" href="/"><img src="/assets/img/logo-duck.png" alt="Logo de Chirp"><span>Chirp</span></a>
+<nav class="navline">
+<a class="navlink" href="/legal.html">Legal</a>
+<a class="navlink" href="/login.html">Entrar</a>
+<a class="btn btn-primary" href="/register.html">Crear cuenta</a>
+</nav></div></header>
+<main>
+<section class="landing-hero"><div class="shell hero-grid">
+  <div>
+    <div class="hero-kicker">🐣 Simple, rosa, social</div>
+    <h1 class="hero-title">Chirpeá con onda, <span>sin sistema raro.</span></h1>
+    <p class="hero-copy">Una versión más directa de Chirp: varios HTML reales, un CSS principal, un JS principal y una interfaz más limpia, grande y social.</p>
+    <div class="hero-actions"><a class="btn btn-primary" href="/register.html">Crear cuenta</a><a class="btn btn-ghost" href="/login.html">Ya tengo cuenta</a></div>
+  </div>
+  <div class="preview-board">
+    <img class="preview-logo" src="/assets/img/logo-duck.png" alt="Patito de Chirp">
+    <div class="preview-feed">
+      <div class="preview-top"><b>Timeline</b><span class="chip">en vivo</span></div>
+      <article class="preview-post"><div class="avatar"></div><div><b>Luna</b><p style="margin:6px 0;color:var(--muted);line-height:1.45;">Nueva versión más simple, más clara y más usable.</p><div class="preview-media"></div></div></article>
+      <article class="preview-post"><div class="avatar"></div><div><b>Milo</b><p style="margin:6px 0;color:var(--muted);line-height:1.45;">Hashtags populares, player plano, mobile prolijo.</p></div></article>
+    </div>
+  </div>
+</div></section>
+<section class="shell feature-grid">
+  <div class="card feature-card"><span class="chip">01</span><b>HTML reales</b><p>Páginas separadas sin sistema complejo de partials ni router raro.</p></div>
+  <div class="card feature-card"><span class="chip">02</span><b>UI mejorada</b><p>Más contenido, mejor jerarquía y menos redondeo exagerado.</p></div>
+  <div class="card feature-card"><span class="chip">03</span><b>Social completo</b><p>Chirps, media, hashtags, perfiles, notificaciones y soporte.</p></div>
+  <div class="card feature-card"><span class="chip">04</span><b>Producción</b><p>Auth, emails, legal, SMTP y patches SQL incluidos.</p></div>
+</section>
+</main>
+</body>
 </html>

@@ -73,3 +73,51 @@ Ejecutar `supabase-replies.sql` en Supabase SQL Editor antes de probar respuesta
 - `#replyList`
 
 No se modificó ningún CSS.
+
+
+## Autoverificación por 10k seguidores
+
+Agregado sin tocar el diseño base:
+
+- `supabase-autoverificacion.sql`
+- `assets/css/autoverification.css`
+- `assets/js/autoverification.js`
+- Panel agregado en `settings.html`
+- Includes agregados en los HTML:
+  - `/assets/css/autoverification.css`
+  - `/assets/js/autoverification.js`
+
+### Supabase
+
+Ejecutar completo:
+
+```sql
+supabase-autoverificacion.sql
+```
+
+La configuración queda en:
+
+```txt
+public.verification_settings
+```
+
+Campo principal modificable desde Supabase Table Editor:
+
+```txt
+min_followers = 10000
+```
+
+Para verificar manualmente un perfil desde Supabase Table Editor:
+
+```txt
+profiles.is_verified = true
+profiles.verification_status = manual_verified
+profiles.verified_at = now()
+```
+
+Para bloquear autoverificación de un perfil:
+
+```txt
+profiles.is_verified = false
+profiles.verification_status = rejected
+```

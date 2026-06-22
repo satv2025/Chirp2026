@@ -1,75 +1,44 @@
 <!doctype html>
 <html lang="es">
-
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#fff6fb">
-        <link rel="icon" href="/assets/img/favicon.ico" sizes="any">
-        <link rel="icon" href="/assets/img/favicon-32.png" type="image/png">
-        <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
-        <link rel="manifest" href="/assets/img/manifest.webmanifest">
-        <script src="/assets/js/device.js"></script>
-        <link rel="stylesheet" href="/assets/css/satvplyr.css">
-        <link rel="stylesheet" href="/assets/css/base.css">
-        <link rel="stylesheet" href="/assets/css/components.css">
-        <link rel="stylesheet" href="/assets/css/landing.css">
-        <link rel="stylesheet" href="/assets/css/auth.css">
-        <link rel="stylesheet" href="/assets/css/app-shell.css">
-        <link rel="stylesheet" href="/assets/css/feed.css">
-        <link rel="stylesheet" href="/assets/css/player.css">
-        <link rel="stylesheet" href="/assets/css/legal.css">
-        <link rel="stylesheet" href="/assets/css/responsive.css">
-        <link rel="stylesheet" href="/assets/css/icons.css">
-        <link rel="stylesheet" href="/assets/css/messages.css">
-        <link rel="stylesheet" href="/assets/css/chirpy.css">
-        <link rel="stylesheet" href="/assets/css/profile.css">
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-        <script defer src="/assets/js/config.js"></script>
-        <script defer src="/assets/js/chirp.js"></script>
-        <title>Crear cuenta · Chirp</title>
-    </head>
-
-    <body data-page="auth">
-        <div class="auth-layout">
-            <section class="auth-art">
-                <div class="auth-art__inner">
-                    <div><a class="brand" href="/"><img src="/assets/img/logo-duck.png"
-                                alt="Logo de Chirp"><span>Chirp</span></a>
-                        <h1>Chirp, más simple y más social.</h1>
-                        <p>Entrá, armá tu perfil y empezá a chirpear sin vueltas.</p>
-                    </div><img src="/assets/img/logo-duck.png" alt="Patito Chirp"
-                        style="width:150px;justify-self:end;opacity:.88;">
-                </div>
-            </section>
-            <main class="auth-panel">
-                <section class="card auth-card"><a class="brand" href="/"><img src="/assets/img/logo-duck.png"
-                            alt="Logo de Chirp"><span>Chirp</span></a>
-                    <h1>Crear cuenta</h1>
-                    <p>Confirmá tu email y empezá a chirpear.</p>
-                    <form id="registerForm" class="form-grid">
-                        <label class="field"><span>Nombre</span>
-                            <div class="fieldbox"><input id="registerName" maxlength="50" required
-                                    placeholder="Tu nombre"></div>
-                        </label>
-                        <label class="field"><span>Email</span>
-                            <div class="fieldbox"><input id="registerEmail" type="email" autocomplete="email" required
-                                    placeholder="vos@email.com"></div>
-                        </label>
-                        <label class="field"><span>Contraseña</span>
-                            <div class="fieldbox"><input id="registerPassword" type="password"
-                                    autocomplete="new-password" minlength="6" required
-                                    placeholder="Mínimo 6 caracteres"></div>
-                        </label>
-                        <button class="btn btn-primary btn-wide" type="submit">Crear cuenta</button>
-                    </form>
-                    <p class="auth-legal">Al crear tu cuenta aceptás los <a href="/legal.html">Términos</a> y la <a
-                            href="/legal.html">Privacidad</a>.</p>
-                    <p class="auth-link">¿Ya tenés cuenta? <a href="/login.html">Entrar</a></p>
-                </section>
-            </main>
-        </div>
-    </body>
-
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fff6fb">
+<link rel="icon" href="/assets/img/favicon.ico" sizes="any">
+<link rel="icon" href="/assets/img/favicon-32.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/assets/img/manifest.webmanifest">
+<script src="/assets/js/device.js"></script>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<link rel="stylesheet" href="/assets/css/landing.css">
+<link rel="stylesheet" href="/assets/css/auth.css">
+<link rel="stylesheet" href="/assets/css/app-shell.css">
+<link rel="stylesheet" href="/assets/css/feed.css">
+<link rel="stylesheet" href="/assets/css/player.css">
+<link rel="stylesheet" href="/assets/css/legal.css">
+<link rel="stylesheet" href="/assets/css/responsive.css">
+<link rel="stylesheet" href="/assets/css/icons.css">
+<link rel="stylesheet" href="/assets/css/messages.css">
+<link rel="stylesheet" href="/assets/css/chirpy.css">
+<link rel="stylesheet" href="/assets/css/autoverification.css">
+<link rel="stylesheet" href="/assets/css/profile.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script defer src="/assets/js/config.js"></script>
+<script defer src="/assets/js/autoverification.js"></script>
+<script defer src="/assets/js/chirp.js"></script>
+<title>Crear cuenta · Chirp</title>
+</head>
+<body data-page="auth">
+<div class="auth-layout"><section class="auth-art"><div class="auth-art__inner"><div><a class="brand" href="/"><img src="/assets/img/logo-duck.png" alt="Logo de Chirp"><span>Chirp</span></a><h1>Chirp, más simple y más social.</h1><p>Entrá, armá tu perfil y empezá a chirpear sin vueltas.</p></div><img src="/assets/img/logo-duck.png" alt="Patito Chirp" style="width:150px;justify-self:end;opacity:.88;"></div></section><main class="auth-panel"><section class="card auth-card"><a class="brand" href="/"><img src="/assets/img/logo-duck.png" alt="Logo de Chirp"><span>Chirp</span></a><h1>Crear cuenta</h1><p>Confirmá tu email y empezá a chirpear.</p><form id="registerForm" class="form-grid">
+<label class="field"><span>Nombre</span><div class="fieldbox"><input id="registerName" maxlength="50" required placeholder="Tu nombre"></div></label>
+<label class="field"><span>Email</span><div class="fieldbox"><input id="registerEmail" type="email" autocomplete="email" required placeholder="vos@email.com"></div></label>
+<label class="field"><span>Contraseña</span><div class="fieldbox"><input id="registerPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="Mínimo 6 caracteres"></div></label>
+<button class="btn btn-primary btn-wide" type="submit">Crear cuenta</button>
+</form>
+<p class="auth-legal">Al crear tu cuenta aceptás los <a href="/legal.html">Términos</a> y la <a href="/legal.html">Privacidad</a>.</p>
+<p class="auth-link">¿Ya tenés cuenta? <a href="/login.html">Entrar</a></p></section></main></div>
+</body>
 </html>
