@@ -59,3 +59,40 @@
   color: var(--hot);
   font-weight: 950;
 }
+
+.fieldbox--password {
+  position: relative;
+}
+
+.fieldbox--password input {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--pink);
+  line-height: 0;
+  cursor: pointer;
+  border-radius: 999px;
+}
+
+.password-toggle:hover,
+.password-toggle:focus-visible {
+  background: color-mix(in srgb, var(--pink) 12%, transparent);
+  outline: none;
+}
+
+.password-toggle svg {
+  display: block;
+  pointer-events: none;
+}
