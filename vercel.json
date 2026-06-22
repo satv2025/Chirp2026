@@ -5,10 +5,13 @@
       "destination": "/chirp.html"
     },
     {
+<<<<<<< HEAD
       "source": "/embed",
       "destination": "/embed.html"
     },
     {
+=======
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
       "source": "/embed/:id",
       "destination": "/embed.html"
     },

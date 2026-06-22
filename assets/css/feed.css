@@ -521,6 +521,7 @@
     width: 100%;
   }
 }
+<<<<<<< HEAD
 
 .dropdown__button > span:not([data-dropdown-label]) {
   display: none;
@@ -541,3 +542,5 @@
 .dropdown.is-open .dropdown__button::after {
   transform: translateY(2px) rotate(225deg);
 }
+=======
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40

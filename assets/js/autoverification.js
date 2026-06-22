@@ -20,6 +20,7 @@
     .replaceAll("'", "&#039;");
 
   const VERIFIED_ICON_SRC = "/assets/img/icons/verified.svg";
+<<<<<<< HEAD
   const LEVELS = ["blue", "orange", "red", "gold"];
   const TIERS = [
     { level: "blue", label: "ChirpCheck", followers: 100000, description: "Se consigue al llegar a 100k seguidores." },
@@ -28,6 +29,10 @@
     { level: "gold", label: "ChirpCheck Gold", followers: null, description: "Para usuarios VIP con 1 año o más de uso, cuentas oficiales de Chirp o universo Sol Argentino TV Group." }
   ];
 
+=======
+
+  let settingsCache = null;
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
   let userCache = null;
   let profileCache = null;
   let badgeHydrateTimer = null;
@@ -42,6 +47,7 @@
     );
   }
 
+<<<<<<< HEAD
   function chirpCheckLevel(profile) {
     if (!profile) return "";
     const stored = String(profile.chirpcheck_level || profile.verification_badge || "").toLowerCase();
@@ -62,6 +68,10 @@
   function badgeHTML(level = "blue") {
     const label = chirpCheckLabel(level);
     return `<span class="verification-badge chirpcheck-badge chirpcheck-badge--${esc(level)}" title="${esc(label)}" aria-label="${esc(label)}"><img src="${VERIFIED_ICON_SRC}" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>`;
+=======
+  function badgeHTML(label = "Verificado") {
+    return `<span class="verification-badge" title="${esc(label)}" aria-label="${esc(label)}"><img src="${VERIFIED_ICON_SRC}" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>`;
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
   }
 
   function usernameFromProfileURL(href = "") {

@@ -1,5 +1,8 @@
 /chirp/* /chirp.html 200
+<<<<<<< HEAD
 /embed /embed.html 200
+=======
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
 /embed/* /embed.html 200
 /login /login.html 200
 /signin /signin.html 200

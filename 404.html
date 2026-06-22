@@ -14,12 +14,17 @@
     return;
   }
 
+<<<<<<< HEAD
   if (parts[0] === "embed") {
     if (parts[1]) {
       location.replace("/embed.html?chirp=" + encodeURIComponent(decodeURIComponent(parts[1])));
     } else {
       location.replace("/embed.html" + (location.search || ""));
     }
+=======
+  if (parts[0] === "embed" && parts[1]) {
+    location.replace("/embed.html?chirp=" + encodeURIComponent(decodeURIComponent(parts[1])));
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
     return;
   }
 

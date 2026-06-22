@@ -438,7 +438,11 @@
 
   function chirpEmbedURL(id) {
     const clean = String(id || "").trim();
+<<<<<<< HEAD
     return absoluteURL(clean ? `/embed/${encodeURIComponent(clean)}` : "/embed.html");
+=======
+    return absoluteURL(clean ? `/embed.html?chirp=${encodeURIComponent(clean)}` : "/embed.html");
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
   }
 
   function chirpIframeCode(id) {
@@ -588,7 +592,11 @@
       <div class="chirp__grid">
         <a href="${profileURL(username)}" target="${isEmbed ? "_blank" : "_self"}" rel="${isEmbed ? "noopener" : ""}"><img class="avatar" src="${esc(p.avatar_url || fallbackAvatar(p))}" alt="${esc(displayName)}"></a>
         <div class="chirp__body">
+<<<<<<< HEAD
           <div class="chirp__meta"><a class="chirp__name" href="${profileURL(username)}" target="${isEmbed ? "_blank" : "_self"}" rel="${isEmbed ? "noopener" : ""}">${profileNameHTML(p, displayName)}</a><span>@${esc(username)}</span><span>·</span><a href="${chirpURL(chirp.id)}" target="${isEmbed ? "_blank" : "_self"}" rel="${isEmbed ? "noopener" : ""}">${ago(chirp.created_at)}</a>${hasEditedAt ? `<span>· editado</span>` : ""}</div>
+=======
+          <div class="chirp__meta"><a class="chirp__name" href="${profileURL(username)}" target="${isEmbed ? "_blank" : "_self"}" rel="${isEmbed ? "noopener" : ""}">${esc(displayName)}</a><span>@${esc(username)}</span><span>·</span><a href="${chirpURL(chirp.id)}" target="${isEmbed ? "_blank" : "_self"}" rel="${isEmbed ? "noopener" : ""}">${ago(chirp.created_at)}</a>${hasEditedAt ? `<span>· editado</span>` : ""}</div>
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
           ${content ? `<p class="chirp__text">${linkContent(content)}</p>` : ""}
           ${await mediaHtml(chirp.chirp_media || [])}
           <div class="chirp__actions">
@@ -1662,7 +1670,11 @@
     const isActive = profile.id && profile.id === activeDmUser;
     return `<button class="dm-row${isActive ? " is-active" : ""}" data-user-id="${esc(profile.id)}" data-username="${esc(profile.username || "")}">
       <img class="avatar" src="${esc(profile.avatar_url || fallbackAvatar(profile))}" alt="${esc(profile.display_name || "Usuario")}">
+<<<<<<< HEAD
       <span class="dm-row__main"><b>${profileNameHTML(profile, "Usuario")}</b><small>@${esc(profile.username || "")}</small></span>
+=======
+      <span class="dm-row__main"><b>${esc(profile.display_name || "Usuario")}</b><small>@${esc(profile.username || "")}</small></span>
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
       ${renderNumberBadge(receivedCount, "dm-count-badge")}
     </button>`;
   }
@@ -1716,15 +1728,23 @@
       box.innerHTML = `<div class="chip chip-muted">Sin chats todavía</div>`;
       return;
     }
+<<<<<<< HEAD
     const profileMap = await fetchProfilesByIds((data || []).map(row => row.peer_id));
     box.innerHTML = (data || []).map(row => {
       const fresh = profileMap.get(row.peer_id) || {};
+=======
+    box.innerHTML = (data || []).map(row => {
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
       const peer = {
         id: row.peer_id,
         username: row.peer_username,
         display_name: row.peer_display_name,
+<<<<<<< HEAD
         avatar_url: row.peer_avatar_url,
         ...fresh
+=======
+        avatar_url: row.peer_avatar_url
+>>>>>>> a0cca3687e9914ca6257489999ed4dc7b407ca40
       };
       return dmRow(peer, dmIncomingCounts.get(peer.id) || 0);
     }).join("") || `<div class="chip chip-muted">Sin chats todavía</div>`;
