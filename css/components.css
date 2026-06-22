@@ -586,3 +586,14 @@
   line-height: 1.55;
 }
 .custom-textfield.is-placeholder { color: #b08ca0; }
+
+.auth-legal {
+  margin: 4px 0 0 !important;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.auth-legal a {
+  color: var(--hot);
+  font-weight: 900;
+}

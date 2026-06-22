@@ -54,7 +54,7 @@
 }
 
 .pagebar {
-  position: sticky;
+  position: static;
   top: 0;
   z-index: 20;
   min-height: 64px;

@@ -164,3 +164,15 @@ El fondo exterior fue recortado a transparente preservando detalles internos bla
 - La UI sigue respondiendo por ancho de pantalla en todo momento.
 - Desktop angosto usa sidebar compacto, no bottom nav.
 - Mobile/tablet real usa topbar + bottom nav grande y visible.
+
+
+## Legal HTML
+
+Se agregó una sección legal completa en HTML, no PDF:
+
+- `/legal/` documento completo estilizado.
+- `/terms/` redirige a términos.
+- `/privacy/` redirige a privacidad.
+- Registro muestra enlaces a términos y privacidad.
+
+El documento fue reescrito para la nueva versión de Chirp: ahora contempla cuenta, login, perfil, media, hashtags, menciones, notificaciones, privacidad, soporte y proveedores técnicos.
