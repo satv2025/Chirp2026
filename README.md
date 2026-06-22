@@ -1,178 +1,245 @@
-# Chirp Rosin Social
+# Chirp Flat Final Clean
 
-Versión multi-page real, sin SPA y sin `#` en las rutas.
+Estructura plana final.
 
-## Correr local
+## Raíz
+
+```txt
+index.html
+login.html
+signin.html
+register.html
+signup.html
+reset.html
+update-password.html
+auth-callback.html
+home.html
+explore.html
+notifications.html
+bookmarks.html
+profile.html
+settings.html
+support.html
+u.html
+chirp.html
+legal.html
+assets/
+serve.json
+vercel.json
+package.json
+README.md
+```
+
+Todo lo legal vive únicamente en:
+
+```txt
+legal.html
+```
+
+## Probar
 
 ```bash
-cd chirp-rosin-social
+cd chirp-flat-final-clean
 npx serve -l 3000 .
 ```
 
 Abrí:
 
 ```txt
-http://localhost:3000/
-http://localhost:3000/register/
-http://localhost:3000/home/
+http://localhost:3000/index.html
 ```
-
-## Deploy en Vercel
-
-Subí la carpeta completa. El proyecto incluye `vercel.json` con `cleanUrls` y rewrites específicos para:
-
-- `/u/:username`
-- `/chirp/:id`
-
-No hay fallback global de SPA.
-
-## Supabase
-
-La conexión está en:
-
-```txt
-js/config.js
-```
-
-Usa el Project URL directo:
-
-```txt
-https://kdohnkpykpcmnoyxhkte.supabase.co
-```
-
-Esto evita el 504 que venía de `https://db.chirp.com.ar/auth/v1/signup`.
 
 ## SQL
 
-Pegá este archivo en Supabase SQL Editor:
+```txt
+assets/supabase/chirp-fix-patch.sql
+```
+
+
+## Hashtag fix
+
+Todo hashtag navega explícitamente a:
 
 ```txt
-supabase/chirp-fix-patch.sql
+explore.html?tag=nombre
 ```
 
-Crea/ajusta:
+También hay un handler global en `assets/js/chirp.js` para forzar que no se pierda el query `tag`.
 
-- `security_events`
-- `support_tickets`
-- columnas `storage_bucket` y `storage_path` para media
-- buckets `avatars`, `banners`, `chirp-media`
-- policies de Storage sin tocar `alter table storage.objects enable row level security`
 
-## Emails
+## CSS dividido
 
-Los templates están en:
+Los estilos están separados por área:
 
 ```txt
-emails/
+assets/css/base.css
+assets/css/components.css
+assets/css/landing.css
+assets/css/auth.css
+assets/css/app-shell.css
+assets/css/feed.css
+assets/css/player.css
+assets/css/legal.css
+assets/css/responsive.css
 ```
 
-Asuntos sugeridos:
+No se usa `assets/css/chirp.css`.
+
+
+## Social extras
+
+- Se reemplazó el copy genérico por “Explorá hashtags, Chirps y usuarios”.
+- Se agregó `messages.html` para DM privado.
+- Se agregó `chirpy.html`, bot de ayuda con la imagen `assets/img/chirpy.png`.
+- En perfil público se agregaron botones: Seguir, Dejar de seguir, Mensaje y Bloquear.
+- SQL de DM agregado en `assets/supabase/chirp-fix-patch.sql`.
+
+
+## Chirpy IA pro
+
+- Chirpy ya no usa respuestas predefinidas por `if/else`.
+- El frontend llama a `CFG.chirpyEndpoint`.
+- Endpoint configurado en `assets/js/config.js`.
+- Función backend incluida en `assets/supabase/functions/chirpy/index.ts`.
+- Si no configurás proveedor IA, responde con fallback local temporal.
+- Diseño de `chirpy.html` mejorado con hero, panel lateral, chat pro y estado online.
+
+
+## Perfil público espectador
+
+`u.html?username=usuario` ahora muestra:
+
+- header de perfil público
+- botón Seguir / Dejar de seguir
+- botón Mensaje
+- botón Bloquear / Desbloquear
+- pestaña Chirps
+- pestaña Seguidores
+- pestaña Seguidos
+
+CSS agregado:
 
 ```txt
-emails/SUBJECTS.md
+assets/css/profile.css
 ```
 
-Todos los emails usan:
+SQL agregado para refrescar contadores de followers/following.
 
-```css
-font-family:'Google Sans';
-```
 
-sin fallback.
+## Perfil tipo Instagram
 
-## Diseño
-
-- Rosa moderno, más limpio.
-- Bordes moderados: nada exageradamente redondeado.
-- No se usan `<select>` ni inputs checkbox nativos visibles.
-- Los toggles/dropdowns son componentes custom con `div`/`button`.
-- Los botones de archivo son custom; el input file queda invisible dentro del label.
-- Las fotos se muestran como media social normal con CSS.
-- Los videos usan Plyr estilizado rosa, sin controles nativos de HTML.
-
-## Storage paths esperados
+La ruta pública principal de perfiles ahora es:
 
 ```txt
-avatars/{user_id}/avatar-*.webp
-banners/{user_id}/banner-*.webp
-chirp-media/{user_id}/{chirp_id}/archivo.mp4
-chirp-media/{user_id}/{chirp_id}/archivo.webp
+/{usuario}
 ```
 
-## Configuración de Auth recomendada
-
-En Supabase → Authentication → URL Configuration:
+Ejemplo:
 
 ```txt
-Site URL:
-https://chirp.com.ar
+http://localhost:3000/estapasando
+```
 
-Redirect URLs:
-https://chirp.com.ar/**
-http://localhost:3000/**
+También sigue funcionando como fallback:
+
+```txt
+u.html?username=estapasando
+```
+
+`u.html` lee el username desde query string o desde el pathname.
+
+
+## Fix local /{usuario}
+
+`npx serve` no entiende bien `/:username` como Vercel, por eso `/estapasando` podía dar 404 local.
+
+Ahora `serve.json` tiene fallback:
+
+```txt
+/** -> /u.html
+```
+
+Así en local funciona:
+
+```txt
+http://localhost:3000/estapasando
+```
+
+y `u.html` lee el usuario desde `location.pathname`.
+
+En producción Vercel usa:
+
+```txt
+/:username -> /u.html
 ```
 
 
-## Extras visuales
+## Chirpy backend real
 
-- Logo oficial incluido: `assets/logo-duck.png`
-- Favicons incluidos: `assets/favicon-32.png`, `assets/favicon.ico`, `assets/favicon-192.png`, `assets/favicon-512.png`
-- Manifest: `assets/manifest.webmanifest`
+Chirpy usa Supabase Edge Function + OpenAI Responses API.
+
+1. Crear/pegar la función:
+
+```txt
+assets/supabase/functions/chirpy/index.ts
+```
+
+2. Deploy:
+
+```bash
+supabase functions deploy chirpy
+```
+
+3. Agregar secrets:
+
+```bash
+supabase secrets set OPENAI_API_KEY=sk-...
+supabase secrets set CHIRPY_MODEL=gpt-4.1-mini
+```
+
+`CHIRPY_MODEL` es opcional.
+
+## Realtime de números
+
+El frontend escucha cambios con Supabase Realtime en:
+
+```txt
+likes
+bookmarks
+rechirps
+follows
+blocks
+chirps
+chirp_media
+chirp_hashtags
+hashtags
+direct_messages
+notifications
+```
+
+Re-ejecutá:
+
+```txt
+assets/supabase/chirp-fix-patch.sql
+```
+
+Ese patch agrega tablas a `supabase_realtime`, crea triggers de contadores y hace backfill.
 
 
-## Favicon final
+## Persistent vote state
 
-Este paquete usa el patito rosa exacto provisto por SKB como identidad visual:
+Al renderizar Chirps, el frontend consulta:
 
-- `assets/logo-duck.png`
-- `assets/favicon.ico`
-- `assets/favicon-16.png`
-- `assets/favicon-32.png`
-- `assets/favicon-64.png`
-- `assets/favicon-192.png`
-- `assets/favicon-512.png`
-- `assets/apple-touch-icon.png`
+```txt
+likes
+bookmarks
+rechirps
+```
 
-El fondo exterior fue recortado a transparente preservando detalles internos blancos del logo.
+para el usuario actual y marca los botones activos aunque se recargue la página.
 
+También se agregaron índices únicos y políticas RLS en:
 
-## Mobile responsive v2
-
-- `js/device.js` detecta mobile/tablet por User-Agent y agrega `html[data-device="mobile"]`.
-- El `mobile-nav` y `mobile-topbar` quedan ocultos por defecto y solo aparecen en mobile/tablet detectado.
-- En desktop no se muestra el mobile-nav aunque la ventana esté angosta.
-- UI mobile agrandada: tabs inferiores con label, composer más grande, botones más visibles, cards más cómodas y safe-area para iPhone.
-
-
-## Responsive mobile + hashtags
-
-- `js/device.js` detecta mobile/tablet por User-Agent. En desktop el `mobile-nav` no aparece aunque achiques la ventana.
-- Mobile UI más grande y visible: bottom nav con labels, composer más alto, botones más cómodos y soporte safe-area.
-- Los hashtags se renderizan clickeables en el feed.
-- Al crear un Chirp, el frontend llama a `sync_chirp_entities_for(...)` para asegurar que hashtags/menciones se guarden aunque el trigger ya lo haya hecho.
-- Para activar el fix de hashtags, pegá `supabase/chirp-fix-patch.sql` en Supabase.
-
-
-## Redirect automático de sesión
-
-- Si el usuario ya está logueado y entra a `/`, `/login/`, `/signin/`, `/register/` o `/signup/`, Chirp lo manda automáticamente a `/home/`.
-- Las páginas privadas siguen validando sesión con `requireUser()`.
-
-## Responsive híbrido final
-
-- Se mantiene detección por User-Agent/touch en `js/device.js`.
-- La UI sigue respondiendo por ancho de pantalla en todo momento.
-- Desktop angosto usa sidebar compacto, no bottom nav.
-- Mobile/tablet real usa topbar + bottom nav grande y visible.
-
-
-## Legal HTML
-
-Se agregó una sección legal completa en HTML, no PDF:
-
-- `/legal/` documento completo estilizado.
-- `/terms/` redirige a términos.
-- `/privacy/` redirige a privacidad.
-- Registro muestra enlaces a términos y privacidad.
-
-El documento fue reescrito para la nueva versión de Chirp: ahora contempla cuenta, login, perfil, media, hashtags, menciones, notificaciones, privacidad, soporte y proveedores técnicos.
+```txt
+assets/supabase/chirp-fix-patch.sql
+```

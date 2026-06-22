@@ -1,13 +1,7 @@
 {
-  "name": "chirp-rosin-custom-native",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "npx serve -l 3000 .",
-    "start": "npx serve -l 3000 ."
+    "serve": "serve -l 3000 .",
+    "dev": "serve -l 3000 ."
   },
-  "dependencies": {
-    "serve": "latest"
-  }
+  "dependencies": {}
 }

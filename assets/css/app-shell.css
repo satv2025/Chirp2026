@@ -1,0 +1,24 @@
+.app-layout {
+  width: min(1280px, calc(100% - 28px));
+  min-height: 100vh; margin: 0 auto;
+  display: grid; grid-template-columns: var(--sidebar) minmax(0,1fr) var(--rightbar); gap: 18px;
+}
+.sidebar { position: sticky; top: 0; height: 100vh; padding: 18px 0; display: grid; align-content: start; gap: 14px; }
+.sidebar__card { padding: 14px; border-radius: 16px; border: 1px solid var(--line-2); background: rgba(255,255,255,.82); box-shadow: var(--shadow-2); }
+.sidebar__nav { display: grid; gap: 5px; margin-top: 14px; }
+.side-link { min-height: 46px; display: flex; align-items: center; gap: 12px; padding: 0 12px; border-radius: 10px; color: var(--muted); font-weight: 950; }
+.side-link:hover, .side-link.is-active { color: var(--hot); background: var(--card-2); }
+.side-icon { width: 26px; display: grid; place-items: center; font-size: 18px; }
+
+.main-column { min-width: 0; padding: 18px 0 42px; }
+.pagebar {
+  position: static;
+  min-height: 66px; margin-bottom: 12px; padding: 0 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border: 1px solid var(--line-2); border-radius: 16px; background: rgba(255,250,252,.82);
+}
+.pagebar h1 { margin: 0; font-size: 24px; letter-spacing: -.045em; }
+.pagebar small { display: block; color: var(--muted); font-weight: 850; margin-top: 2px; }
+
+.rightbar { position: sticky; top: 0; height: 100vh; padding: 18px 0; display: grid; align-content: start; gap: 14px; }
+.mobile-topbar, .mobile-nav { display: none !important; }

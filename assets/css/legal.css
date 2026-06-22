@@ -1,0 +1,8 @@
+.legal-hero { padding: 48px 0 24px; }
+.legal-title { margin: 0; font-size: clamp(42px,7vw,74px); line-height: .92; letter-spacing: -.07em; }
+.legal-title span { color: var(--pink); }
+.legal-copy { max-width: 760px; color: var(--muted); font-size: 18px; line-height: 1.55; }
+.legal-content { display: grid; gap: 12px; }
+.legal-section { padding: 20px; }
+.legal-section h2 { margin: 0 0 10px; font-size: 26px; letter-spacing: -.04em; }
+.legal-section p { margin: 0 0 12px; line-height: 1.72; color: #563346; }

@@ -1,0 +1,11 @@
+.auth-layout { min-height: 100vh; display: grid; grid-template-columns: minmax(0,1fr) minmax(380px,500px); }
+.auth-art { padding: 30px; display: grid; }
+.auth-art__inner { padding: 34px; border-radius: 18px; border: 1px solid var(--line-2); background: rgba(255,255,255,.76); box-shadow: var(--shadow); display: grid; align-content: space-between; }
+.auth-art h1 { margin: 28px 0 14px; font-size: clamp(42px,6vw,74px); line-height: .9; letter-spacing: -.075em; }
+.auth-art p { margin: 0; color: var(--muted); font-size: 18px; line-height: 1.55; }
+.auth-panel { padding: 30px; display: grid; place-items: center; }
+.auth-card { width: 100%; max-width: 430px; padding: 22px; }
+.auth-card h1 { margin: 16px 0 8px; font-size: 34px; letter-spacing: -.05em; }
+.auth-card p { margin: 0 0 18px; color: var(--muted); line-height: 1.45; }
+.auth-link, .auth-legal { margin: 8px 0 0 !important; color: var(--muted); font-size: 14px; }
+.auth-link a, .auth-legal a { color: var(--hot); font-weight: 950; }
