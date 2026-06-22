@@ -214,10 +214,10 @@
           ${chirp.content ? `<p class="chirp__text">${linkContent(chirp.content)}</p>` : ""}
           ${await mediaHtml(chirp.chirp_media || [])}
           <div class="chirp__actions">
-            <button class="action-btn js-like"><span>♡</span><b>${chirp.likes_count || 0}</b></button>
-            <button class="action-btn js-rechirp"><span>↻</span><b>${chirp.rechirps_count || 0}</b></button>
-            <button class="action-btn js-bookmark"><span>◇</span><b>${chirp.bookmarks_count || 0}</b></button>
-            <a class="action-btn" href="/chirp.html?id=${encodeURIComponent(chirp.id)}"><span>↩</span><b>${chirp.replies_count || 0}</b></a>
+            <button class="action-btn js-like" title="Me gusta"><span class="action-icon action-icon-like" aria-hidden="true"></span><b>${chirp.likes_count || 0}</b></button>
+            <button class="action-btn js-rechirp" title="Rechirp"><span class="action-icon action-icon-rechirp" aria-hidden="true"></span><b>${chirp.rechirps_count || 0}</b></button>
+            <button class="action-btn js-bookmark" title="Guardar"><span class="action-icon action-icon-bookmark" aria-hidden="true"></span><b>${chirp.bookmarks_count || 0}</b></button>
+            <a class="action-btn" title="Respuestas" href="/chirp.html?id=${encodeURIComponent(chirp.id)}"><span class="action-icon action-icon-comment" aria-hidden="true"></span><b>${chirp.replies_count || 0}</b></a>
           </div>
         </div>
       </div>
@@ -252,20 +252,14 @@
 
         if (likedSet.has(id)) {
           likeBtn?.classList.add("is-active");
-          const icon = likeBtn?.querySelector("span");
-          if (icon) icon.textContent = "♥";
         }
 
         if (bookmarkedSet.has(id)) {
           bookmarkBtn?.classList.add("is-active");
-          const icon = bookmarkBtn?.querySelector("span");
-          if (icon) icon.textContent = "◆";
         }
 
         if (rechirpedSet.has(id)) {
           rechirpBtn?.classList.add("is-active");
-          const icon = rechirpBtn?.querySelector("span");
-          if (icon) icon.textContent = "↻";
         }
       });
     } catch (error) {
@@ -300,25 +294,11 @@
   async function toggleJoin(table, row, card, selector) {
     const btn = $(selector, card);
     const countEl = btn?.querySelector("b");
-    const iconEl = btn?.querySelector("span");
     const wasActive = btn?.classList.contains("is-active");
     const current = Number(countEl?.textContent || 0);
 
-    const activeIcons = {
-      likes: "♥",
-      bookmarks: "◆",
-      rechirps: "↻"
-    };
-
-    const inactiveIcons = {
-      likes: "♡",
-      bookmarks: "◇",
-      rechirps: "↻"
-    };
-
     btn?.classList.toggle("is-active", !wasActive);
     if (countEl) countEl.textContent = String(Math.max(0, current + (wasActive ? -1 : 1)));
-    if (iconEl) iconEl.textContent = wasActive ? inactiveIcons[table] : activeIcons[table];
 
     try {
       const { data, error: selectError } = await sb.from(table).select("*").match(row).maybeSingle();
@@ -336,7 +316,6 @@
     } catch (error) {
       btn?.classList.toggle("is-active", wasActive);
       if (countEl) countEl.textContent = String(current);
-      if (iconEl) iconEl.textContent = wasActive ? activeIcons[table] : inactiveIcons[table];
       toast("No se pudo actualizar", error.message, "error");
     }
   }
@@ -1069,17 +1048,61 @@
         })
       });
 
-      if (!response.ok) throw new Error(`Chirpy backend ${response.status}`);
+      let payload = null;
+      const raw = await response.text();
 
-      const payload = await response.json();
-      if (payload?.mode && $("#chirpyMode")) $("#chirpyMode").textContent = payload.mode === "openai" ? "Respuestas generadas por IA" : "Fallback local hasta conectar IA";
+      try {
+        payload = raw ? JSON.parse(raw) : null;
+      } catch (_error) {
+        payload = null;
+      }
+
+      console.info("[Chirpy] backend response", {
+        status: response.status,
+        ok: response.ok,
+        payload,
+        raw
+      });
+
+      if (!response.ok) {
+        const backendError = payload?.error || payload?.reply || raw || `HTTP ${response.status}`;
+        throw new Error(`Backend Chirpy respondió ${response.status}: ${backendError}`);
+      }
+
+      if (payload?.mode && $("#chirpyMode")) {
+        $("#chirpyMode").textContent = payload.mode === "openai"
+          ? "Respuestas generadas por IA"
+          : payload.mode === "fallback"
+            ? "Fallback backend: revisar OpenAI key"
+            : `Modo ${payload.mode}`;
+      }
+
       if (payload?.reply) return String(payload.reply).trim();
-      throw new Error("Chirpy no devolvió respuesta.");
+
+      if (Object.prototype.hasOwnProperty.call(payload || {}, "hasOpenAIKey")) {
+        return [
+          "Debug Chirpy:",
+          `OPENAI_API_KEY: ${payload.hasOpenAIKey ? "OK" : "NO DETECTADA"}`,
+          `Modelo: ${payload.model || "sin modelo"}`,
+          `Deployment: ${payload.deployment || "sin deployment"}`
+        ].join("\n");
+      }
+
+      if (payload?.error) {
+        throw new Error(payload.error);
+      }
+
+      return [
+        "Chirpy respondió, pero sin campo `reply`.",
+        "Respuesta recibida:",
+        JSON.stringify(payload || raw || {}, null, 2)
+      ].join("\n");
     } catch (error) {
       console.warn("[Chirpy] IA backend no disponible, usando fallback generativo local.", error);
       return localChirpyFallback(cleanQuestion);
     }
   }
+
 
   function localChirpyFallback(question) {
     const q = String(question || "").trim();
