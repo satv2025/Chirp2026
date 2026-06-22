@@ -62,6 +62,7 @@ async function initComposer() {
         .single();
       if (error) throw error;
       if (file) await uploadChirpMedia(chirp.id, file);
+      await syncChirpTagsAndMentions(chirp.id);
       setCustomTextValue('#chirpContent', '');
       $('#chirpMedia').value = '';
       $('.media-preview')?.classList.remove('is-active');
@@ -94,6 +95,33 @@ async function uploadChirpMedia(chirpId, file) {
     sort_order: 0
   });
   if (dbError) throw dbError;
+}
+
+
+async function syncChirpTagsAndMentions(chirpId) {
+  try {
+    const { error } = await supabase.rpc('sync_chirp_entities_for', {
+      chirp_id_to_sync: chirpId
+    });
+    if (error) throw error;
+  } catch (error) {
+    console.warn('[Chirp] No pude sincronizar hashtags/menciones por RPC. El trigger puede haberlo hecho igual.', error);
+  }
+}
+
+function linkifyChirpContent(content = '') {
+  const escaped = escapeHtml(content);
+  return escaped
+    .replace(/(^|[\s>])#([a-zA-Z0-9_]{1,50})\b/g, (match, prefix, tag) => {
+      return `${prefix}<a class="text-tag" href="/explore/?q=%23${encodeURIComponent(tag.toLowerCase())}">#${tag}</a>`;
+    })
+    .replace(/(^|[\s>])@([a-zA-Z0-9_]{3,30})\b/g, (match, prefix, username) => {
+      return `${prefix}<a class="text-mention" href="/u/${encodeURIComponent(username)}/">@${username}</a>`;
+    });
+}
+
+function normalizeHashtagQuery(value = '') {
+  return value.trim().replace(/^#/, '').toLowerCase();
 }
 
 async function loadFeed() {
@@ -156,22 +184,71 @@ async function loadNotifications() {
 async function initExplore() {
   const input = $('#exploreSearch');
   const results = $('#exploreResults');
+
+  const renderHashtagFeed = async tag => {
+    const { data: exactTag } = await supabase
+      .from('hashtags')
+      .select('*')
+      .eq('tag', tag)
+      .maybeSingle();
+
+    if (!exactTag) return '';
+
+    const { data: rows, error } = await supabase
+      .from('chirp_hashtags')
+      .select('chirps(*, profiles:author_id(*), chirp_media(*))')
+      .eq('hashtag_id', exactTag.id)
+      .limit(30);
+
+    if (error) {
+      console.warn('[Chirp] No pude cargar feed de hashtag', error);
+      return '';
+    }
+
+    const chirps = (rows || []).map(row => row.chirps).filter(Boolean);
+    if (!chirps.length) {
+      return `<div class="card panel"><h3>#${escapeHtml(tag)}</h3><p style="color:var(--muted);margin:6px 0 0;">El hashtag existe, pero todavía no hay Chirps visibles.</p></div>`;
+    }
+
+    const rendered = [];
+    for (const chirp of chirps) rendered.push(await chirpTemplate(chirp));
+
+    return `<section class="hashtag-feed">
+      <div class="section-title"><div><h2>#${escapeHtml(tag)}</h2><p>${exactTag.chirps_count || chirps.length} Chirps con este hashtag</p></div></div>
+      <div class="chirp-list">${rendered.join('')}</div>
+    </section>`;
+  };
+
   const run = async () => {
     const q = input.value.trim();
     if (!q) {
-      results.innerHTML = emptyState('Buscá gente o hashtags', 'Probá con un usuario, nombre o palabra que te guste.');
+      results.innerHTML = emptyState('Buscá gente o hashtags', 'Probá con @usuario, #rosin o una palabra que te guste.');
       return;
     }
+
     results.innerHTML = loadingCard('Buscando...');
+    const cleanTag = normalizeHashtagQuery(q);
+    const tagQuery = cleanTag || q;
+
     const [profiles, tags] = await Promise.all([
-      supabase.from('profiles').select('*').or(`username.ilike.%${q}%,display_name.ilike.%${q}%`).limit(12),
-      supabase.from('hashtags').select('*').ilike('tag', `%${q}%`).limit(12)
+      supabase.from('profiles').select('*').or(`username.ilike.%${q.replace(/^@/, '')}%,display_name.ilike.%${q}%`).limit(12),
+      supabase.from('hashtags').select('*').ilike('tag', `%${tagQuery}%`).limit(12)
     ]);
+
     const html = [];
     if (profiles.data?.length) html.push(`<div class="card"><div class="panel"><h3>Personas</h3></div>${profiles.data.map(userRow).join('')}</div>`);
-    if (tags.data?.length) html.push(`<div class="card"><div class="panel"><h3>Hashtags</h3></div>${tags.data.map(tag => `<a class="user-row" href="/explore/?q=${encodeURIComponent(tag.tag)}"><span class="chip">#</span><div><b>#${escapeHtml(tag.tag)}</b><small>${tag.chirps_count || 0} Chirps</small></div><span>→</span></a>`).join('')}</div>`);
+    if (tags.data?.length) html.push(`<div class="card"><div class="panel"><h3>Hashtags</h3></div>${tags.data.map(tag => `<a class="user-row" href="/explore/?q=%23${encodeURIComponent(tag.tag)}"><span class="chip">#</span><div><b>#${escapeHtml(tag.tag)}</b><small>${tag.chirps_count || 0} Chirps</small></div><span>→</span></a>`).join('')}</div>`);
+
+    if (q.startsWith('#') || tags.data?.some(tag => tag.tag?.toLowerCase() === cleanTag)) {
+      const tagFeed = await renderHashtagFeed(cleanTag);
+      if (tagFeed) html.push(tagFeed);
+    }
+
     results.innerHTML = html.join('') || emptyState('Sin resultados', 'Probá con otra búsqueda.');
+    bindChirpActions(results);
+    initPlyr(results);
   };
+
   input?.addEventListener('input', debounce(run, 350));
   const paramsQ = new URLSearchParams(location.search).get('q');
   if (paramsQ) {
@@ -344,7 +421,7 @@ async function chirpTemplate(chirp) {
       <a href="/u/${encodeURIComponent(profile.username || '')}/"><img class="avatar" src="${escapeHtml(profile.avatar_url || fallbackAvatar(profile))}" alt="${escapeHtml(profile.display_name || profile.username || 'Usuario')}"></a>
       <div>
         <div class="chirp__meta"><a class="chirp__name" href="/u/${encodeURIComponent(profile.username || '')}/">${escapeHtml(profile.display_name || 'Usuario')}</a><span>@${escapeHtml(profile.username || 'usuario')}</span><span>·</span><a href="/chirp/${chirp.id}/">${timeAgo(chirp.created_at)}</a></div>
-        ${chirp.content ? `<p class="chirp__text">${escapeHtml(chirp.content)}</p>` : ''}
+        ${chirp.content ? `<p class="chirp__text">${linkifyChirpContent(chirp.content)}</p>` : ''}
         ${media}
         <div class="chirp__actions">
           <button class="action-btn js-like"><span>♡</span><b>${chirp.likes_count || 0}</b></button>

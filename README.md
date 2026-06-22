@@ -1,11 +1,11 @@
-# Chirp Rosin Custom Native
+# Chirp Rosin Social
 
-Versión multi-page real, sin SPA, sin `#` en rutas, con diseño rosa moderno y controles custom.
+Versión multi-page real, sin SPA y sin `#` en las rutas.
 
 ## Correr local
 
 ```bash
-cd chirp-rosin-custom-native
+cd chirp-rosin-social
 npx serve -l 3000 .
 ```
 
@@ -19,7 +19,7 @@ http://localhost:3000/home/
 
 ## Deploy en Vercel
 
-Subí la carpeta completa. Incluye `vercel.json` con `cleanUrls` y rewrites específicos para:
+Subí la carpeta completa. El proyecto incluye `vercel.json` con `cleanUrls` y rewrites específicos para:
 
 - `/u/:username`
 - `/chirp/:id`
@@ -40,9 +40,9 @@ Usa el Project URL directo:
 https://kdohnkpykpcmnoyxhkte.supabase.co
 ```
 
-Esto evita depender de `db.chirp.com.ar` para Auth mientras el custom domain no esté fino.
+Esto evita el 504 que venía de `https://db.chirp.com.ar/auth/v1/signup`.
 
-## SQL importante
+## SQL
 
 Pegá este archivo en Supabase SQL Editor:
 
@@ -50,40 +50,13 @@ Pegá este archivo en Supabase SQL Editor:
 supabase/chirp-fix-patch.sql
 ```
 
-Además de los ajustes anteriores, ahora incluye:
+Crea/ajusta:
 
-- `handle_new_user()` seguro: el trigger ya no debería bloquear el signup si falla `profiles` o `account_settings`.
-- `ensure_current_user_profile()`: función RPC para crear/reparar el perfil del usuario logueado desde el frontend.
-- `security_events` y `support_tickets`.
-- buckets/policies para `avatars`, `banners`, `chirp-media`.
-- policies de Storage sin usar `alter table storage.objects enable row level security`.
-
-## Auth / crear cuenta
-
-El registro usa `supabase.auth.signUp()` con timeout más largo para signup.
-
-Si `Confirm email` está OFF, al crear cuenta redirige al timeline.
-Si `Confirm email` está ON, muestra el mensaje para revisar el correo.
-
-Si vuelve a tardar mucho, el problema suele estar en SMTP/Confirm email, no en la UI.
-
-## Controles nativos vs custom
-
-- Login y registro usan inputs nativos para email/password/nombre, por seguridad, autocompletado y accesibilidad.
-- El resto de campos visibles de la app usan controles custom:
-  - composer de Chirps con `div.contenteditable` custom.
-  - búsqueda custom.
-  - settings custom.
-  - soporte custom.
-  - dropdown custom con teclado.
-  - switch custom con teclado.
-  - upload custom con input file invisible.
-- No hay `<select>` ni checkbox nativo visible.
-
-## Media
-
-- Fotos: se muestran como media social normal, estilizadas con CSS.
-- Videos: usan Plyr estilizado rosa, con look de player social, sin controles nativos visibles.
+- `security_events`
+- `support_tickets`
+- columnas `storage_bucket` y `storage_path` para media
+- buckets `avatars`, `banners`, `chirp-media`
+- policies de Storage sin tocar `alter table storage.objects enable row level security`
 
 ## Emails
 
@@ -99,11 +72,23 @@ Asuntos sugeridos:
 emails/SUBJECTS.md
 ```
 
-Todos los emails usan solo:
+Todos los emails usan:
 
 ```css
 font-family:'Google Sans';
 ```
+
+sin fallback.
+
+## Diseño
+
+- Rosa moderno, más limpio.
+- Bordes moderados: nada exageradamente redondeado.
+- No se usan `<select>` ni inputs checkbox nativos visibles.
+- Los toggles/dropdowns son componentes custom con `div`/`button`.
+- Los botones de archivo son custom; el input file queda invisible dentro del label.
+- Las fotos se muestran como media social normal con CSS.
+- Los videos usan Plyr estilizado rosa, sin controles nativos de HTML.
 
 ## Storage paths esperados
 
@@ -126,3 +111,56 @@ Redirect URLs:
 https://chirp.com.ar/**
 http://localhost:3000/**
 ```
+
+
+## Extras visuales
+
+- Logo oficial incluido: `assets/logo-duck.png`
+- Favicons incluidos: `assets/favicon-32.png`, `assets/favicon.ico`, `assets/favicon-192.png`, `assets/favicon-512.png`
+- Manifest: `assets/manifest.webmanifest`
+
+
+## Favicon final
+
+Este paquete usa el patito rosa exacto provisto por SKB como identidad visual:
+
+- `assets/logo-duck.png`
+- `assets/favicon.ico`
+- `assets/favicon-16.png`
+- `assets/favicon-32.png`
+- `assets/favicon-64.png`
+- `assets/favicon-192.png`
+- `assets/favicon-512.png`
+- `assets/apple-touch-icon.png`
+
+El fondo exterior fue recortado a transparente preservando detalles internos blancos del logo.
+
+
+## Mobile responsive v2
+
+- `js/device.js` detecta mobile/tablet por User-Agent y agrega `html[data-device="mobile"]`.
+- El `mobile-nav` y `mobile-topbar` quedan ocultos por defecto y solo aparecen en mobile/tablet detectado.
+- En desktop no se muestra el mobile-nav aunque la ventana esté angosta.
+- UI mobile agrandada: tabs inferiores con label, composer más grande, botones más visibles, cards más cómodas y safe-area para iPhone.
+
+
+## Responsive mobile + hashtags
+
+- `js/device.js` detecta mobile/tablet por User-Agent. En desktop el `mobile-nav` no aparece aunque achiques la ventana.
+- Mobile UI más grande y visible: bottom nav con labels, composer más alto, botones más cómodos y soporte safe-area.
+- Los hashtags se renderizan clickeables en el feed.
+- Al crear un Chirp, el frontend llama a `sync_chirp_entities_for(...)` para asegurar que hashtags/menciones se guarden aunque el trigger ya lo haya hecho.
+- Para activar el fix de hashtags, pegá `supabase/chirp-fix-patch.sql` en Supabase.
+
+
+## Redirect automático de sesión
+
+- Si el usuario ya está logueado y entra a `/`, `/login/`, `/signin/`, `/register/` o `/signup/`, Chirp lo manda automáticamente a `/home/`.
+- Las páginas privadas siguen validando sesión con `requireUser()`.
+
+## Responsive híbrido final
+
+- Se mantiene detección por User-Agent/touch en `js/device.js`.
+- La UI sigue respondiendo por ancho de pantalla en todo momento.
+- Desktop angosto usa sidebar compacto, no bottom nav.
+- Mobile/tablet real usa topbar + bottom nav grande y visible.

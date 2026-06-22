@@ -242,3 +242,103 @@
   color: var(--muted);
   font-weight: 800;
 }
+
+
+/* === Enhanced Feed === */
+.composer {
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+}
+.composer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.18), transparent 30%);
+}
+.composer__head { gap: 12px; }
+.composer .fieldbox { padding: 0 16px; }
+.media-preview {
+  background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,242,248,.88));
+}
+.media-preview img,
+.media-preview video {
+  border-radius: 14px;
+}
+.chirp {
+  position: relative;
+  overflow: hidden;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.chirp:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+  border-color: #efc1d8;
+}
+.chirp::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, rgba(239,0,138,.45), rgba(239,0,138,0));
+}
+.chirp__meta { gap: 8px; }
+.chirp__text { font-size: 15.5px; color: #351423; }
+.chirp-photo {
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(49,16,33,.10);
+}
+.chirp-video-wrap {
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(49,16,33,.10);
+}
+.action-btn {
+  min-height: 36px;
+  border-radius: 11px;
+}
+.profile-cover {
+  min-height: 240px;
+  background: linear-gradient(135deg, #ffd5ea, #ff5aa8 48%, #38101d);
+}
+.profile-cover img { height: 240px; }
+.profile-card { margin-top: -56px; }
+.user-row,
+.notification-row {
+  min-height: 72px;
+  background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.72));
+}
+.user-row + .user-row,
+.notification-row + .notification-row {
+  margin-top: 8px;
+  border-radius: 14px;
+  border: 1px solid var(--line-2);
+}
+
+
+/* === Hashtags & Mentions === */
+.text-tag,
+.text-mention {
+  color: var(--hot);
+  font-weight: 900;
+  text-decoration: none;
+  border-radius: 7px;
+  padding: 1px 2px;
+  transition: background .14s ease, color .14s ease;
+}
+
+.text-tag:hover,
+.text-mention:hover {
+  background: rgba(239, 0, 138, .10);
+  color: var(--pink);
+}
+
+.hashtag-feed {
+  display: grid;
+  gap: 12px;
+}
+
+html[data-device="mobile"] .text-tag,
+html[data-device="mobile"] .text-mention {
+  padding: 2px 3px;
+}

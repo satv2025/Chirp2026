@@ -3,8 +3,11 @@ import { supabase } from './supabaseClient.js';
 import { $, showToast, setButtonLoading, withTimeout, logSecurityEvent, escapeHtml, ensureMyProfile } from './utils.js';
 import { initCustomControls, bindErrorBoundary } from './ui.js';
 import { reportAuthError } from './auth-errors.js';
+import { redirectIfLoggedIn, watchAuthRedirect } from './sessionRedirect.js';
 
 bindErrorBoundary();
+redirectIfLoggedIn();
+watchAuthRedirect();
 initCustomControls();
 
 const nextUrl = new URLSearchParams(location.search).get('next') || '/home/';

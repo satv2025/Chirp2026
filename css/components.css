@@ -475,3 +475,114 @@
   background: var(--surface-2);
   color: var(--hot);
 }
+
+
+/* === Enhanced Components === */
+.site-header {
+  background: rgba(255, 250, 252, .8);
+  border-bottom: 1px solid rgba(239, 193, 216, .72);
+  box-shadow: 0 8px 24px rgba(136,21,78,.05);
+}
+.brand {
+  gap: 12px;
+  letter-spacing: -.045em;
+}
+.brand img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(239, 0, 138, .16));
+}
+.brand span {
+  position: relative;
+  top: 1px;
+}
+.btn {
+  min-height: 44px;
+  border-radius: 12px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--pink), var(--pink-2));
+  box-shadow: 0 14px 28px rgba(239, 0, 138, .22);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-ghost {
+  border-color: #f2d3e3;
+  background: rgba(255,255,255,.8);
+}
+.btn-soft {
+  background: linear-gradient(180deg, #fff5fa, #ffeef7);
+}
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.82));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-soft);
+}
+.panel { padding: 20px; }
+.fieldbox {
+  min-height: 50px;
+  border-color: #f2d6e4;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
+}
+.fieldbox:hover { border-color: #eeb8d3; }
+.notice {
+  background: linear-gradient(180deg, #fff4fa, #fff0f7);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid #f3d6e4;
+  background: rgba(255,255,255,.85);
+  color: var(--hot);
+  font-weight: 900;
+}
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: linear-gradient(135deg, #ffd7eb, #ffc0dd);
+  border: 1px solid #f0cfdf;
+}
+.dropdown__button {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  border-radius: 10px;
+  font-weight: 900;
+}
+.dropdown__menu {
+  padding: 6px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.98);
+  border: 1px solid var(--line-2);
+  box-shadow: var(--shadow);
+}
+.dropdown__item {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 9px;
+  color: var(--ink);
+}
+.dropdown__item:hover,
+.dropdown__item.is-selected { background: var(--surface-2); color: var(--hot); }
+.custom-textfield {
+  width: 100%;
+  min-height: 86px;
+  padding: 14px 0;
+  font-size: 18px;
+  line-height: 1.55;
+}
+.custom-textfield.is-placeholder { color: #b08ca0; }

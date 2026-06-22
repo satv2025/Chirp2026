@@ -326,3 +326,109 @@ grant execute on function public.ensure_current_user_profile() to authenticated;
 grant insert on public.profiles to authenticated;
 grant select on public.profiles to anon, authenticated;
 grant select on public.account_settings to authenticated;
+
+
+-- =========================================================
+-- CHIRP - HASHTAG/MENTION SYNC RPC
+-- Permite que el frontend fuerce la sincronización de hashtags
+-- después de crear un Chirp, además del trigger existente.
+-- =========================================================
+
+create or replace function public.sync_chirp_entities_for(chirp_id_to_sync uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  chirp_record public.chirps;
+  username_text text;
+  tag_text text;
+  found_hashtag_id uuid;
+  tag_count int := 0;
+  mention_count int := 0;
+begin
+  if auth.uid() is null then
+    raise exception 'not_authenticated';
+  end if;
+
+  select *
+  into chirp_record
+  from public.chirps
+  where id = chirp_id_to_sync;
+
+  if chirp_record.id is null then
+    raise exception 'chirp_not_found';
+  end if;
+
+  if chirp_record.author_id <> auth.uid() then
+    raise exception 'not_chirp_author';
+  end if;
+
+  delete from public.mentions
+  where chirp_id = chirp_record.id;
+
+  delete from public.chirp_hashtags
+  where chirp_id = chirp_record.id;
+
+  if chirp_record.deleted_at is not null or chirp_record.content is null then
+    return jsonb_build_object('hashtags', 0, 'mentions', 0);
+  end if;
+
+  for username_text in
+    select distinct lower(t.match_result[2])
+    from regexp_matches(
+      chirp_record.content,
+      '(^|[^a-zA-Z0-9_])@([a-zA-Z0-9_]{3,30})',
+      'g'
+    ) as t(match_result)
+  loop
+    insert into public.mentions (
+      chirp_id,
+      mentioned_user_id
+    )
+    select
+      chirp_record.id,
+      p.id
+    from public.profiles p
+    where lower(p.username::text) = username_text
+    on conflict do nothing;
+
+    mention_count := mention_count + 1;
+  end loop;
+
+  for tag_text in
+    select distinct lower(t.match_result[2])
+    from regexp_matches(
+      chirp_record.content,
+      '(^|[^a-zA-Z0-9_])#([a-zA-Z0-9_]{1,50})',
+      'g'
+    ) as t(match_result)
+  loop
+    insert into public.hashtags (tag)
+    values (tag_text)
+    on conflict (tag) do nothing;
+
+    select id
+    into found_hashtag_id
+    from public.hashtags
+    where tag = tag_text;
+
+    insert into public.chirp_hashtags (
+      chirp_id,
+      hashtag_id
+    )
+    values (
+      chirp_record.id,
+      found_hashtag_id
+    )
+    on conflict do nothing;
+
+    tag_count := tag_count + 1;
+  end loop;
+
+  return jsonb_build_object('hashtags', tag_count, 'mentions', mention_count);
+end;
+$$;
+
+grant execute on function public.sync_chirp_entities_for(uuid) to authenticated;
