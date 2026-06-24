@@ -1,3 +1,4 @@
+/*config.js*/
 window.CHIRP = {
   SUPABASE_URL: 'https://db.chirp.com.ar',
   SUPABASE_ANON_KEY:
