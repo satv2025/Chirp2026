@@ -516,27 +516,302 @@
     });
   }
 
-  function initPlyr(root = document) {
-    if (!window.Plyr) return;
-    root
-      .querySelectorAll('video.js-plyr:not([data-ready])')
-      .forEach((video) => {
-        video.dataset.ready = '1';
-        new window.Plyr(video, {
-          controls: [
-            'play-large',
-            'play',
-            'progress',
-            'current-time',
-            'mute',
-            'volume',
-            'fullscreen',
-          ],
-          ratio: '16:9',
-          hideControls: true,
-          clickToPlay: true,
-        });
+  const CHIRP_PLAYER_ASSET_BASE = 'https://player.chirp.com.ar/assets';
+  const CHIRP_PLAYER_STYLE_URL = `${CHIRP_PLAYER_ASSET_BASE}/styles.css`;
+  const CHIRP_PLAYER_SCRIPT_URL = `${CHIRP_PLAYER_ASSET_BASE}/chirpplayer.js`;
+  const CHIRP_REACT_URLS = [
+    'https://unpkg.com/react@18/umd/react.production.min.js',
+  ];
+  const CHIRP_REACT_DOM_URLS = [
+    'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
+  ];
+
+  let chirpPlayerAssetsPromise = null;
+  let chirpPlayerReloadPromise = null;
+
+  function chirpPlayerGlobal() {
+    return (
+      window.ChirpPlayer ||
+      window.chirpPlayer ||
+      window.Chirpplayer ||
+      window.ChirpPlayerComponent ||
+      null
+    );
+  }
+
+  function reactReady() {
+    return Boolean(window.React?.createElement && window.React?.useState);
+  }
+
+  function reactDomReady() {
+    return Boolean(window.ReactDOM?.createRoot);
+  }
+
+  function playerReady() {
+    return typeof window.ChirpPlayerMount === 'function' || Boolean(chirpPlayerGlobal());
+  }
+
+  function renderNativePlayerFallback(mount, props = {}) {
+    const src = props.src || '';
+    if (!src) return null;
+
+    mount.innerHTML = props.kind === 'audio'
+      ? `<audio class="chirp-native-player" controls preload="metadata"><source src="${esc(src)}"${props.type ? ` type="${esc(props.type)}"` : ''}></audio>`
+      : `<video class="chirp-native-player" controls playsinline preload="metadata"${props.poster ? ` poster="${esc(props.poster)}"` : ''}><source src="${esc(src)}"${props.type ? ` type="${esc(props.type)}"` : ''}></video>`;
+
+    return mount.firstElementChild;
+  }
+
+  function ensureChirpPlayerStylesheet() {
+    const alreadyLoaded = [...document.querySelectorAll('link[rel="stylesheet"]')]
+      .some((link) => String(link.href || '').split('?')[0] === CHIRP_PLAYER_STYLE_URL);
+
+    if (alreadyLoaded) return;
+
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = CHIRP_PLAYER_STYLE_URL;
+    document.head.appendChild(link);
+  }
+
+  function removeScriptByCleanSrc(cleanSrc) {
+    [...document.scripts].forEach((script) => {
+      if (String(script.src || '').split('?')[0] === cleanSrc) script.remove();
+    });
+  }
+
+  function waitForReady(isReady, timeoutMs = 2500) {
+    if (isReady()) return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+      const started = Date.now();
+      const tick = () => {
+        if (isReady()) {
+          resolve();
+          return;
+        }
+
+        if (Date.now() - started >= timeoutMs) {
+          reject(new Error('La API esperada no quedó disponible.'));
+          return;
+        }
+
+        window.setTimeout(tick, 40);
+      };
+
+      tick();
+    });
+  }
+
+  function loadScriptTag(src, attrs = {}) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+
+      Object.entries(attrs).forEach(([key, value]) => {
+        if (value === true) script.setAttribute(key, '');
+        else if (value) script.setAttribute(key, String(value));
       });
+
+      script.onload = () => resolve(script);
+      script.onerror = () => reject(new Error(`No se pudo cargar ${src}`));
+      document.head.appendChild(script);
+    });
+  }
+
+  async function loadScriptWithFallback(urls, isReady, label, attrs = {}) {
+    if (isReady()) return;
+
+    const list = Array.isArray(urls) ? urls : [urls];
+    const errors = [];
+
+    for (const src of list) {
+      const cleanSrc = String(src).split('?')[0];
+
+      if (isReady()) return;
+
+      try {
+        const existing = [...document.scripts].find((script) => {
+          return String(script.src || '').split('?')[0] === cleanSrc;
+        });
+
+        if (existing) {
+          await waitForReady(isReady, 3500);
+          return;
+        }
+
+        await loadScriptTag(src, attrs);
+        await waitForReady(isReady, 3500);
+        return;
+      } catch (error) {
+        errors.push(error);
+        removeScriptByCleanSrc(cleanSrc);
+      }
+    }
+
+    throw new Error(`${label} no quedó disponible. ${errors.map((error) => error?.message || error).join(' | ')}`);
+  }
+
+  async function ensureChirpPlayerAssets() {
+    if (chirpPlayerAssetsPromise) return chirpPlayerAssetsPromise;
+
+    chirpPlayerAssetsPromise = (async () => {
+      ensureChirpPlayerStylesheet();
+
+      await loadScriptWithFallback(CHIRP_REACT_URLS, reactReady, 'React', {
+        crossorigin: 'anonymous',
+      });
+
+      await loadScriptWithFallback(CHIRP_REACT_DOM_URLS, reactDomReady, 'ReactDOM', {
+        crossorigin: 'anonymous',
+      });
+
+      await loadScriptWithFallback(CHIRP_PLAYER_SCRIPT_URL, playerReady, 'ChirpPlayer');
+    })().catch((error) => {
+      chirpPlayerAssetsPromise = null;
+      throw error;
+    });
+
+    return chirpPlayerAssetsPromise;
+  }
+
+  async function reloadChirpPlayerBundle() {
+    if (chirpPlayerReloadPromise) return chirpPlayerReloadPromise;
+
+    chirpPlayerReloadPromise = (async () => {
+      [...document.scripts].forEach((script) => {
+        const src = String(script.src || '');
+        if (src.includes('player.chirp.com.ar/assets/chirpplayer.js')) {
+          script.remove();
+        }
+      });
+
+      try {
+        delete window.ChirpPlayerMount;
+        delete window.ChirpPlayer;
+        delete window.chirpPlayer;
+        delete window.Chirpplayer;
+        delete window.ChirpPlayerComponent;
+      } catch (_error) {
+        window.ChirpPlayerMount = undefined;
+      }
+
+      await loadScriptWithFallback(
+        `${CHIRP_PLAYER_SCRIPT_URL}?v=${Date.now()}`,
+        playerReady,
+        'ChirpPlayer'
+      );
+    })();
+
+    try {
+      await chirpPlayerReloadPromise;
+    } finally {
+      chirpPlayerReloadPromise = null;
+    }
+  }
+
+  function isReactDomMountError(error) {
+    const text = `${error?.name || ''} ${error?.message || ''} ${error?.stack || ''}`.toLowerCase();
+    return text.includes('reactdom') || text.includes('createroot');
+  }
+
+  function applyChirpPlayerDataset(mount, props = {}) {
+    const src = props.src || '';
+    if (!src) return;
+
+    mount.classList.add('chirp-player-root');
+    mount.setAttribute('data-chirp-player', '');
+    mount.dataset.src = src;
+
+    if (props.poster) mount.dataset.poster = props.poster;
+    else delete mount.dataset.poster;
+
+    if (props.kind) mount.dataset.kind = props.kind;
+    else delete mount.dataset.kind;
+
+    if (props.type) mount.dataset.type = props.type;
+    else delete mount.dataset.type;
+
+    if (props.aspectRatio) mount.dataset.aspectRatio = props.aspectRatio;
+    else delete mount.dataset.aspectRatio;
+  }
+
+  async function mountChirpPlayer(mount, props = {}) {
+    const src = props.src || '';
+    if (!src) return null;
+
+    applyChirpPlayerDataset(mount, props);
+    await ensureChirpPlayerAssets();
+
+    if (typeof window.ChirpPlayerMount === 'function') {
+      try {
+        window.ChirpPlayerMount();
+        return { refresh: window.ChirpPlayerMount };
+      } catch (error) {
+        if (!isReactDomMountError(error)) throw error;
+
+        await reloadChirpPlayerBundle();
+        window.ChirpPlayerMount();
+        return { refresh: window.ChirpPlayerMount };
+      }
+    }
+
+    const api = chirpPlayerGlobal();
+
+    if (api?.mount) return api.mount(mount, props);
+    if (api?.render) return api.render(mount, props);
+    if (api?.create) return api.create(mount, props);
+    if (typeof window.mountChirpPlayer === 'function') {
+      return window.mountChirpPlayer(mount, props);
+    }
+    if (typeof window.renderChirpPlayer === 'function') {
+      return window.renderChirpPlayer(mount, props);
+    }
+
+    const Component = api?.Component || window.ChirpPlayerComponent ||
+      (typeof api === 'function' ? api : null);
+
+    if (Component && reactReady() && reactDomReady()) {
+      const root = window.ReactDOM.createRoot(mount);
+      root.render(window.React.createElement(Component, props));
+      return root;
+    }
+
+    return null;
+  }
+
+  async function initChirpPlayers(root = document) {
+    const mounts = [...root.querySelectorAll('.js-chirp-player:not([data-ready="1"]):not([data-ready="loading"])')];
+
+    for (const mount of mounts) {
+      const src = mount.dataset.src || '';
+      if (!src) continue;
+
+      mount.dataset.ready = 'loading';
+
+      const props = {
+        src,
+        poster: mount.dataset.poster || '',
+        kind: mount.dataset.kind || 'video',
+        type: mount.dataset.type || '',
+        aspectRatio: mount.dataset.aspectRatio || '',
+      };
+
+      try {
+        const instance = await mountChirpPlayer(mount, props);
+        if (instance) {
+          mount.__chirpPlayer = instance;
+          mount.dataset.ready = '1';
+          continue;
+        }
+      } catch (error) {
+        console.warn('[Chirp Player] No pude montar ChirpPlayer, uso fallback nativo', error);
+      }
+
+      renderNativePlayerFallback(mount, props);
+      mount.dataset.ready = '1';
+    }
   }
 
   async function uploadChirpMedia(chirpId, file) {
@@ -604,11 +879,16 @@
       const url =
         m.media_url || (await signedOrPublic(m.storage_bucket, m.storage_path));
       if (!url) continue;
-      if (m.media_type === 'video')
+      if (m.media_type === 'video') {
+        const ratio =
+          Number(m.width) > 0 && Number(m.height) > 0
+            ? ` data-aspect-ratio="${esc(`${m.width}:${m.height}`)}"`
+            : '';
+
         out.push(
-          `<div class="chirp-video-wrap"><video class="js-plyr" playsinline preload="metadata"><source src="${esc(url)}"></video></div>`
+          `<div class="chirp-video-wrap"><div class="js-chirp-player chirp-player-root" data-chirp-player data-src="${esc(url)}" data-poster="${esc(m.poster_url || m.thumbnail_url || '')}" data-kind="video" data-type="${esc(m.mime_type || m.content_type || '')}"${ratio}></div></div>`
         );
-      else
+      } else
         out.push(
           `<img class="chirp-photo" src="${esc(url)}" alt="${esc(m.alt_text || 'Foto del Chirp')}" loading="lazy">`
         );
@@ -908,7 +1188,7 @@
       (chirps || []).map((c) => c.id)
     );
     bindActions(container);
-    initPlyr(container);
+    initChirpPlayers(container);
   }
 
   function bindActions(root) {
@@ -1290,7 +1570,7 @@
         chirps.map((c) => c.id)
       );
       bindActions(box);
-      initPlyr(box);
+      initChirpPlayers(box);
     } catch (e) {
       box.innerHTML = empty('No pude filtrar el hashtag', e.message);
     }
