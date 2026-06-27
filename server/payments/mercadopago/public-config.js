@@ -1,6 +1,6 @@
-const { sendJson } = require('../../../api/_utils/http.js');
-const { mpMode, assertMpCredentialPair } = require('../../../api/_utils/mercadopago.js');
-const { getPlan } = require('../../../api/_utils/plans.js');
+const { sendJson } = require('../../_utils/http.js');
+const { mpMode, assertMpCredentialPair } = require('../../_utils/mercadopago.js');
+const { getPlan } = require('../../_utils/plans.js');
 
 module.exports = async function handler(req, res) {
   try {

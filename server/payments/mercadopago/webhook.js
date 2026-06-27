@@ -3,16 +3,16 @@ const {
   findGoldOrderById,
   findGoldOrderByProviderOrder,
   updateGoldOrder,
-} = require('../../../api/_utils/chirpSupabase.js');
-const { sendJson, methodNotAllowed, readJson } = require('../../../api/_utils/http.js');
+} = require('../../_utils/chirpSupabase.js');
+const { sendJson, methodNotAllowed, readJson } = require('../../_utils/http.js');
 const {
   extractMpResourceId,
   extractMpTopic,
   getPayment,
   getPreapproval,
   verifyMpWebhookSignature,
-} = require('../../../api/_utils/mercadopago.js');
-const { getPlan } = require('../../../api/_utils/plans.js');
+} = require('../../_utils/mercadopago.js');
+const { getPlan } = require('../../_utils/plans.js');
 
 function isPaymentTopic(topic = '') {
   return topic.includes('payment') || topic === 'pagos' || topic === 'merchant_order';

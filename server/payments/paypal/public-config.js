@@ -1,6 +1,6 @@
-const { sendJson, methodNotAllowed } = require('../../../api/_utils/http.js');
-const { paypalPlanId } = require('../../../api/_utils/paypal.js');
-const { getPlan, moneyValue } = require('../../../api/_utils/plans.js');
+const { sendJson, methodNotAllowed } = require('../../_utils/http.js');
+const { paypalPlanId } = require('../../_utils/paypal.js');
+const { getPlan, moneyValue } = require('../../_utils/plans.js');
 
 module.exports = async function handler(req, res) {
   try {

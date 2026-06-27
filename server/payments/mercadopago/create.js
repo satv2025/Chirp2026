@@ -1,8 +1,8 @@
-const { getSupabaseUserFromRequest } = require('../../../api/_utils/auth.js');
-const { createGoldOrder, updateGoldOrder } = require('../../../api/_utils/chirpSupabase.js');
-const { sendJson, methodNotAllowed, readJson, siteUrl } = require('../../../api/_utils/http.js');
-const { createPreference } = require('../../../api/_utils/mercadopago.js');
-const { getPlan } = require('../../../api/_utils/plans.js');
+const { getSupabaseUserFromRequest } = require('../../_utils/auth.js');
+const { createGoldOrder, updateGoldOrder } = require('../../_utils/chirpSupabase.js');
+const { sendJson, methodNotAllowed, readJson, siteUrl } = require('../../_utils/http.js');
+const { createPreference } = require('../../_utils/mercadopago.js');
+const { getPlan } = require('../../_utils/plans.js');
 
 module.exports = async function handler(req, res) {
   try {

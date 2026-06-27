@@ -4,10 +4,10 @@ const {
   findGoldOrderByProviderOrder,
   updateGoldOrder,
   setProfileGold,
-} = require('../../../api/_utils/chirpSupabase.js');
-const { sendJson, methodNotAllowed, readJson } = require('../../../api/_utils/http.js');
-const { verifyPaypalWebhook } = require('../../../api/_utils/paypal.js');
-const { getPlan } = require('../../../api/_utils/plans.js');
+} = require('../../_utils/chirpSupabase.js');
+const { sendJson, methodNotAllowed, readJson } = require('../../_utils/http.js');
+const { verifyPaypalWebhook } = require('../../_utils/paypal.js');
+const { getPlan } = require('../../_utils/plans.js');
 
 function normalizedStatus(eventType = '') {
   const type = String(eventType || '').toUpperCase();

@@ -4,7 +4,7 @@ const create = require('../../server/payments/mercadopago/create.js');
 const publicConfig = require('../../server/payments/mercadopago/public-config.js');
 const subscribe = require('../../server/payments/mercadopago/subscribe.js');
 const webhook = require('../../server/payments/mercadopago/webhook.js');
-const { sendJson } = require('../_utils/http.js');
+const { sendJson } = require('../../server/_utils/http.js');
 
 const handlers = {
   checkout,

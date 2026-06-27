@@ -5,7 +5,7 @@ const prepareSubscription = require('../../server/payments/paypal/prepare-subscr
 const publicConfig = require('../../server/payments/paypal/public-config.js');
 const subscribe = require('../../server/payments/paypal/subscribe.js');
 const webhook = require('../../server/payments/paypal/webhook.js');
-const { sendJson } = require('../_utils/http.js');
+const { sendJson } = require('../../server/_utils/http.js');
 
 const handlers = {
   capture,

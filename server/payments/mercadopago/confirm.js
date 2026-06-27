@@ -1,13 +1,13 @@
-const { getSupabaseUserFromRequest } = require('../../../api/_utils/auth.js');
+const { getSupabaseUserFromRequest } = require('../../_utils/auth.js');
 const {
   activateGold,
   findGoldOrderById,
   findGoldOrderByProviderOrder,
   updateGoldOrder,
-} = require('../../../api/_utils/chirpSupabase.js');
-const { sendJson, methodNotAllowed, readJson } = require('../../../api/_utils/http.js');
-const { getPayment, getPreapproval } = require('../../../api/_utils/mercadopago.js');
-const { getPlan } = require('../../../api/_utils/plans.js');
+} = require('../../_utils/chirpSupabase.js');
+const { sendJson, methodNotAllowed, readJson } = require('../../_utils/http.js');
+const { getPayment, getPreapproval } = require('../../_utils/mercadopago.js');
+const { getPlan } = require('../../_utils/plans.js');
 
 function clean(value = '') {
   return String(value || '').trim();
