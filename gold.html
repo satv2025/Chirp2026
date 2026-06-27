@@ -1,56 +1,61 @@
 <!doctype html>
 <html lang="es-AR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chirp Gold · Chirp</title>
-  <link rel="icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/assets/css/base.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
-  <link rel="stylesheet" href="/assets/css/app-shell.css">
-  <link rel="stylesheet" href="/assets/css/responsive.css">
-  <link rel="stylesheet" href="/assets/css/gold.css">
-</head>
-<body data-page="gold" class="gold-page">
-  <main class="gold-shell">
-    <section class="gold-hero card">
-      <a class="gold-back" href="/home.html">← Volver a Chirp</a>
-      <div class="gold-mark">✦</div>
-      <p class="eyebrow">Chirp Gold</p>
-      <h1>Activá Gold y destacá tu perfil.</h1>
-      <p class="gold-lead">Badge Gold, presencia premium y acceso a beneficios exclusivos de Chirp. La activación se confirma desde el backend cuando el proveedor aprueba el pago.</p>
-      <div id="goldStatus" class="gold-status">Revisando tu sesión...</div>
-    </section>
 
-    <section class="gold-grid">
-      <article class="gold-plan card">
-        <span class="gold-pill">Argentina</span>
-        <h2>Gold mensual</h2>
-        <p class="gold-price" data-mp-price>ARS $3.490</p>
-        <p>Pagá con Mercado Pago. Ideal para usuarios de Argentina.</p>
-        <button id="payMercadoPago" class="btn btn-primary gold-btn" type="button">Pagar con Mercado Pago</button>
-        <small class="gold-note">Vas a ser redirigido al checkout seguro.</small>
-      </article>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chirp Gold · Chirp</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/assets/css/base.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/app-shell.css">
+    <link rel="stylesheet" href="/assets/css/responsive.css">
+    <link rel="stylesheet" href="/assets/css/gold.css">
+  </head>
 
-      <article class="gold-plan card">
-        <span class="gold-pill gold-pill-dark">Internacional</span>
-        <h2>Gold mensual</h2>
-        <p class="gold-price" data-paypal-price>USD $4.99</p>
-        <p>Pagá con PayPal. Ideal para usuarios internacionales.</p>
-        <button id="payPayPal" class="btn btn-soft gold-btn" type="button">Pagar con PayPal</button>
-        <small class="gold-note">Después de aprobar, Chirp captura la orden y activa Gold.</small>
-      </article>
-    </section>
+  <body data-page="gold" class="gold-page">
+    <main class="gold-shell">
+      <section class="gold-hero card">
+        <a class="gold-back" href="/home.html">← Volver a Chirp</a>
+        <div class="gold-mark">✦</div>
+        <p class="eyebrow">Chirp Gold</p>
+        <h1>Activá Gold y destacá tu perfil.</h1>
+        <p class="gold-lead">Badge Gold, presencia premium y acceso a beneficios exclusivos de Chirp. La activación se
+          confirma desde el backend cuando el proveedor aprueba el pago.</p>
+        <div id="goldStatus" class="gold-status">Revisando tu sesión...</div>
+      </section>
 
-    <section class="gold-faq card">
-      <h2>Cómo funciona</h2>
-      <p>Chirp crea una orden, el proveedor procesa el pago y un webhook/confirmación del backend activa <strong>is_chirp_gold</strong> y <strong>gold_until</strong> en tu perfil.</p>
-      <p>El frontend nunca activa Gold por sí mismo: solo muestra lo que dice Supabase.</p>
-    </section>
-  </main>
+      <section class="gold-grid">
+        <article class="gold-plan card">
+          <span class="gold-pill">Argentina</span>
+          <h2>Gold mensual</h2>
+          <p class="gold-price" data-mp-price>ARS $3.490</p>
+          <p>Pagá con Mercado Pago. Ideal para usuarios de Argentina.</p>
+          <button id="payMercadoPago" class="btn btn-primary gold-btn" type="button">Pagar con Mercado Pago</button>
+          <small class="gold-note">Vas a ser redirigido al checkout seguro.</small>
+        </article>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/assets/js/config.js"></script>
-  <script src="/assets/js/gold-payments.js"></script>
-</body>
+        <article class="gold-plan card">
+          <span class="gold-pill gold-pill-dark">Internacional</span>
+          <h2>Gold mensual</h2>
+          <p class="gold-price" data-paypal-price>USD $4.99</p>
+          <p>Pagá con PayPal. Ideal para usuarios internacionales.</p>
+          <button id="payPayPal" class="btn btn-soft gold-btn" type="button">Pagar con PayPal</button>
+          <small class="gold-note">Después de aprobar, Chirp captura la orden y activa Gold.</small>
+        </article>
+      </section>
+
+      <section class="gold-faq card">
+        <h2>¿Que beneficios trae?</h2>
+        <p>Te brinda el nivel de verificación más alto de la red social, <strong>"ChirpCheck Gold"</strong>, que,
+          asegura que tu perfil es el único y oficial, además de transformarte en Usuario VIP por tu aporte económico a
+          la red social./p>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/gold-payments.js"></script>
+  </body>
+
 </html>
