@@ -99,7 +99,7 @@
     const currency = plan.currency || 'ARS';
     const moneyLabel = amount
       ? new Intl.NumberFormat('es-AR', { style: 'currency', currency, maximumFractionDigits: 0 }).format(amount)
-      : 'ARS $3.490';
+      : 'ARS $7.560';
     const label = `${moneyLabel} / mes`;
 
     document.querySelectorAll('[data-mp-price]').forEach((node) => {
@@ -227,13 +227,13 @@
       return;
     }
 
-    const amount = String(mpConfig.plan?.amount || 3490);
+    const amount = String(mpConfig.plan?.amount || 7560);
     const publicKey = mpConfig.public_key;
     const mp = new window.MercadoPago(publicKey, { locale: mpConfig.locale || 'es-AR' });
 
     const cardForm = mp.cardForm({
       amount,
-      iframe: true,
+      iframe: false,
       form: {
         id: 'form-checkout',
         cardNumber: {

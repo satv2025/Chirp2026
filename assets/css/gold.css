@@ -697,3 +697,38 @@
 .gold-custom-dropdown.is-open .gold-custom-dropdown__menu {
   pointer-events: auto;
 }
+
+/* === Chirp Gold v7: campos de tarjeta nativos, 100% escribibles === */
+input.gold-secure-field {
+  padding: 0 14px !important;
+  font: inherit !important;
+  font-weight: 800 !important;
+  letter-spacing: .02em;
+  caret-color: #ffd36d;
+  cursor: text !important;
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+input.gold-secure-field::placeholder {
+  color: rgba(255, 255, 255, .42);
+}
+
+input.gold-secure-field:focus {
+  border-color: rgba(255, 216, 107, .72) !important;
+  box-shadow: 0 0 0 4px rgba(255, 216, 107, .12) !important;
+  background: rgba(255, 255, 255, .105) !important;
+}
+
+.gold-secure-field:not(input) iframe,
+.gold-secure-field:not(input) > iframe,
+.gold-secure-field:not(input) > div,
+.gold-secure-field:not(input) > div iframe {
+  width: 100% !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  border: 0 !important;
+  display: block !important;
+  pointer-events: auto !important;
+}

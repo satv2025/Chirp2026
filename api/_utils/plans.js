@@ -8,7 +8,7 @@ const PLANS = {
     durationDays: Number(process.env.CHIRP_GOLD_MONTHLY_DAYS || DEFAULT_MONTHLY_DAYS),
     mercadopago: {
       currency: process.env.MP_GOLD_MONTHLY_CURRENCY || 'ARS',
-      amount: Number(process.env.MP_GOLD_MONTHLY_PRICE || process.env.MP_GOLD_MONTHLY_PRICE_ARS || 3490),
+      amount: Number(process.env.MP_GOLD_MONTHLY_PRICE || process.env.MP_GOLD_MONTHLY_PRICE_ARS || 7560),
     },
     paypal: {
       currency: process.env.PAYPAL_GOLD_MONTHLY_CURRENCY || 'USD',
