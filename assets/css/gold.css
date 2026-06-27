@@ -907,7 +907,10 @@ input.gold-secure-field:focus {
   margin: 8px 0 14px;
 }
 
-#goldCheckout .gold-price:not(.gold-price-small) {
+#goldCheckout
+  .gold-price:not(.gold-payment-panel .gold-price):not(
+    .gold-payment-panel__head .gold-price
+  ) {
   display: none;
 }
 
