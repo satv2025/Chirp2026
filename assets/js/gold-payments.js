@@ -700,6 +700,21 @@
         }, session);
       }
 
+      if (provider === 'mercadopago' || params.get('preapproval_id') || orderId.includes('preapproval_id')) {
+        $('#returnTitle') && ($('#returnTitle').textContent = 'Confirmando suscripción de Mercado Pago...');
+        await postPayment('/api/payments/mercadopago/confirm', {
+          order_id: orderId,
+          preapproval_id: params.get('preapproval_id') || params.get('id') || '',
+          payment_id: params.get('payment_id') || params.get('collection_id') || '',
+          collection_id: params.get('collection_id') || '',
+          preference_id: params.get('preference_id') || '',
+          status: params.get('status') || params.get('collection_status') || result || '',
+          collection_status: params.get('collection_status') || '',
+          external_reference: params.get('external_reference') || '',
+          result,
+        }, session);
+      }
+
       $('#returnTitle') && ($('#returnTitle').textContent = 'Verificando activación...');
       setStatus('Esperando confirmación de ChirpCheck Gold...');
       const profile = await waitForGold(session, provider === 'mercadopago' ? 14 : 8);
