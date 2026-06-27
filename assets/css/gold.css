@@ -922,3 +922,52 @@ input.gold-secure-field:focus {
   color: rgba(255, 255, 255, .82);
   font-weight: 800;
 }
+
+
+/* === Chirp Gold v11: Mercado Pago remaster === */
+.gold-mp-test-hint {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 216, 107, .28);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255, 216, 107, .12), rgba(239, 0, 138, .08));
+  color: rgba(255,255,255,.84);
+  display: grid;
+  gap: 6px;
+  font-size: .9rem;
+}
+
+.gold-mp-test-hint[hidden] {
+  display: none !important;
+}
+
+.gold-mp-test-hint strong {
+  color: #ffd86b;
+  font-weight: 950;
+}
+
+.gold-card-form[data-mp-mode="test"] .gold-payment-panel__head,
+body[data-mp-mode="test"] #goldArgentinaPayment .gold-payment-panel__head {
+  border-color: rgba(255, 216, 107, .24);
+}
+
+.gold-field input.is-invalid,
+.gold-secure-field.is-invalid,
+.gold-custom-dropdown__button.is-invalid {
+  border-color: rgba(255, 82, 132, .82) !important;
+  box-shadow: 0 0 0 4px rgba(255, 82, 132, .14) !important;
+}
+
+/* === Chirp Gold v12: Mercado Pago checkout oficial === */
+.gold-mp-redirect-card .gold-summary-box {
+  margin-top: 18px;
+}
+
+.gold-mp-redirect-card .gold-field {
+  margin-top: 14px;
+}
+
+#mpCheckoutButton[disabled] {
+  opacity: .68;
+  cursor: wait;
+}

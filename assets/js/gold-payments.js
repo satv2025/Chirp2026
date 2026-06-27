@@ -27,11 +27,14 @@
   function setLoading(isLoading, message = '') {
     const form = $('#form-checkout');
     const submit = $('#form-checkout__submit');
+    const mpCheckoutButton = $('#mpCheckoutButton');
     const progress = $('#goldProgress');
 
     form?.classList.toggle('is-loading', Boolean(isLoading));
+    $('#mpRedirectCheckout')?.classList.toggle('is-loading', Boolean(isLoading));
     progress?.classList.toggle('is-loading', Boolean(isLoading));
     if (submit) submit.disabled = Boolean(isLoading);
+    if (mpCheckoutButton) mpCheckoutButton.disabled = Boolean(isLoading);
     if (message) setStatus(message);
   }
 
@@ -222,6 +225,85 @@
     });
   }
 
+  function initMpModeHint(mpConfig) {
+    const mode = mpConfig?.mode || (String(mpConfig?.public_key || '').startsWith('TEST-') ? 'test' : 'live');
+    document.body.dataset.mpMode = mode;
+    $('#form-checkout')?.setAttribute('data-mp-mode', mode);
+    $('#mpRedirectCheckout')?.setAttribute('data-mp-mode', mode);
+    const hint = $('#mpTestHint');
+    if (hint) hint.hidden = mode !== 'test';
+  }
+
+  function flattenErrorDetails(details) {
+    if (!details) return '';
+    if (typeof details === 'string') return details;
+    try {
+      return JSON.stringify(details);
+    } catch (_error) {
+      return String(details);
+    }
+  }
+
+  function humanizePaymentError(error) {
+    const raw = [error?.message || '', flattenErrorDetails(error?.details)].join(' ');
+    const text = raw.toLowerCase();
+
+    if (raw.includes('CC_VAL_433') || text.includes('credit card validation')) {
+      return 'La tarjeta no pasó la validación de Mercado Pago. En prueba usá una tarjeta TEST válida, vencimiento futuro, CVV correcto, nombre y documento del comprador de prueba.';
+    }
+
+    if (text.includes('card_token') || text.includes('token')) {
+      return 'No se pudo generar o usar el token seguro de la tarjeta. Revisá número, vencimiento, CVV y que la Public Key corresponda al mismo ambiente que el Access Token.';
+    }
+
+    if (text.includes('unauthorized') || text.includes('invalid access token') || text.includes('401')) {
+      return 'Mercado Pago rechazó las credenciales. Revisá que MERCADOPAGO_PUBLIC_KEY y MERCADOPAGO_ACCESS_TOKEN sean ambos TEST o ambos producción.';
+    }
+
+    if (text.includes('payer_email')) {
+      return 'Falta o es inválido el email del pagador.';
+    }
+
+    return error?.message || 'Mercado Pago no pudo crear la suscripción.';
+  }
+
+  function resetInvalidFields(root = document) {
+    root.querySelectorAll('.is-invalid').forEach((node) => node.classList.remove('is-invalid'));
+  }
+
+  function markInvalid(selector) {
+    const node = $(selector);
+    node?.classList.add('is-invalid');
+    return node;
+  }
+
+  function validateMpVisibleFields() {
+    resetInvalidFields($('#form-checkout') || document);
+
+    const required = [
+      ['#form-checkout__cardNumber', 'Completá el número de tarjeta.'],
+      ['#form-checkout__expirationDate', 'Completá el vencimiento.'],
+      ['#form-checkout__securityCode', 'Completá el código de seguridad.'],
+      ['#form-checkout__cardholderName', 'Completá el titular de la tarjeta.'],
+      ['#form-checkout__cardholderEmail', 'Completá el email del pagador.'],
+      ['#form-checkout__identificationNumber', 'Completá el número de documento.'],
+    ];
+
+    for (const [selector, message] of required) {
+      const node = $(selector);
+      if (!String(node?.value || '').trim()) {
+        markInvalid(selector)?.focus?.({ preventScroll: false });
+        throw new Error(message);
+      }
+    }
+
+    const email = $('#form-checkout__cardholderEmail')?.value || '';
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      markInvalid('#form-checkout__cardholderEmail')?.focus?.({ preventScroll: false });
+      throw new Error('El email del pagador no parece válido.');
+    }
+  }
+
 
   function setGoldActiveUi(profile) {
     const active = isGoldActive(profile);
@@ -383,10 +465,10 @@
   function bindGoldCtas() {
     document.querySelectorAll('[data-gold-scroll]').forEach((button) => {
       button.addEventListener('click', () => {
-        const checkout = $('#goldCheckout') || $('#form-checkout');
+        const checkout = $('#goldCheckout') || $('#mpRedirectCheckout') || $('#form-checkout');
         checkout?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         window.setTimeout(() => {
-          $('#form-checkout__cardholderName')?.focus({ preventScroll: true });
+          ($('#mpCheckoutButton') || $('#form-checkout__cardholderName'))?.focus({ preventScroll: true });
         }, 450);
       });
     });
@@ -395,7 +477,51 @@
   function prefillEmail(session) {
     const email = session?.user?.email || '';
     const input = $('#form-checkout__cardholderEmail');
+    const mpInput = $('#mpCheckoutEmail');
     if (input && !input.value) input.value = email;
+    if (mpInput && !mpInput.value) mpInput.value = email;
+  }
+
+
+  function initMercadoPagoHostedCheckout(mpConfig, session) {
+    const button = $('#mpCheckoutButton');
+    if (!button || button.dataset.ready === 'true') return;
+
+    button.dataset.ready = 'true';
+    initMpModeHint(mpConfig);
+
+    const input = $('#mpCheckoutEmail');
+    if (input && !input.value) input.value = session?.user?.email || '';
+
+    button.addEventListener('click', async () => {
+      const payerEmail = String(input?.value || session?.user?.email || '').trim();
+      if (!/^\S+@\S+\.\S+$/.test(payerEmail)) {
+        input?.classList.add('is-invalid');
+        input?.focus?.({ preventScroll: false });
+        setStatus('Completá un email válido para abrir Mercado Pago.', 'error');
+        return;
+      }
+
+      input?.classList.remove('is-invalid');
+      setLoading(true, 'Creando link seguro de Mercado Pago...');
+
+      try {
+        const data = await postPayment('/api/payments/mercadopago/checkout', {
+          plan_id: 'gold_monthly',
+          payer_email: payerEmail,
+        }, session);
+
+        const url = data.init_point || data.checkout_url || data.sandbox_init_point || '';
+        if (!url) throw new Error('Mercado Pago no devolvió un link de checkout.');
+
+        setStatus('Redirigiendo al checkout oficial de Mercado Pago...');
+        window.location.href = url;
+      } catch (error) {
+        console.error('[Chirp Gold MP checkout]', error);
+        setStatus(humanizePaymentError(error), 'error');
+        setLoading(false);
+      }
+    });
   }
 
   function initMercadoPagoCardForm(mpConfig, session) {
@@ -409,6 +535,7 @@
 
     const amount = String(mpConfig.plan?.amount || 7560);
     const publicKey = mpConfig.public_key;
+    initMpModeHint(mpConfig);
     const mp = new window.MercadoPago(publicKey, { locale: mpConfig.locale || 'es-AR' });
 
     const cardForm = mp.cardForm({
@@ -465,6 +592,12 @@
         },
         onSubmit: async (event) => {
           event.preventDefault();
+          try {
+            validateMpVisibleFields();
+          } catch (error) {
+            setStatus(error.message, 'error');
+            return;
+          }
           setLoading(true, 'Tokenizando tarjeta de forma segura...');
 
           try {
@@ -499,7 +632,7 @@
             }
           } catch (error) {
             console.error('[Chirp Gold MP]', error);
-            setStatus(error.message || 'No pude activar ChirpCheck Gold.', 'error');
+            setStatus(humanizePaymentError(error), 'error');
           } finally {
             setLoading(false);
           }
@@ -533,14 +666,13 @@
       setStatus(`Ya sos ChirpCheck Gold. ${goldUntilLabel(profile)}`, 'ok');
       return;
     }
-    setStatus('Tu cuenta todavía no tiene Gold activo. Completá el formulario para activar autopago mensual.');
+    setStatus('Tu cuenta todavía no tiene Gold activo. Elegí método y continuá al checkout oficial.')
 
     try {
       const mpConfig = await getMpConfig();
       updatePriceLabels(mpConfig);
-      initCustomDropdowns();
       initPaymentRegionDropdown();
-      initMercadoPagoCardForm(mpConfig, session);
+      initMercadoPagoHostedCheckout(mpConfig, session);
     } catch (error) {
       console.error(error);
       setStatus(error.message || 'No pude cargar el módulo de pago.', 'error');

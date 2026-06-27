@@ -2,27 +2,48 @@ const crypto = require('node:crypto');
 const { getSupabaseUserFromRequest } = require('../../_utils/auth.js');
 const { createGoldOrder, updateGoldOrder, activateGold } = require('../../_utils/chirpSupabase.js');
 const { sendJson, methodNotAllowed, readJson, siteUrl } = require('../../_utils/http.js');
-const { createPreapproval } = require('../../_utils/mercadopago.js');
+const { createPreapproval, mpMode, assertMpCredentialPair } = require('../../_utils/mercadopago.js');
 const { getPlan } = require('../../_utils/plans.js');
 
 function isoNowPlusMinutes(minutes = 2) {
   return new Date(Date.now() + minutes * 60 * 1000).toISOString();
 }
 
+function safeMpDetails(error) {
+  const details = error.details || null;
+  if (!details) return null;
+  return details;
+}
+
+function mpFriendlyMessage(error) {
+  const raw = JSON.stringify(error.details || {}) + ' ' + (error.message || '');
+  if (raw.includes('CC_VAL_433')) {
+    return 'La tarjeta no pasó la validación de Mercado Pago. En modo prueba usá una tarjeta TEST válida, vencimiento futuro, CVV correcto y documento del comprador de prueba.';
+  }
+  if (/invalid.*access|unauthorized|401/i.test(raw)) {
+    return 'Mercado Pago rechazó las credenciales. Revisá que Public Key y Access Token sean ambos TEST o ambos producción.';
+  }
+  if (/card_token/i.test(raw)) {
+    return 'Mercado Pago rechazó el token de tarjeta. Generá el token con la Public Key del mismo ambiente que el Access Token.';
+  }
+  return error.message || 'No pude crear la suscripción en Mercado Pago.';
+}
+
 module.exports = async function handler(req, res) {
   try {
     if (req.method !== 'POST') return methodNotAllowed(res, 'POST');
 
+    assertMpCredentialPair();
     const user = await getSupabaseUserFromRequest(req);
     const body = readJson(req);
     const plan = getPlan(body.plan_id || 'gold_monthly');
 
-    const cardTokenId = body.card_token_id || body.token || '';
+    const cardTokenId = String(body.card_token_id || body.token || '').trim();
     if (!cardTokenId) {
       return sendJson(res, { error: 'Falta el token seguro de tarjeta.' }, 400);
     }
 
-    const payerEmail = body.payer_email || body.email || user.email || '';
+    const payerEmail = String(body.payer_email || body.email || user.email || '').trim();
     if (!payerEmail) {
       return sendJson(res, { error: 'Falta email del pagador.' }, 400);
     }
@@ -42,8 +63,10 @@ module.exports = async function handler(req, res) {
     });
 
     const base = siteUrl();
+    const preapprovalPlanId = String(process.env.MP_PREAPPROVAL_PLAN_ID || '').trim();
     const payload = {
-      reason: plan.name || 'Chirp Gold mensual',
+      ...(preapprovalPlanId ? { preapproval_plan_id: preapprovalPlanId } : {}),
+      reason: plan.name || 'ChirpCheck Gold mensual',
       external_reference: order.id,
       payer_email: payerEmail,
       card_token_id: cardTokenId,
@@ -59,17 +82,39 @@ module.exports = async function handler(req, res) {
     };
 
     const idempotencyKey = crypto.randomUUID();
-    const preapproval = await createPreapproval(payload, idempotencyKey);
+    let preapproval;
+    try {
+      preapproval = await createPreapproval(payload, idempotencyKey);
+    } catch (error) {
+      await updateGoldOrder(order.id, {
+        status: 'failed',
+        raw: {
+          mercadopago_error: safeMpDetails(error),
+          mercadopago_message: error.message || null,
+          preapproval_payload_safe: {
+            ...payload,
+            card_token_id: '[redacted]',
+          },
+        },
+      });
+      return sendJson(res, {
+        error: mpFriendlyMessage(error),
+        details: safeMpDetails(error),
+      }, error.statusCode || 500);
+    }
+
     const preapprovalId = preapproval?.id || preapproval?.preapproval_id || '';
-    const status = preapproval?.status || 'authorized';
+    const status = String(preapproval?.status || 'authorized').toLowerCase();
 
     await updateGoldOrder(order.id, {
       provider_order_id: preapprovalId || null,
+      provider_subscription_id: preapprovalId || null,
       external_reference: order.id,
       checkout_url: preapproval?.init_point || null,
       status,
       raw: {
         create_preapproval: preapproval,
+        mercadopago_mode: mpMode(),
         preapproval_payload_safe: {
           ...payload,
           card_token_id: '[redacted]',
@@ -77,9 +122,10 @@ module.exports = async function handler(req, res) {
       },
     });
 
-    // En suscripciones autorizadas, Mercado Pago valida la tarjeta y el primer cobro puede demorar.
-    // Chirp activa el primer período inmediatamente; los pagos mensuales futuros renuevan por webhook.
-    if (String(status).toLowerCase() === 'authorized' || String(status).toLowerCase() === 'pending') {
+    // Mercado Pago valida la tarjeta al crear la suscripción. La primera cuota puede entrar unos minutos después.
+    // Para que Chirp se sienta instantáneo, activamos el primer período cuando la suscripción queda authorized/pending.
+    const canActivateNow = ['authorized', 'pending'].includes(status);
+    if (canActivateNow) {
       await activateGold({
         orderId: order.id,
         userId: user.id,
@@ -87,17 +133,18 @@ module.exports = async function handler(req, res) {
         providerPaymentId: preapprovalId ? `preapproval:${preapprovalId}:start` : `preapproval:${order.id}:start`,
         providerOrderId: preapprovalId || order.id,
         status: 'approved',
-        raw: { mercadopago_preapproval: preapproval },
+        raw: { mercadopago_preapproval: preapproval, mercadopago_mode: mpMode() },
       });
     }
 
     return sendJson(res, {
       ok: true,
       provider: 'mercadopago',
+      mode: mpMode(),
       order_id: order.id,
       preapproval_id: preapprovalId,
       status,
-      gold_activated: String(status).toLowerCase() === 'authorized' || String(status).toLowerCase() === 'pending',
+      gold_activated: canActivateNow,
     });
   } catch (error) {
     console.error('[Chirp Gold MP subscribe]', error);

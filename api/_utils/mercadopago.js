@@ -5,12 +5,41 @@ const MP_BASE = 'https://api.mercadopago.com';
 
 function mpAccessToken() {
   requireEnv(['MERCADOPAGO_ACCESS_TOKEN']);
+  assertMpCredentialPair();
   return process.env.MERCADOPAGO_ACCESS_TOKEN;
 }
 
 function mpPublicKey() {
   requireEnv(['MERCADOPAGO_PUBLIC_KEY']);
   return process.env.MERCADOPAGO_PUBLIC_KEY;
+}
+
+function mpMode() {
+  const token = process.env.MERCADOPAGO_ACCESS_TOKEN || '';
+  const key = process.env.MERCADOPAGO_PUBLIC_KEY || '';
+  return token.startsWith('TEST-') || key.startsWith('TEST-') ? 'test' : 'live';
+}
+
+function assertMpCredentialPair() {
+  const token = process.env.MERCADOPAGO_ACCESS_TOKEN || '';
+  const key = process.env.MERCADOPAGO_PUBLIC_KEY || '';
+  if (!token || !key) return;
+  const tokenTest = token.startsWith('TEST-');
+  const keyTest = key.startsWith('TEST-');
+  const tokenLive = token.startsWith('APP_USR-');
+  const keyLive = key.startsWith('APP_USR-');
+
+  if (tokenTest !== keyTest && (tokenTest || keyTest)) {
+    const err = new Error('MERCADOPAGO_PUBLIC_KEY y MERCADOPAGO_ACCESS_TOKEN no son del mismo ambiente. Usá ambos TEST o ambos producción.');
+    err.statusCode = 500;
+    throw err;
+  }
+
+  if ((tokenLive && !keyLive) || (keyLive && !tokenLive)) {
+    const err = new Error('Credenciales Mercado Pago mezcladas. En producción, Public Key y Access Token empiezan con APP_USR-.');
+    err.statusCode = 500;
+    throw err;
+  }
 }
 
 async function mpFetch(path, options = {}) {
@@ -131,6 +160,8 @@ function verifyMpWebhookSignature(req, resourceId = '') {
 
 module.exports = {
   mpPublicKey,
+  mpMode,
+  assertMpCredentialPair,
   createPreference,
   createPreapproval,
   getPreapproval,

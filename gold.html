@@ -94,7 +94,7 @@
         <h2>Comprar ChirpCheck Gold</h2>
         <p class="gold-price" data-mp-price>ARS $7.560 <span>/ mes</span></p>
         <p class="gold-plan-text">
-          Suscripción mensual con autopago. Elegí si comprás desde Argentina o desde otro país y Chirp te muestra el formulario correspondiente.
+          Suscripción mensual con autopago. Elegí si comprás desde Argentina o desde otro país y Chirp te lleva al checkout correspondiente.
         </p>
 
         <div class="gold-summary-box">
@@ -124,11 +124,11 @@
             <div class="gold-region-dropdown__menu" role="listbox" aria-label="Elegir región de compra">
               <button class="gold-region-dropdown__item is-selected" type="button" role="option" data-region="argentina" data-label="Argentina" data-sublabel="ARS · autopago mensual" aria-selected="true">
                 <strong>Argentina</strong>
-                <span>Formulario en pesos argentinos</span>
+                <span>Checkout oficial de Mercado Pago</span>
               </button>
               <button class="gold-region-dropdown__item" type="button" role="option" data-region="internacional" data-label="Internacional" data-sublabel="USD · autopago mensual" aria-selected="false">
                 <strong>Internacional</strong>
-                <span>Formulario internacional en dólares</span>
+                <span>Checkout internacional en dólares</span>
               </button>
             </div>
           </div>
@@ -140,81 +140,43 @@
             <p class="gold-price" data-mp-price>ARS $7.560 <span>/ mes</span></p>
           </div>
 
-          <form id="form-checkout" class="gold-card-form" autocomplete="off">
-          <h3>Datos de pago</h3>
-          <p class="gold-form-intro">
-            Los campos de tarjeta son seguros. Chirp no ve ni guarda tu número de tarjeta.
-          </p>
+          <div id="mpRedirectCheckout" class="gold-card-form gold-mp-redirect-card" data-mp-mode="live">
+            <h3>Mercado Pago</h3>
+            <p class="gold-form-intro">
+              Vas a salir al checkout oficial de Mercado Pago para completar la suscripción mensual. Chirp no ve ni guarda tus datos de pago.
+            </p>
 
-          <div class="gold-form-grid">
-            <div class="gold-field gold-field-full">
-              <span>Número de tarjeta</span>
-              <input id="form-checkout__cardNumber" class="gold-secure-field" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="Número de tarjeta" required>
-            </div>
-
-            <div class="gold-field">
-              <span>Vencimiento</span>
-              <input id="form-checkout__expirationDate" class="gold-secure-field" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" required>
-            </div>
-
-            <div class="gold-field">
-              <span>Código de seguridad</span>
-              <input id="form-checkout__securityCode" class="gold-secure-field" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="Código" required>
+            <div class="gold-summary-box gold-summary-box-two">
+              <div>
+                <span>Producto</span>
+                <strong>ChirpCheck Gold</strong>
+              </div>
+              <div>
+                <span>Renovación</span>
+                <strong data-mp-price>ARS $7.560 <span>/ mes</span></strong>
+              </div>
             </div>
 
             <label class="gold-field gold-field-full">
-              <span>Titular de la tarjeta</span>
-              <input id="form-checkout__cardholderName" type="text" placeholder="Nombre como figura en la tarjeta" required>
+              <span>Email del comprador</span>
+              <input id="mpCheckoutEmail" type="email" placeholder="tu@email.com" autocomplete="email" required>
             </label>
 
-            <label class="gold-field gold-field-full">
-              <span>Email del pagador</span>
-              <input id="form-checkout__cardholderEmail" type="email" placeholder="tu@email.com" required>
-            </label>
+            <button id="mpCheckoutButton" class="btn btn-primary gold-btn" type="button">
+              Continuar en Mercado Pago
+            </button>
 
-            <label class="gold-field">
-              <span>Tipo de documento</span>
-              <select id="form-checkout__identificationType" class="gold-native-select" required aria-hidden="true" tabindex="-1"></select>
-              <div class="gold-custom-dropdown" data-gold-select="#form-checkout__identificationType" data-placeholder="Elegí el tipo">
-                <button class="gold-custom-dropdown__button" type="button"><span data-gold-dropdown-label>Elegí el tipo</span></button>
-                <div class="gold-custom-dropdown__menu" role="listbox"></div>
-              </div>
-            </label>
+            <progress id="goldProgress" class="gold-progress" value="0">Cargando...</progress>
 
-            <label class="gold-field">
-              <span>Número de documento</span>
-              <input id="form-checkout__identificationNumber" type="text" placeholder="DNI" required>
-            </label>
+            <div id="mpTestHint" class="gold-mp-test-hint" hidden>
+              <strong>Modo prueba de Mercado Pago activo</strong>
+              <span>Vas a abrir el checkout de prueba de Mercado Pago. Usá comprador y medios de pago de prueba.</span>
+            </div>
 
-            <label class="gold-field gold-field-full gold-field-muted">
-              <span>Banco emisor</span>
-              <select id="form-checkout__issuer" class="gold-native-select" aria-hidden="true" tabindex="-1"></select>
-              <div class="gold-custom-dropdown" data-gold-select="#form-checkout__issuer" data-placeholder="Banco emisor">
-                <button class="gold-custom-dropdown__button" type="button"><span data-gold-dropdown-label>Banco emisor</span></button>
-                <div class="gold-custom-dropdown__menu" role="listbox"></div>
-              </div>
-            </label>
-
-            <label class="gold-field gold-field-full gold-field-muted">
-              <span>Cuotas</span>
-              <select id="form-checkout__installments" class="gold-native-select" aria-hidden="true" tabindex="-1"></select>
-              <div class="gold-custom-dropdown" data-gold-select="#form-checkout__installments" data-placeholder="Cuotas">
-                <button class="gold-custom-dropdown__button" type="button"><span data-gold-dropdown-label>Cuotas</span></button>
-                <div class="gold-custom-dropdown__menu" role="listbox"></div>
-              </div>
-            </label>
+            <small class="gold-note">
+              Mercado Pago te va a mostrar sus medios disponibles en Argentina, como dinero en cuenta, tarjetas u opciones habilitadas por la plataforma. Al confirmar, autorizás el autopago mensual.
+            </small>
           </div>
-
-          <button id="form-checkout__submit" class="btn btn-primary gold-btn" type="submit">
-            Confirmar compra de ChirpCheck Gold
-          </button>
-
-          <progress id="goldProgress" class="gold-progress" value="0">Cargando...</progress>
-
-          <small class="gold-note">
-            Al continuar, autorizás el cobro mensual de ChirpCheck Gold. Podés cancelar la suscripción más adelante desde los medios disponibles en Chirp.
-          </small>
-          </form>
         </div>
 
         <div id="goldInternationalPayment" class="gold-payment-panel" data-gold-payment-panel="internacional">
@@ -295,7 +257,6 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://sdk.mercadopago.com/js/v2"></script>
   <script src="/assets/js/config.js"></script>
   <script src="/assets/js/gold-payments.js"></script>
 </body>

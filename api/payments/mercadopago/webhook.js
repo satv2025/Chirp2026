@@ -31,10 +31,11 @@ function daysLeft(until) {
 async function handlePayment({ resourceId, body }) {
   const payment = await getPayment(resourceId);
   const orderId = payment?.metadata?.chirp_order_id || payment?.external_reference || '';
-  if (!orderId) return { ok: true, ignored: 'missing_chirp_order_id' };
+  const preapprovalId = payment?.preapproval_id || payment?.metadata?.preapproval_id || payment?.subscription_id || '';
 
-  const order = await findGoldOrderById(orderId);
-  if (!order) return { ok: true, ignored: 'order_not_found' };
+  let order = orderId ? await findGoldOrderById(orderId) : null;
+  if (!order && preapprovalId) order = await findGoldOrderByProviderOrder('mercadopago', preapprovalId);
+  if (!order) return { ok: true, ignored: orderId ? 'order_not_found' : 'missing_chirp_order_id' };
 
   const status = payment.status || 'unknown';
   const providerPaymentId = String(payment.id || resourceId);
@@ -52,7 +53,7 @@ async function handlePayment({ resourceId, body }) {
       await updateGoldOrder(order.id, {
         status: 'approved',
         provider_payment_id: providerPaymentId,
-        provider_order_id: order.provider_order_id || payment.order?.id || null,
+        provider_order_id: order.provider_order_id || preapprovalId || payment.order?.id || null,
         raw: {
           ...(order.raw || {}),
           mercadopago_last_payment: payment,
@@ -69,7 +70,7 @@ async function handlePayment({ resourceId, body }) {
       userId: order.user_id,
       days: plan.durationDays,
       providerPaymentId,
-      providerOrderId: order.provider_order_id || payment.order?.id || resourceId,
+      providerOrderId: order.provider_order_id || preapprovalId || payment.order?.id || resourceId,
       status: 'approved',
       raw: { mercadopago_payment: payment, mercadopago_webhook: body },
     });
