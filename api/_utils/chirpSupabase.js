@@ -74,8 +74,10 @@ async function findGoldOrderById(orderId) {
 }
 
 async function findGoldOrderByProviderOrder(provider, providerOrderId) {
+  const encodedProvider = encodeURIComponent(provider);
+  const encodedValue = encodeURIComponent(providerOrderId);
   const rows = await supabaseRest(
-    `chirp_gold_orders?provider=eq.${encodeURIComponent(provider)}&provider_order_id=eq.${encodeURIComponent(providerOrderId)}&select=*`,
+    `chirp_gold_orders?provider=eq.${encodedProvider}&or=(provider_order_id.eq.${encodedValue},provider_subscription_id.eq.${encodedValue})&select=*`,
     { method: 'GET' }
   );
 

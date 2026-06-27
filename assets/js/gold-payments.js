@@ -199,6 +199,76 @@
     });
   }
 
+  function setPaymentRegion(region) {
+    const normalized = region === 'internacional' ? 'internacional' : 'argentina';
+    const input = $('#goldPaymentRegion');
+    if (input) input.value = normalized;
+
+    document.body.dataset.goldPaymentRegion = normalized;
+
+    document.querySelectorAll('[data-gold-payment-panel]').forEach((panel) => {
+      const active = panel.dataset.goldPaymentPanel === normalized;
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+    });
+
+    const pill = $('#goldRegionPill');
+    if (pill) {
+      pill.textContent = normalized === 'internacional'
+        ? 'Internacional · Autopago mensual'
+        : 'Argentina · Autopago mensual';
+    }
+
+    const checkout = $('#goldCheckout');
+    checkout?.classList.toggle('is-international-mode', normalized === 'internacional');
+  }
+
+  function initPaymentRegionDropdown() {
+    const drop = $('[data-gold-region-dropdown]');
+    if (!drop) {
+      setPaymentRegion('argentina');
+      return;
+    }
+
+    if (drop.dataset.ready !== 'true') {
+      drop.dataset.ready = 'true';
+      const button = drop.querySelector('.gold-region-dropdown__button');
+      const label = drop.querySelector('[data-gold-region-label]');
+      const sublabel = drop.querySelector('[data-gold-region-sublabel]');
+
+      button?.addEventListener('click', () => {
+        const isOpen = drop.classList.toggle('is-open');
+        button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      drop.querySelectorAll('[data-region]').forEach((item) => {
+        item.addEventListener('click', () => {
+          const region = item.dataset.region || 'argentina';
+          drop.querySelectorAll('[data-region]').forEach((other) => {
+            const selected = other === item;
+            other.classList.toggle('is-selected', selected);
+            other.setAttribute('aria-selected', selected ? 'true' : 'false');
+          });
+          if (label) label.textContent = item.dataset.label || item.textContent.trim();
+          if (sublabel) sublabel.textContent = item.dataset.sublabel || '';
+          drop.classList.remove('is-open');
+          button?.setAttribute('aria-expanded', 'false');
+          setPaymentRegion(region);
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!drop.contains(event.target)) {
+          drop.classList.remove('is-open');
+          button?.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    const initial = $('#goldPaymentRegion')?.value || 'argentina';
+    setPaymentRegion(initial);
+  }
+
 
   function bindGoldCtas() {
     document.querySelectorAll('[data-gold-scroll]').forEach((button) => {
@@ -348,6 +418,7 @@
 
     const profile = await fetchProfile(session.user.id);
     setGoldActiveUi(profile);
+    initPaymentRegionDropdown();
     if (isGoldActive(profile)) {
       setStatus(`Ya sos ChirpCheck Gold. ${goldUntilLabel(profile)}`, 'ok');
       return;
@@ -358,6 +429,7 @@
       const mpConfig = await getMpConfig();
       updatePriceLabels(mpConfig);
       initCustomDropdowns();
+      initPaymentRegionDropdown();
       initMercadoPagoCardForm(mpConfig, session);
     } catch (error) {
       console.error(error);
@@ -367,14 +439,14 @@
     $('#payPayPal')?.addEventListener('click', async (event) => {
       const btn = event.currentTarget;
       btn.disabled = true;
-      setStatus('Creando orden de PayPal...');
+      setStatus('Creando suscripción de PayPal...');
       try {
-        const data = await postPayment('/api/payments/paypal/create', { plan_id: 'gold_monthly' }, session);
-        if (!data.approve_url) throw new Error('PayPal no devolvió URL de aprobación.');
+        const data = await postPayment('/api/payments/paypal/subscribe', { plan_id: 'gold_monthly' }, session);
+        if (!data.approve_url) throw new Error('PayPal no devolvió URL de aprobación para la suscripción.');
         location.href = data.approve_url;
       } catch (error) {
         console.error(error);
-        setStatus(error.message || 'No pude iniciar PayPal.', 'error');
+        setStatus(error.message || 'No pude iniciar la suscripción de PayPal.', 'error');
         btn.disabled = false;
       }
     });
@@ -407,10 +479,10 @@
 
     try {
       if (provider === 'paypal') {
-        $('#returnTitle') && ($('#returnTitle').textContent = 'Capturando pago de PayPal...');
-        await postPayment('/api/payments/paypal/capture', {
+        $('#returnTitle') && ($('#returnTitle').textContent = 'Confirmando suscripción de PayPal...');
+        await postPayment('/api/payments/paypal/confirm-subscription', {
           order_id: orderId,
-          paypal_order_id: token,
+          subscription_id: params.get('subscription_id') || params.get('ba_token') || token,
           token,
         }, session);
       }
@@ -439,6 +511,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     bindGoldCtas();
     initCustomDropdowns();
+    initPaymentRegionDropdown();
 
     if (!CFG || !window.supabase || !sb) {
       setStatus('Falta cargar config.js o Supabase.', 'error');

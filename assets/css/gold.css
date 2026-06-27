@@ -1,8 +1,16 @@
 .gold-page {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 18% 8%, rgba(255, 216, 107, .24), transparent 28rem),
-    radial-gradient(circle at 88% 18%, rgba(255, 74, 170, .18), transparent 24rem),
+    radial-gradient(
+      circle at 18% 8%,
+      rgba(255, 216, 107, 0.24),
+      transparent 28rem
+    ),
+    radial-gradient(
+      circle at 88% 18%,
+      rgba(255, 74, 170, 0.18),
+      transparent 24rem
+    ),
     linear-gradient(135deg, #100710, #24101f 48%, #070307);
   color: #fff;
 }
@@ -17,9 +25,9 @@
 .gold-plan,
 .gold-benefit,
 .gold-faq {
-  border: 1px solid rgba(255, 255, 255, .12);
-  background: rgba(16, 10, 16, .74);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, .3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(16, 10, 16, 0.74);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(18px);
 }
 
@@ -30,14 +38,14 @@
 }
 
 .gold-hero::after {
-  content: "";
+  content: '';
   position: absolute;
   right: -140px;
   top: -160px;
   width: 420px;
   height: 420px;
   border-radius: 999px;
-  background: rgba(255, 216, 107, .12);
+  background: rgba(255, 216, 107, 0.12);
   filter: blur(8px);
   pointer-events: none;
 }
@@ -54,7 +62,7 @@
 
 .gold-back {
   display: inline-flex;
-  color: rgba(255, 255, 255, .78);
+  color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
   font-weight: 800;
 }
@@ -72,12 +80,12 @@
   padding: 7px 12px;
   border-radius: 999px;
   font-weight: 900;
-  font-size: .78rem;
+  font-size: 0.78rem;
 }
 
 .gold-secure-chip {
-  background: rgba(255, 255, 255, .09);
-  color: rgba(255, 255, 255, .82);
+  background: rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .gold-hero-layout {
@@ -99,29 +107,29 @@
   color: #2d1700;
   font-size: 42px;
   font-weight: 900;
-  box-shadow: 0 18px 38px rgba(216, 155, 23, .38);
+  box-shadow: 0 18px 38px rgba(216, 155, 23, 0.38);
 }
 
 .eyebrow {
   margin: 24px 0 8px;
   text-transform: uppercase;
-  letter-spacing: .16em;
+  letter-spacing: 0.16em;
   color: #ffd86b;
   font-weight: 900;
-  font-size: .76rem;
+  font-size: 0.76rem;
 }
 
 .gold-hero h1 {
   margin: 0;
   max-width: 760px;
   font-size: clamp(2.35rem, 6vw, 5.2rem);
-  line-height: .94;
-  letter-spacing: -.055em;
+  line-height: 0.94;
+  letter-spacing: -0.055em;
 }
 
 .gold-lead {
   max-width: 760px;
-  color: rgba(255, 255, 255, .76);
+  color: rgba(255, 255, 255, 0.76);
   font-size: 1.08rem;
   line-height: 1.55;
 }
@@ -139,37 +147,43 @@
 }
 
 .gold-main-cta {
-  box-shadow: 0 18px 36px rgba(216, 155, 23, .24);
+  box-shadow: 0 18px 36px rgba(216, 155, 23, 0.24);
 }
 
 .gold-status {
   margin-top: 22px;
   padding: 14px 16px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, .08);
-  color: rgba(255, 255, 255, .84);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.84);
   font-weight: 800;
 }
 
 .gold-status.is-ok {
-  background: rgba(44, 204, 113, .18);
+  background: rgba(44, 204, 113, 0.18);
   color: #bfffd7;
 }
 
 .gold-status.is-error {
-  background: rgba(255, 80, 90, .18);
+  background: rgba(255, 80, 90, 0.18);
   color: #ffc2c6;
 }
 
 .gold-preview-card {
   position: relative;
-  border: 1px solid rgba(255, 216, 107, .22);
+  border: 1px solid rgba(255, 216, 107, 0.22);
   border-radius: 30px;
   padding: 22px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .055)),
-    rgba(13, 8, 13, .78);
-  box-shadow: inset 0 1px rgba(255, 255, 255, .12), 0 24px 70px rgba(0, 0, 0, .32);
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.11),
+      rgba(255, 255, 255, 0.055)
+    ),
+    rgba(13, 8, 13, 0.78);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.12),
+    0 24px 70px rgba(0, 0, 0, 0.32);
 }
 
 .gold-preview-profile {
@@ -197,7 +211,7 @@
 
 .gold-preview-profile p {
   margin: 2px 0 0;
-  color: rgba(255, 255, 255, .58);
+  color: rgba(255, 255, 255, 0.58);
 }
 
 .gold-check {
@@ -213,7 +227,7 @@
 
 .gold-preview-post {
   margin: 22px 0;
-  color: rgba(255, 255, 255, .84);
+  color: rgba(255, 255, 255, 0.84);
   line-height: 1.5;
 }
 
@@ -226,9 +240,9 @@
 .gold-preview-meta span {
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, .09);
-  color: rgba(255, 255, 255, .74);
-  font-size: .78rem;
+  background: rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.78rem;
   font-weight: 800;
 }
 
@@ -249,7 +263,7 @@
   display: grid;
   place-items: center;
   border-radius: 16px;
-  background: rgba(255, 216, 107, .16);
+  background: rgba(255, 216, 107, 0.16);
   color: #ffd86b;
   font-weight: 900;
 }
@@ -265,7 +279,7 @@
 .gold-note,
 .gold-faq p,
 .gold-form-intro {
-  color: rgba(255, 255, 255, .72);
+  color: rgba(255, 255, 255, 0.72);
   line-height: 1.52;
 }
 
@@ -277,7 +291,7 @@
 }
 
 .gold-grid-main {
-  grid-template-columns: minmax(0, 1.35fr) minmax(290px, .65fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(290px, 0.65fr);
   align-items: start;
 }
 
@@ -293,17 +307,17 @@
 .gold-plan-featured {
   position: relative;
   overflow: hidden;
-  border-color: rgba(255, 216, 107, .22);
+  border-color: rgba(255, 216, 107, 0.22);
 }
 
 .gold-plan-featured::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: -40% auto auto -15%;
   width: 280px;
   height: 280px;
   border-radius: 999px;
-  background: rgba(255, 216, 107, .13);
+  background: rgba(255, 216, 107, 0.13);
   filter: blur(10px);
   pointer-events: none;
 }
@@ -319,17 +333,17 @@
 }
 
 .gold-pill {
-  background: rgba(255, 216, 107, .18);
+  background: rgba(255, 216, 107, 0.18);
   color: #ffe189;
 }
 
 .gold-pill-dark {
-  background: rgba(255, 255, 255, .11);
-  color: rgba(255, 255, 255, .88);
+  background: rgba(255, 255, 255, 0.11);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .gold-plan-badge {
-  background: rgba(255, 74, 170, .16);
+  background: rgba(255, 74, 170, 0.16);
   color: #ffaad2;
 }
 
@@ -338,7 +352,8 @@
   font-size: 2.25rem;
   font-weight: 900;
   color: #ffd86b;
-  letter-spacing: -.03em;
+  letter-spacing: -0.03em;
+  display: none;
 }
 
 .gold-summary-box {
@@ -352,14 +367,14 @@
   min-width: 0;
   padding: 14px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, .075);
-  border: 1px solid rgba(255, 255, 255, .09);
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
 .gold-summary-box span {
   display: block;
-  color: rgba(255, 255, 255, .54);
-  font-size: .76rem;
+  color: rgba(255, 255, 255, 0.54);
+  font-size: 0.76rem;
   font-weight: 800;
   margin-bottom: 4px;
 }
@@ -373,7 +388,7 @@
   position: relative;
   margin-top: 22px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, .1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .gold-card-form h3 {
@@ -399,9 +414,9 @@
 }
 
 .gold-field span {
-  font-size: .83rem;
+  font-size: 0.83rem;
   font-weight: 900;
-  color: rgba(255, 255, 255, .78);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .gold-field input,
@@ -409,13 +424,16 @@
 .gold-secure-field {
   width: 100%;
   min-height: 48px;
-  border: 1px solid rgba(255, 255, 255, .14);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 16px;
-  background: rgba(255, 255, 255, .08);
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
   box-sizing: border-box;
   outline: none;
-  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
 }
 
 .gold-field input,
@@ -454,9 +472,9 @@
 .gold-field input:focus,
 .gold-field select:focus,
 .gold-secure-field:focus-within {
-  border-color: rgba(255, 216, 107, .72);
-  box-shadow: 0 0 0 4px rgba(255, 216, 107, .12);
-  background: rgba(255, 255, 255, .105);
+  border-color: rgba(255, 216, 107, 0.72);
+  box-shadow: 0 0 0 4px rgba(255, 216, 107, 0.12);
+  background: rgba(255, 255, 255, 0.105);
 }
 
 .gold-field-muted {
@@ -484,11 +502,11 @@
 .gold-note {
   display: block;
   margin-top: 12px;
-  font-size: .88rem;
+  font-size: 0.88rem;
 }
 
 .gold-next-card {
-  opacity: .82;
+  opacity: 0.82;
 }
 
 .gold-faq {
@@ -505,7 +523,7 @@
 .gold-faq-grid div {
   padding: 18px;
   border-radius: 20px;
-  background: rgba(255, 255, 255, .07);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .gold-faq-grid h3 {
@@ -577,7 +595,6 @@
   }
 }
 
-
 /* === Chirp Gold v5: custom dropdowns + estado activo === */
 .gold-native-select {
   position: absolute !important;
@@ -599,9 +616,9 @@
 .gold-custom-dropdown__button {
   width: 100%;
   min-height: 46px;
-  border: 1px solid rgba(255, 214, 120, .24);
+  border: 1px solid rgba(255, 214, 120, 0.24);
   border-radius: 16px;
-  background: rgba(15, 12, 18, .78);
+  background: rgba(15, 12, 18, 0.78);
   color: var(--text);
   display: flex;
   align-items: center;
@@ -611,11 +628,11 @@
   font: inherit;
   font-weight: 850;
   cursor: pointer;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .gold-custom-dropdown__button::after {
-  content: "⌄";
+  content: '⌄';
   color: #ffd36d;
   font-weight: 950;
   transform: translateY(-1px);
@@ -635,10 +652,10 @@
   max-height: 220px;
   overflow: auto;
   padding: 8px;
-  border: 1px solid rgba(255, 214, 120, .25);
+  border: 1px solid rgba(255, 214, 120, 0.25);
   border-radius: 18px;
-  background: rgba(17, 13, 22, .98);
-  box-shadow: 0 22px 60px rgba(0,0,0,.45);
+  background: rgba(17, 13, 22, 0.98);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(16px);
 }
 
@@ -661,7 +678,11 @@
 
 .gold-custom-dropdown__item:hover,
 .gold-custom-dropdown__item.is-selected {
-  background: linear-gradient(135deg, rgba(255, 211, 109, .22), rgba(239, 0, 138, .16));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 211, 109, 0.22),
+    rgba(239, 0, 138, 0.16)
+  );
 }
 
 .gold-field-muted .gold-custom-dropdown__button {
@@ -677,12 +698,11 @@
   display: block !important;
 }
 
-
 /* v6: campos seguros clickeables + dropdowns custom sin tapar inputs */
 .gold-card-form.is-loading .gold-secure-field,
 .gold-card-form.is-loading .gold-field input,
 .gold-card-form.is-loading .gold-custom-dropdown__button {
-  opacity: .8;
+  opacity: 0.8;
 }
 
 .gold-secure-field *,
@@ -703,7 +723,7 @@ input.gold-secure-field {
   padding: 0 14px !important;
   font: inherit !important;
   font-weight: 800 !important;
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
   caret-color: #ffd36d;
   cursor: text !important;
   pointer-events: auto !important;
@@ -712,13 +732,13 @@ input.gold-secure-field {
 }
 
 input.gold-secure-field::placeholder {
-  color: rgba(255, 255, 255, .42);
+  color: rgba(255, 255, 255, 0.42);
 }
 
 input.gold-secure-field:focus {
-  border-color: rgba(255, 216, 107, .72) !important;
-  box-shadow: 0 0 0 4px rgba(255, 216, 107, .12) !important;
-  background: rgba(255, 255, 255, .105) !important;
+  border-color: rgba(255, 216, 107, 0.72) !important;
+  box-shadow: 0 0 0 4px rgba(255, 216, 107, 0.12) !important;
+  background: rgba(255, 255, 255, 0.105) !important;
 }
 
 .gold-secure-field:not(input) iframe,
@@ -731,4 +751,179 @@ input.gold-secure-field:focus {
   border: 0 !important;
   display: block !important;
   pointer-events: auto !important;
+}
+
+/* PayPal internacional */
+.gold-paypal-card {
+  border-color: rgba(251, 191, 36, 0.22);
+}
+
+.gold-price-small {
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  margin: 0.35rem 0 0.55rem;
+}
+
+.gold-paypal-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* === Chirp Gold v9: selector custom Argentina / Internacional === */
+.gold-region-selector {
+  position: relative;
+  z-index: 3;
+  margin: 22px 0 18px;
+  padding: 18px;
+  border: 1px solid rgba(255, 216, 107, 0.16);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.gold-region-selector h3 {
+  margin: 0 0 6px;
+  font-size: 1.08rem;
+}
+
+.gold-region-dropdown {
+  position: relative;
+  margin-top: 12px;
+}
+
+.gold-region-dropdown__button {
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid rgba(255, 216, 107, 0.26);
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 216, 107, 0.14),
+      rgba(255, 74, 170, 0.08)
+    ),
+    rgba(15, 12, 18, 0.86);
+  color: #fff;
+  padding: 12px 16px;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.gold-region-dropdown__button::after {
+  content: '⌄';
+  color: #ffd86b;
+  font-size: 1.1rem;
+  font-weight: 950;
+}
+
+.gold-region-dropdown.is-open .gold-region-dropdown__button::after {
+  transform: rotate(180deg);
+}
+
+.gold-region-dropdown__button span {
+  display: block;
+  font-weight: 950;
+}
+
+.gold-region-dropdown__button small {
+  display: block;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 800;
+}
+
+.gold-region-dropdown__menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 90;
+  display: none;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(255, 216, 107, 0.26);
+  border-radius: 20px;
+  background: rgba(17, 13, 22, 0.98);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(16px);
+}
+
+.gold-region-dropdown.is-open .gold-region-dropdown__menu {
+  display: grid;
+}
+
+.gold-region-dropdown__item {
+  display: grid;
+  gap: 3px;
+  border: 0;
+  border-radius: 15px;
+  padding: 12px 14px;
+  background: transparent;
+  color: #fff;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.gold-region-dropdown__item strong {
+  font-size: 0.96rem;
+}
+
+.gold-region-dropdown__item span {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.88rem;
+  font-weight: 750;
+}
+
+.gold-region-dropdown__item:hover,
+.gold-region-dropdown__item.is-selected {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 211, 109, 0.22),
+    rgba(239, 0, 138, 0.16)
+  );
+}
+
+.gold-payment-panel {
+  display: none;
+  margin-top: 18px;
+}
+
+.gold-payment-panel.is-active {
+  display: block;
+}
+
+.gold-payment-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 8px 0 14px;
+}
+
+.gold-payment-panel__head .gold-price {
+  margin: 0;
+}
+
+.gold-international-form {
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gold-summary-box-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 640px) {
+  .gold-payment-panel__head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .gold-summary-box-two {
+    grid-template-columns: 1fr;
+  }
 }

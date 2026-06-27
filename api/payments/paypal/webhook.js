@@ -1,7 +1,39 @@
-const { activateGold, findGoldOrderById, findGoldOrderByProviderOrder, updateGoldOrder } = require('../../_utils/chirpSupabase.js');
+const {
+  activateGold,
+  findGoldOrderById,
+  findGoldOrderByProviderOrder,
+  updateGoldOrder,
+  setProfileGold,
+} = require('../../_utils/chirpSupabase.js');
 const { sendJson, methodNotAllowed, readJson } = require('../../_utils/http.js');
 const { verifyPaypalWebhook } = require('../../_utils/paypal.js');
 const { getPlan } = require('../../_utils/plans.js');
+
+function normalizedStatus(eventType = '') {
+  return String(eventType || '').toLowerCase().replaceAll('.', '_');
+}
+
+async function findOrderFromSubscriptionResource(resource = {}) {
+  const customId = resource.custom_id || resource.custom || resource.invoice_id || '';
+  const subscriptionId = resource.id || resource.billing_agreement_id || resource.subscription_id || '';
+
+  let order = customId ? await findGoldOrderById(customId) : null;
+  if (!order && subscriptionId) order = await findGoldOrderByProviderOrder('paypal', subscriptionId);
+  return order;
+}
+
+async function activateFromOrder(order, eventType, resource, body) {
+  const plan = getPlan(order.plan_id || 'gold_monthly');
+  await activateGold({
+    orderId: order.id,
+    userId: order.user_id,
+    days: plan.durationDays,
+    providerPaymentId: resource.id || resource.billing_agreement_id || resource.subscription_id || '',
+    providerOrderId: resource.id || resource.billing_agreement_id || resource.subscription_id || order.provider_order_id || '',
+    status: eventType === 'BILLING.SUBSCRIPTION.ACTIVATED' ? 'approved' : 'approved',
+    raw: { paypal_webhook: body },
+  });
+}
 
 module.exports = async function handler(req, res) {
   try {
@@ -14,13 +46,25 @@ module.exports = async function handler(req, res) {
     const eventType = body.event_type || '';
     const resource = body.resource || {};
 
-    if (eventType === 'PAYMENT.CAPTURE.COMPLETED') {
+    if (eventType === 'BILLING.SUBSCRIPTION.ACTIVATED') {
+      const order = await findOrderFromSubscriptionResource(resource);
+      if (order) {
+        await updateGoldOrder(order.id, {
+          provider_order_id: resource.id || order.provider_order_id || null,
+          provider_subscription_id: resource.id || order.provider_subscription_id || null,
+          status: 'approved',
+          raw: { paypal_webhook: body },
+        });
+        await activateFromOrder(order, eventType, resource, body);
+      }
+    }
+
+    if (eventType === 'PAYMENT.SALE.COMPLETED' || eventType === 'PAYMENT.CAPTURE.COMPLETED') {
       const capture = resource;
       const orderId = capture.custom_id || capture.invoice_id || '';
+      const subscriptionId = capture.billing_agreement_id || capture.subscription_id || capture.supplementary_data?.related_ids?.order_id || '';
       let order = orderId ? await findGoldOrderById(orderId) : null;
-      if (!order && capture.supplementary_data?.related_ids?.order_id) {
-        order = await findGoldOrderByProviderOrder('paypal', capture.supplementary_data.related_ids.order_id);
-      }
+      if (!order && subscriptionId) order = await findGoldOrderByProviderOrder('paypal', subscriptionId);
 
       if (order) {
         const plan = getPlan(order.plan_id || 'gold_monthly');
@@ -29,29 +73,44 @@ module.exports = async function handler(req, res) {
           userId: order.user_id,
           days: plan.durationDays,
           providerPaymentId: capture.id || '',
-          providerOrderId: order.provider_order_id || capture.supplementary_data?.related_ids?.order_id || '',
+          providerOrderId: subscriptionId || order.provider_order_id || '',
           status: 'approved',
           raw: { paypal_webhook: body },
         });
       }
     }
 
-    if (['PAYMENT.CAPTURE.REFUNDED', 'PAYMENT.CAPTURE.REVERSED', 'PAYMENT.CAPTURE.DENIED'].includes(eventType)) {
-      const capture = resource;
-      const orderId = capture.custom_id || capture.invoice_id || '';
-      const order = orderId ? await findGoldOrderById(orderId) : null;
+    if ([
+      'BILLING.SUBSCRIPTION.CANCELLED',
+      'BILLING.SUBSCRIPTION.SUSPENDED',
+      'BILLING.SUBSCRIPTION.EXPIRED',
+      'PAYMENT.SALE.DENIED',
+      'PAYMENT.SALE.REFUNDED',
+      'PAYMENT.SALE.REVERSED',
+      'PAYMENT.CAPTURE.REFUNDED',
+      'PAYMENT.CAPTURE.REVERSED',
+      'PAYMENT.CAPTURE.DENIED',
+    ].includes(eventType)) {
+      const order = await findOrderFromSubscriptionResource(resource);
       if (order) {
         await updateGoldOrder(order.id, {
-          status: eventType.toLowerCase().replaceAll('.', '_'),
-          provider_payment_id: capture.id || order.provider_payment_id || null,
+          status: normalizedStatus(eventType),
+          provider_payment_id: resource.id || order.provider_payment_id || null,
           raw: { paypal_webhook: body },
         });
+
+        if (eventType.startsWith('BILLING.SUBSCRIPTION.')) {
+          await setProfileGold(order.user_id, false, null);
+        }
       }
     }
 
     return sendJson(res, { ok: true });
   } catch (error) {
     console.error('[Chirp Gold PayPal webhook]', error);
-    return sendJson(res, { error: error.message || 'No pude procesar el webhook de PayPal.', details: error.details || null }, error.statusCode || 500);
+    return sendJson(res, {
+      error: error.message || 'No pude procesar el webhook de PayPal.',
+      details: error.details || null,
+    }, error.statusCode || 500);
   }
 };

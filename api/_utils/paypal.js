@@ -1,4 +1,4 @@
-const { requireEnv } = require('./http.js');
+const { requireEnv, siteUrl } = require('./http.js');
 
 function paypalBase() {
   const env = (process.env.PAYPAL_ENV || 'sandbox').toLowerCase();
@@ -37,17 +37,26 @@ async function paypalFetch(path, options = {}) {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
+      Prefer: 'return=representation',
       ...(options.headers || {}),
     },
   });
 
-  const data = await response.json().catch(() => null);
+  const text = await response.text();
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch (_error) {
+    data = { raw: text };
+  }
+
   if (!response.ok) {
     const err = new Error(data?.message || data?.name || `PayPal error ${response.status}`);
     err.statusCode = response.status;
     err.details = data;
     throw err;
   }
+
   return data;
 }
 
@@ -63,6 +72,48 @@ function capturePaypalOrder(orderId) {
     method: 'POST',
     body: JSON.stringify({}),
   });
+}
+
+function paypalPlanId() {
+  const planId = process.env.PAYPAL_PLAN_ID || process.env.PAYPAL_GOLD_PLAN_ID;
+  if (!planId) {
+    const err = new Error('Falta PAYPAL_PLAN_ID en Vercel. Creá un plan mensual de PayPal Subscriptions y pegá el ID P-...');
+    err.statusCode = 500;
+    throw err;
+  }
+  return planId;
+}
+
+function createPaypalSubscription({ orderId, plan, user, customId }) {
+  const base = siteUrl();
+  const returnUrl = `${base}/gold-return.html?provider=paypal&order_id=${encodeURIComponent(orderId)}`;
+  const cancelUrl = `${base}/gold-return.html?provider=paypal&result=cancelled&order_id=${encodeURIComponent(orderId)}`;
+
+  return paypalFetch('/v1/billing/subscriptions', {
+    method: 'POST',
+    body: JSON.stringify({
+      plan_id: paypalPlanId(),
+      custom_id: customId || orderId,
+      quantity: '1',
+      subscriber: user?.email
+        ? {
+            email_address: user.email,
+          }
+        : undefined,
+      application_context: {
+        brand_name: 'Chirp',
+        locale: 'es-AR',
+        shipping_preference: 'NO_SHIPPING',
+        user_action: 'SUBSCRIBE_NOW',
+        return_url: returnUrl,
+        cancel_url: cancelUrl,
+      },
+    }),
+  });
+}
+
+function getPaypalSubscription(subscriptionId) {
+  return paypalFetch(`/v1/billing/subscriptions/${encodeURIComponent(subscriptionId)}`);
 }
 
 async function verifyPaypalWebhook(req, body) {
@@ -86,4 +137,13 @@ async function verifyPaypalWebhook(req, body) {
   return { ok: result?.verification_status === 'SUCCESS', skipped: false, result };
 }
 
-module.exports = { createPaypalOrder, capturePaypalOrder, verifyPaypalWebhook };
+module.exports = {
+  paypalBase,
+  paypalFetch,
+  createPaypalOrder,
+  capturePaypalOrder,
+  createPaypalSubscription,
+  getPaypalSubscription,
+  verifyPaypalWebhook,
+  paypalPlanId,
+};

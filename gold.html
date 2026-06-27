@@ -19,7 +19,7 @@
     <section class="gold-hero card" aria-labelledby="goldTitle">
       <div class="gold-topbar">
         <a class="gold-back" href="/home" aria-label="Volver a Chirp">← Volver a Chirp</a>
-        <span class="gold-secure-chip">Pago seguro · Mercado Pago</span>
+        <span class="gold-secure-chip">Pago seguro</span>
       </div>
 
       <div class="gold-hero-layout">
@@ -87,14 +87,14 @@
     <section class="gold-grid gold-grid-main" aria-label="Comprar ChirpCheck Gold">
       <article id="goldCheckout" class="gold-plan gold-plan-featured card">
         <div class="gold-plan-header">
-          <span class="gold-pill">Argentina · Autopago mensual</span>
+          <span class="gold-pill" id="goldRegionPill">Argentina · Autopago mensual</span>
           <span class="gold-plan-badge">Recomendado</span>
         </div>
 
         <h2>Comprar ChirpCheck Gold</h2>
         <p class="gold-price" data-mp-price>ARS $7.560 <span>/ mes</span></p>
         <p class="gold-plan-text">
-          Suscripción mensual con autopago. Completá los datos en esta página y Chirp activa Gold cuando el pago quede confirmado.
+          Suscripción mensual con autopago. Elegí si comprás desde Argentina o desde otro país y Chirp te muestra el formulario correspondiente.
         </p>
 
         <div class="gold-summary-box">
@@ -112,7 +112,35 @@
           </div>
         </div>
 
-        <form id="form-checkout" class="gold-card-form" autocomplete="off">
+        <div class="gold-region-selector" data-hide-if-gold>
+          <h3>Elegí desde dónde comprás</h3>
+          <p class="gold-form-intro">Seleccioná tu región para mostrar el formulario correcto.</p>
+          <input type="hidden" id="goldPaymentRegion" value="argentina">
+          <div class="gold-region-dropdown" data-gold-region-dropdown>
+            <button class="gold-region-dropdown__button" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span data-gold-region-label>Argentina</span>
+              <small data-gold-region-sublabel>ARS · autopago mensual</small>
+            </button>
+            <div class="gold-region-dropdown__menu" role="listbox" aria-label="Elegir región de compra">
+              <button class="gold-region-dropdown__item is-selected" type="button" role="option" data-region="argentina" data-label="Argentina" data-sublabel="ARS · autopago mensual" aria-selected="true">
+                <strong>Argentina</strong>
+                <span>Formulario en pesos argentinos</span>
+              </button>
+              <button class="gold-region-dropdown__item" type="button" role="option" data-region="internacional" data-label="Internacional" data-sublabel="USD · autopago mensual" aria-selected="false">
+                <strong>Internacional</strong>
+                <span>Formulario internacional en dólares</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="goldArgentinaPayment" class="gold-payment-panel is-active" data-gold-payment-panel="argentina">
+          <div class="gold-payment-panel__head">
+            <span class="gold-pill gold-pill-dark">Argentina · Mercado Pago</span>
+            <p class="gold-price" data-mp-price>ARS $7.560 <span>/ mes</span></p>
+          </div>
+
+          <form id="form-checkout" class="gold-card-form" autocomplete="off">
           <h3>Datos de pago</h3>
           <p class="gold-form-intro">
             Los campos de tarjeta son seguros. Chirp no ve ni guarda tu número de tarjeta.
@@ -186,7 +214,35 @@
           <small class="gold-note">
             Al continuar, autorizás el cobro mensual de ChirpCheck Gold. Podés cancelar la suscripción más adelante desde los medios disponibles en Chirp.
           </small>
-        </form>
+          </form>
+        </div>
+
+        <div id="goldInternationalPayment" class="gold-payment-panel" data-gold-payment-panel="internacional">
+          <div class="gold-payment-panel__head">
+            <span class="gold-pill gold-pill-dark">Internacional</span>
+            <p class="gold-price gold-price-small">USD $4.99 <span>/ mes</span></p>
+          </div>
+          <div class="gold-international-form">
+            <h3>Datos de pago internacional</h3>
+            <p class="gold-form-intro">
+              Usá este método si comprás desde fuera de Argentina. Vas a aprobar el autopago mensual y después volvés a Chirp.
+            </p>
+            <div class="gold-summary-box gold-summary-box-two">
+              <div>
+                <span>Producto</span>
+                <strong>ChirpCheck Gold</strong>
+              </div>
+              <div>
+                <span>Renovación</span>
+                <strong>USD $4.99 / mes</strong>
+              </div>
+            </div>
+            <button id="payPayPal" class="btn btn-primary gold-btn gold-paypal-btn" type="button">
+              Continuar con compra internacional
+            </button>
+            <small class="gold-note">Disponible en modo sandbox mientras hacemos pruebas.</small>
+          </div>
+        </div>
       </article>
 
       <aside class="gold-side-stack">
@@ -206,14 +262,6 @@
             Arriba te avisamos si tu cuenta ya tiene Gold activo. Si ya pagaste y no aparece, esperá unos segundos y refrescá.
           </p>
           <a class="btn btn-soft gold-btn" href="/profile">Ir a mi perfil</a>
-        </article>
-
-        <article class="gold-plan card gold-next-card">
-          <span class="gold-pill gold-pill-dark">Próximamente</span>
-          <h2>Pagos internacionales</h2>
-          <p class="gold-plan-text">
-            Primero dejamos el pago local fino. Después sumamos pagos internacionales.
-          </p>
         </article>
       </aside>
     </section>
