@@ -21,6 +21,7 @@ async function supabaseRest(path, options = {}) {
 
   const response = await fetch(url, { ...options, headers });
   const text = await response.text();
+
   let data = null;
   try {
     data = text ? JSON.parse(text) : null;
@@ -51,6 +52,7 @@ async function createGoldOrder({ userId, provider, plan, amount, currency }) {
       raw: {},
     }),
   });
+
   return Array.isArray(rows) ? rows[0] : rows;
 }
 
@@ -59,6 +61,7 @@ async function updateGoldOrder(orderId, payload = {}) {
     method: 'PATCH',
     body: JSON.stringify(payload),
   });
+
   return Array.isArray(rows) ? rows[0] : rows;
 }
 
@@ -66,6 +69,7 @@ async function findGoldOrderById(orderId) {
   const rows = await supabaseRest(`chirp_gold_orders?id=eq.${encodeURIComponent(orderId)}&select=*`, {
     method: 'GET',
   });
+
   return Array.isArray(rows) ? rows[0] : null;
 }
 
@@ -74,6 +78,7 @@ async function findGoldOrderByProviderOrder(provider, providerOrderId) {
     `chirp_gold_orders?provider=eq.${encodeURIComponent(provider)}&provider_order_id=eq.${encodeURIComponent(providerOrderId)}&select=*`,
     { method: 'GET' }
   );
+
   return Array.isArray(rows) ? rows[0] : null;
 }
 
@@ -92,4 +97,24 @@ async function activateGold({ orderId, userId, days, providerPaymentId = '', pro
   });
 }
 
-module.exports = { supabaseRest, createGoldOrder, updateGoldOrder, findGoldOrderById, findGoldOrderByProviderOrder, activateGold };
+async function setProfileGold(userId, isGold, goldUntil = null) {
+  const rows = await supabaseRest(`profiles?id=eq.${encodeURIComponent(userId)}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      is_chirp_gold: Boolean(isGold),
+      gold_until: goldUntil,
+    }),
+  });
+
+  return Array.isArray(rows) ? rows[0] : rows;
+}
+
+module.exports = {
+  supabaseRest,
+  createGoldOrder,
+  updateGoldOrder,
+  findGoldOrderById,
+  findGoldOrderByProviderOrder,
+  activateGold,
+  setProfileGold,
+};

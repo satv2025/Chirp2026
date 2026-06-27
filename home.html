@@ -51,12 +51,17 @@
             <a class="side-link" data-route="messages" href="/messages.html"><span
                 class="side-icon ui-icon ui-icon-message" aria-hidden="true"></span><span>Mensajes</span></a>
             <a class="side-link" data-route="chirpy" href="/chirpy.html"><span class="side-icon ui-icon ui-icon-chirpy"
-                aria-hidden="true"></span><span>Chirpy</span></a>
+                aria-hidden="true"></span><span>Chirpy</span></a>            <a class="side-link chirp-gold-nav-link" data-route="gold" href="/gold.html"><span class="side-icon chirp-gold-nav-icon" aria-hidden="true"></span><span>ChirpCheck Gold</span></a>
+
             <a class="side-link" data-route="settings" href="/settings.html"><span
                 class="side-icon ui-icon ui-icon-settings" aria-hidden="true"></span><span>Ajustes</span></a>
           </nav>
         </div>
         <a class="btn btn-primary btn-wide" href="/home.html">Chirpear</a>
+        <a class="btn btn-wide chirp-gold-sidebar-cta" href="/gold.html" aria-label="Comprar ChirpCheck Gold">
+          <span class="chirp-gold-sidebar-cta__badge">Gold</span>
+          <span>Comprar ChirpCheck Gold</span>
+        </a>
         <div class="sidebar__card">
           <div style="display:flex;align-items:center;gap:10px;">
             <img class="avatar js-me-avatar" alt="Tu avatar">
@@ -131,7 +136,17 @@
             <a class="btn btn-ghost btn-wide" href="/legal.html">Legal</a>
           </div>
         </section>
-      </aside>
+      
+        <section class="card panel gold-mini-panel">
+          <span class="gold-mini-kicker">ChirpCheck Gold</span>
+          <h3>Más presencia para tu perfil</h3>
+          <p>Activá Gold, destacá tu identidad y apoyá el crecimiento de Chirp.</p>
+          <div class="gold-mini-actions">
+            <a class="btn btn-primary btn-wide" href="/gold.html">Comprar ChirpCheck Gold</a>
+            <a class="btn btn-ghost btn-wide" href="/gold.html#beneficios">Ver beneficios</a>
+          </div>
+        </section>
+</aside>
     </div>
     <nav class="mobile-nav">
       <a class="side-link" data-route="home" href="/home.html"><span class="side-icon ui-icon ui-icon-home"
@@ -145,6 +160,7 @@
       <a class="side-link" data-route="profile" href="/profile.html"><span class="side-icon ui-icon ui-icon-profile"
           aria-hidden="true"></span><span>Perfil</span></a>
     </nav>
+      <a class="gold-floating-cta" href="/gold.html">Comprar Gold</a>
   </body>
 
 </html>

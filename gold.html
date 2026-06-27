@@ -1,61 +1,230 @@
 <!doctype html>
 <html lang="es-AR">
 
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Chirp Gold · Chirp</title>
-    <link rel="icon" href="/favicon.ico">
-    <link rel="stylesheet" href="/assets/css/base.css">
-    <link rel="stylesheet" href="/assets/css/components.css">
-    <link rel="stylesheet" href="/assets/css/app-shell.css">
-    <link rel="stylesheet" href="/assets/css/responsive.css">
-    <link rel="stylesheet" href="/assets/css/gold.css">
-  </head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChirpCheck Gold · Chirp</title>
+  <meta name="description" content="Activá ChirpCheck Gold y sumá una insignia premium a tu perfil de Chirp.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/app-shell.css">
+  <link rel="stylesheet" href="/assets/css/responsive.css">
+  <link rel="stylesheet" href="/assets/css/gold.css">
+</head>
 
-  <body data-page="gold" class="gold-page">
-    <main class="gold-shell">
-      <section class="gold-hero card">
-        <a class="gold-back" href="/home.html">← Volver a Chirp</a>
-        <div class="gold-mark">✦</div>
-        <p class="eyebrow">Chirp Gold</p>
-        <h1>Activá Gold y destacá tu perfil.</h1>
-        <p class="gold-lead">Badge Gold, presencia premium y acceso a beneficios exclusivos de Chirp. La activación se
-          confirma desde el backend cuando el proveedor aprueba el pago.</p>
-        <div id="goldStatus" class="gold-status">Revisando tu sesión...</div>
-      </section>
+<body data-page="gold" class="gold-page">
+  <main class="gold-shell">
+    <section class="gold-hero card" aria-labelledby="goldTitle">
+      <div class="gold-topbar">
+        <a class="gold-back" href="/home" aria-label="Volver a Chirp">← Volver a Chirp</a>
+        <span class="gold-secure-chip">Pago seguro · Mercado Pago</span>
+      </div>
 
-      <section class="gold-grid">
+      <div class="gold-hero-layout">
+        <div class="gold-hero-copy">
+          <div class="gold-mark" aria-hidden="true">✦</div>
+          <p class="eyebrow">ChirpCheck Gold</p>
+          <h1 id="goldTitle">Tu perfil, pero con presencia premium.</h1>
+          <p class="gold-lead">
+            Activá <strong>ChirpCheck Gold</strong>, la insignia premium de Chirp para perfiles que quieren destacar,
+            apoyar la red social y verse oficiales dentro del ecosistema Chirp.
+          </p>
+
+          <div class="gold-actions gold-actions-hero">
+            <button class="btn btn-primary gold-main-cta" type="button" data-gold-scroll>
+              Comprar ChirpCheck Gold
+            </button>
+            <a class="btn btn-soft" href="#beneficios">Ver beneficios</a>
+          </div>
+
+          <div id="goldStatus" class="gold-status" role="status" aria-live="polite">
+            Revisando tu sesión...
+          </div>
+        </div>
+
+        <aside class="gold-preview-card" aria-label="Vista previa de ChirpCheck Gold">
+          <div class="gold-preview-profile">
+            <div class="gold-avatar">C</div>
+            <div>
+              <strong>Chirp Oficial</strong>
+              <p>@chirp</p>
+            </div>
+            <span class="gold-check" title="ChirpCheck Gold">✦</span>
+          </div>
+          <p class="gold-preview-post">
+            ChirpCheck Gold ya está disponible. Más presencia, más estilo y una identidad premium para tu perfil.
+          </p>
+          <div class="gold-preview-meta">
+            <span>Premium</span>
+            <span>Autopago mensual</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="beneficios" class="gold-benefits-grid" aria-label="Beneficios de ChirpCheck Gold">
+      <article class="gold-benefit card">
+        <span class="gold-benefit-icon">✦</span>
+        <h2>Insignia Gold</h2>
+        <p>Tu perfil muestra ChirpCheck Gold como marca premium dentro de Chirp.</p>
+      </article>
+
+      <article class="gold-benefit card">
+        <span class="gold-benefit-icon">★</span>
+        <h2>Usuario VIP</h2>
+        <p>Gold representa tu aporte económico al crecimiento de la red social.</p>
+      </article>
+
+      <article class="gold-benefit card">
+        <span class="gold-benefit-icon">↻</span>
+        <h2>Autopago mensual</h2>
+        <p>Se renueva automáticamente cada mes mientras la suscripción siga activa.</p>
+      </article>
+    </section>
+
+    <section class="gold-grid gold-grid-main" aria-label="Comprar ChirpCheck Gold">
+      <article id="goldCheckout" class="gold-plan gold-plan-featured card">
+        <div class="gold-plan-header">
+          <span class="gold-pill">Argentina · Mercado Pago</span>
+          <span class="gold-plan-badge">Recomendado</span>
+        </div>
+
+        <h2>Comprar ChirpCheck Gold</h2>
+        <p class="gold-price" data-mp-price>ARS $3.490</p>
+        <p class="gold-plan-text">
+          Suscripción mensual con autopago. Completá los datos en esta página y Chirp activa Gold cuando Mercado Pago confirme la suscripción.
+        </p>
+
+        <div class="gold-summary-box">
+          <div>
+            <span>Producto</span>
+            <strong>ChirpCheck Gold</strong>
+          </div>
+          <div>
+            <span>Renovación</span>
+            <strong>Mensual automática</strong>
+          </div>
+          <div>
+            <span>Procesador</span>
+            <strong>Mercado Pago</strong>
+          </div>
+        </div>
+
+        <form id="form-checkout" class="gold-card-form" autocomplete="off">
+          <h3>Datos de pago</h3>
+          <p class="gold-form-intro">
+            Los campos de tarjeta son seguros. Chirp no ve ni guarda tu número de tarjeta.
+          </p>
+
+          <div class="gold-form-grid">
+            <label class="gold-field gold-field-full">
+              <span>Número de tarjeta</span>
+              <div id="form-checkout__cardNumber" class="gold-secure-field"></div>
+            </label>
+
+            <label class="gold-field">
+              <span>Vencimiento</span>
+              <div id="form-checkout__expirationDate" class="gold-secure-field"></div>
+            </label>
+
+            <label class="gold-field">
+              <span>Código de seguridad</span>
+              <div id="form-checkout__securityCode" class="gold-secure-field"></div>
+            </label>
+
+            <label class="gold-field gold-field-full">
+              <span>Titular de la tarjeta</span>
+              <input id="form-checkout__cardholderName" type="text" placeholder="Nombre como figura en la tarjeta" required>
+            </label>
+
+            <label class="gold-field gold-field-full">
+              <span>Email del pagador</span>
+              <input id="form-checkout__cardholderEmail" type="email" placeholder="tu@email.com" required>
+            </label>
+
+            <label class="gold-field">
+              <span>Tipo de documento</span>
+              <select id="form-checkout__identificationType" required></select>
+            </label>
+
+            <label class="gold-field">
+              <span>Número de documento</span>
+              <input id="form-checkout__identificationNumber" type="text" placeholder="DNI" required>
+            </label>
+
+            <label class="gold-field gold-field-full gold-field-muted">
+              <span>Banco emisor</span>
+              <select id="form-checkout__issuer"></select>
+            </label>
+
+            <label class="gold-field gold-field-full gold-field-muted">
+              <span>Cuotas</span>
+              <select id="form-checkout__installments"></select>
+            </label>
+          </div>
+
+          <button id="form-checkout__submit" class="btn btn-primary gold-btn" type="submit">
+            Confirmar compra de ChirpCheck Gold
+          </button>
+
+          <progress id="goldProgress" class="gold-progress" value="0">Cargando...</progress>
+
+          <small class="gold-note">
+            Al continuar, autorizás el cobro mensual de ChirpCheck Gold. Podés cancelar la suscripción más adelante desde los medios disponibles en Chirp/Mercado Pago.
+          </small>
+        </form>
+      </article>
+
+      <aside class="gold-side-stack">
         <article class="gold-plan card">
-          <span class="gold-pill">Argentina</span>
-          <h2>Gold mensual</h2>
-          <p class="gold-price" data-mp-price>ARS $3.490</p>
-          <p>Pagá con Mercado Pago. Ideal para usuarios de Argentina.</p>
-          <button id="payMercadoPago" class="btn btn-primary gold-btn" type="button">Pagar con Mercado Pago</button>
-          <small class="gold-note">Vas a ser redirigido al checkout seguro.</small>
+          <span class="gold-pill gold-pill-dark">Estado de la cuenta</span>
+          <h2>Tu Gold</h2>
+          <p class="gold-plan-text">
+            Arriba te avisamos si tu cuenta ya tiene Gold activo. Si ya pagaste y no aparece, esperá unos segundos y refrescá.
+          </p>
+          <a class="btn btn-soft gold-btn" href="/profile">Ir a mi perfil</a>
         </article>
 
-        <article class="gold-plan card">
-          <span class="gold-pill gold-pill-dark">Internacional</span>
-          <h2>Gold mensual</h2>
-          <p class="gold-price" data-paypal-price>USD $4.99</p>
-          <p>Pagá con PayPal. Ideal para usuarios internacionales.</p>
-          <button id="payPayPal" class="btn btn-soft gold-btn" type="button">Pagar con PayPal</button>
-          <small class="gold-note">Después de aprobar, Chirp captura la orden y activa Gold.</small>
+        <article class="gold-plan card gold-next-card">
+          <span class="gold-pill gold-pill-dark">Próximamente</span>
+          <h2>PayPal internacional</h2>
+          <p class="gold-plan-text">
+            Primero dejamos Mercado Pago fino. Después sumamos PayPal para pagos internacionales.
+          </p>
         </article>
-      </section>
+      </aside>
+    </section>
 
-      <section class="gold-faq card">
-        <h2>¿Que beneficios trae?</h2>
-        <p>Te brinda el nivel de verificación más alto de la red social, <strong>"ChirpCheck Gold"</strong>, que,
-          asegura que tu perfil es el único y oficial, además de transformarte en Usuario VIP por tu aporte económico a
-          la red social./p>
-      </section>
-    </main>
+    <section class="gold-faq card" aria-label="Preguntas sobre ChirpCheck Gold">
+      <h2>¿Qué es ChirpCheck Gold?</h2>
+      <p>
+        ChirpCheck Gold es la insignia premium de Chirp. No reemplaza la identidad de tu cuenta: la potencia.
+        Sirve para destacar tu perfil, mostrar apoyo a la plataforma y sumar presencia visual dentro de la red social.
+      </p>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/assets/js/config.js"></script>
-    <script src="/assets/js/gold-payments.js"></script>
-  </body>
+      <div class="gold-faq-grid">
+        <div>
+          <h3>¿La página muestra Mercado Pago?</h3>
+          <p>La experiencia visual es Chirp. Mercado Pago procesa de forma segura la tarjeta y puede aparecer en comprobantes o validaciones.</p>
+        </div>
+        <div>
+          <h3>¿Chirp guarda mi tarjeta?</h3>
+          <p>No. Los datos sensibles se tokenizan con Mercado Pago. Chirp solo recibe el resultado necesario para activar Gold.</p>
+        </div>
+        <div>
+          <h3>¿Cuándo se activa?</h3>
+          <p>Cuando Mercado Pago confirma la suscripción, Chirp actualiza tu perfil y muestra Gold si la cuenta está activa.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/gold-payments.js"></script>
+</body>
 
 </html>

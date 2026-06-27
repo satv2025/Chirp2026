@@ -1,10 +1,18 @@
 function sendJson(res, data, statusCode = 200) {
   res.setHeader('Cache-Control', 'no-store');
-  res.status(statusCode).json(data);
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
+  if (typeof res.status === 'function' && typeof res.json === 'function') {
+    return res.status(statusCode).json(data);
+  }
+
+  res.statusCode = statusCode;
+  return res.end(JSON.stringify(data));
 }
 
 function methodNotAllowed(res, method = 'POST') {
-  sendJson(res, { error: `Método no permitido. Usá ${method}.` }, 405);
+  res.setHeader('Allow', method);
+  return sendJson(res, { error: `Método no permitido. Usá ${method}.` }, 405);
 }
 
 function readJson(req) {
@@ -18,7 +26,18 @@ function readJson(req) {
 }
 
 function siteUrl() {
-  return (process.env.PUBLIC_SITE_URL || process.env.SITE_URL || 'http://localhost:3000').replace(/\/+$/, '');
+  const raw =
+    process.env.PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    'https://chirp.com.ar';
+
+  let url = String(raw).trim();
+  if (!url) url = 'https://chirp.com.ar';
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = `https://${url}`;
+  }
+  return url.replace(/\/+$/, '');
 }
 
 function requireEnv(names = []) {
@@ -36,4 +55,11 @@ function bearerToken(req) {
   return match?.[1] || '';
 }
 
-module.exports = { sendJson, methodNotAllowed, readJson, siteUrl, requireEnv, bearerToken };
+module.exports = {
+  sendJson,
+  methodNotAllowed,
+  readJson,
+  siteUrl,
+  requireEnv,
+  bearerToken,
+};
