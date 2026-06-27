@@ -15,7 +15,7 @@ module.exports = async function handler(req, res) {
     const currency = plan.mercadopago.currency || 'ARS';
 
     if (!Number.isFinite(amount) || amount <= 0) {
-      return sendJson(res, { error: 'El monto del plan de Mercado Pago es inválido.' }, 400);
+      return sendJson(res, { error: 'El monto del plan de pago es inválido.' }, 400);
     }
 
     const order = await createGoldOrder({ userId: user.id, provider: 'mercadopago', plan, amount, currency });
@@ -67,6 +67,6 @@ module.exports = async function handler(req, res) {
     });
   } catch (error) {
     console.error('[Chirp Gold MP create]', error);
-    return sendJson(res, { error: error.message || 'No pude crear el pago de Mercado Pago.', details: error.details || null }, error.statusCode || 500);
+    return sendJson(res, { error: error.message || 'No pude crear el pago.', details: error.details || null }, error.statusCode || 500);
   }
 };

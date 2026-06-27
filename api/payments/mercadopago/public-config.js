@@ -19,6 +19,6 @@ module.exports = async function handler(req, res) {
     });
   } catch (error) {
     console.error('[Chirp Gold MP public-config]', error);
-    return sendJson(res, { error: error.message || 'No pude cargar Mercado Pago.' }, error.statusCode || 500);
+    return sendJson(res, { error: error.message || 'No pude cargar el módulo de pago.' }, error.statusCode || 500);
   }
 };

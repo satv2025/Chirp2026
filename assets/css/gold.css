@@ -429,7 +429,26 @@
 }
 
 .gold-secure-field {
-  padding: 12px 14px;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  cursor: text;
+}
+
+.gold-secure-field iframe,
+.gold-secure-field > iframe,
+.gold-secure-field > div,
+.gold-secure-field > div iframe {
+  width: 100% !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  border: 0 !important;
+  display: block !important;
+  pointer-events: auto !important;
+}
+
+.gold-secure-field input {
+  height: 48px !important;
 }
 
 .gold-field input:focus,
@@ -656,4 +675,25 @@
 
 .gold-page.is-gold-active .gold-active-account-card {
   display: block !important;
+}
+
+
+/* v6: campos seguros clickeables + dropdowns custom sin tapar inputs */
+.gold-card-form.is-loading .gold-secure-field,
+.gold-card-form.is-loading .gold-field input,
+.gold-card-form.is-loading .gold-custom-dropdown__button {
+  opacity: .8;
+}
+
+.gold-secure-field *,
+.gold-secure-field iframe {
+  pointer-events: auto !important;
+}
+
+.gold-custom-dropdown:not(.is-open) .gold-custom-dropdown__menu {
+  pointer-events: none;
+}
+
+.gold-custom-dropdown.is-open .gold-custom-dropdown__menu {
+  pointer-events: auto;
 }

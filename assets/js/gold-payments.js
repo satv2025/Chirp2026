@@ -97,12 +97,18 @@
     const plan = mpConfig?.plan || {};
     const amount = Number(plan.amount || 0);
     const currency = plan.currency || 'ARS';
-    const label = amount
+    const moneyLabel = amount
       ? new Intl.NumberFormat('es-AR', { style: 'currency', currency, maximumFractionDigits: 0 }).format(amount)
       : 'ARS $3.490';
+    const label = `${moneyLabel} / mes`;
 
     document.querySelectorAll('[data-mp-price]').forEach((node) => {
-      node.textContent = label;
+      node.innerHTML = '';
+      const price = document.createTextNode(moneyLabel + ' ');
+      const period = document.createElement('span');
+      period.textContent = '/ mes';
+      node.append(price, period);
+      node.setAttribute('aria-label', label);
     });
   }
 

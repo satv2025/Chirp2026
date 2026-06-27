@@ -19,7 +19,7 @@ module.exports = async function handler(req, res) {
 
     const cardTokenId = body.card_token_id || body.token || '';
     if (!cardTokenId) {
-      return sendJson(res, { error: 'Falta card_token_id de Mercado Pago.' }, 400);
+      return sendJson(res, { error: 'Falta el token seguro de tarjeta.' }, 400);
     }
 
     const payerEmail = body.payer_email || body.email || user.email || '';
@@ -30,7 +30,7 @@ module.exports = async function handler(req, res) {
     const amount = Number(plan.mercadopago.amount);
     const currency = plan.mercadopago.currency || 'ARS';
     if (!Number.isFinite(amount) || amount <= 0) {
-      return sendJson(res, { error: 'El monto del plan de Mercado Pago es inválido.' }, 400);
+      return sendJson(res, { error: 'El monto del plan de pago es inválido.' }, 400);
     }
 
     const order = await createGoldOrder({
@@ -104,7 +104,7 @@ module.exports = async function handler(req, res) {
     return sendJson(
       res,
       {
-        error: error.message || 'No pude crear la suscripción de Mercado Pago.',
+        error: error.message || 'No pude crear la suscripción.',
         details: error.details || null,
       },
       error.statusCode || 500

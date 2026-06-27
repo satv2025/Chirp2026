@@ -141,6 +141,6 @@ module.exports = async function handler(req, res) {
     return sendJson(res, { ok: true, ignored: `topic_${topic}` });
   } catch (error) {
     console.error('[Chirp Gold MP webhook]', error);
-    return sendJson(res, { error: error.message || 'No pude procesar el webhook de Mercado Pago.', details: error.details || null }, error.statusCode || 500);
+    return sendJson(res, { error: error.message || 'No pude procesar el webhook de pago.', details: error.details || null }, error.statusCode || 500);
   }
 };
