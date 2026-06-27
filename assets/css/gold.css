@@ -353,6 +353,9 @@
   font-weight: 900;
   color: #ffd86b;
   letter-spacing: -0.03em;
+}
+
+.gold-plan-header .gold-price {
   display: none;
 }
 
@@ -902,6 +905,10 @@ input.gold-secure-field:focus {
   gap: 12px;
   flex-wrap: wrap;
   margin: 8px 0 14px;
+}
+
+#goldCheckout .gold-price:not(.gold-price-small) {
+  display: none;
 }
 
 .gold-payment-panel__head .gold-price {
