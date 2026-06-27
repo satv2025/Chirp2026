@@ -3,6 +3,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/api/payments/mercadopago/:action",
+      "destination": "/api/payments/mercadopago?action=:action"
+    },
+    {
+      "source": "/api/payments/paypal/:action",
+      "destination": "/api/payments/paypal?action=:action"
+    },
+    {
       "source": "/chirp/:id",
       "destination": "/chirp.html"
     },
