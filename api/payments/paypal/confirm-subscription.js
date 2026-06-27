@@ -4,6 +4,14 @@ const { sendJson, methodNotAllowed, readJson } = require('../../_utils/http.js')
 const { getPaypalSubscription } = require('../../_utils/paypal.js');
 const { getPlan } = require('../../_utils/plans.js');
 
+function orderStatusFromPaypalStatus(status) {
+  const value = String(status || '').toUpperCase();
+  if (value === 'ACTIVE') return 'approved';
+  if (value === 'CANCELLED' || value === 'EXPIRED') return 'cancelled';
+  if (value === 'SUSPENDED') return 'failed';
+  return 'pending';
+}
+
 module.exports = async function handler(req, res) {
   try {
     if (req.method !== 'POST') return methodNotAllowed(res, 'POST');
@@ -27,7 +35,7 @@ module.exports = async function handler(req, res) {
     await updateGoldOrder(order.id, {
       provider_order_id: subscription.id || paypalSubId,
       provider_subscription_id: subscription.id || paypalSubId,
-      status: status.toLowerCase(),
+      status: orderStatusFromPaypalStatus(status),
       raw: { paypal_subscription_confirm: subscription },
     });
 

@@ -10,7 +10,13 @@ const { verifyPaypalWebhook } = require('../../_utils/paypal.js');
 const { getPlan } = require('../../_utils/plans.js');
 
 function normalizedStatus(eventType = '') {
-  return String(eventType || '').toLowerCase().replaceAll('.', '_');
+  const type = String(eventType || '').toUpperCase();
+  if (type.includes('CANCELLED') || type.includes('EXPIRED')) return 'cancelled';
+  if (type.includes('REFUNDED')) return 'refunded';
+  if (type.includes('REVERSED')) return 'charged_back';
+  if (type.includes('DENIED')) return 'rejected';
+  if (type.includes('SUSPENDED')) return 'failed';
+  return 'failed';
 }
 
 async function findOrderFromSubscriptionResource(resource = {}) {

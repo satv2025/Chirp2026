@@ -93,6 +93,116 @@
     return data;
   }
 
+  async function getPayPalConfig() {
+    const response = await fetch('/api/payments/paypal/public-config', { cache: 'no-store' });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'No pude cargar la configuración de PayPal.');
+    if (!data.client_id) throw new Error('Falta PAYPAL_CLIENT_ID en Vercel.');
+    if (!data.plan_id) throw new Error('Falta PAYPAL_PLAN_ID en Vercel.');
+    return data;
+  }
+
+  function loadExternalScript(src, id) {
+    return new Promise((resolve, reject) => {
+      if (id && document.getElementById(id)) {
+        resolve();
+        return;
+      }
+      const script = document.createElement('script');
+      if (id) script.id = id;
+      script.src = src;
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('No pude cargar el SDK de PayPal. Revisá el bloqueador o la conexión.'));
+      document.head.appendChild(script);
+    });
+  }
+
+  async function loadPayPalSdk(paypalConfig) {
+    if (window.paypal?.Buttons) return;
+    const currency = paypalConfig?.plan?.currency || 'USD';
+    const qs = new URLSearchParams({
+      'client-id': paypalConfig.client_id,
+      components: 'buttons',
+      vault: 'true',
+      intent: 'subscription',
+      currency,
+    });
+    await loadExternalScript(`https://www.paypal.com/sdk/js?${qs.toString()}`, 'paypal-subscriptions-sdk');
+  }
+
+  async function initPayPalButtons(session) {
+    const container = $('#paypalButtonContainer');
+    if (!container || container.dataset.ready === 'true') return;
+    container.dataset.ready = 'true';
+
+    try {
+      const paypalConfig = await getPayPalConfig();
+      await loadPayPalSdk(paypalConfig);
+
+      if (!window.paypal?.Buttons) throw new Error('PayPal no cargó el botón de suscripción.');
+
+      let currentOrderId = '';
+      container.innerHTML = '';
+
+      window.paypal.Buttons({
+        style: {
+          shape: 'rect',
+          color: 'white',
+          layout: 'vertical',
+          label: 'subscribe',
+        },
+        createSubscription: async (_data, actions) => {
+          setStatus('Preparando compra internacional...');
+          const prepared = await postPayment('/api/payments/paypal/prepare-subscription', { plan_id: 'gold_monthly' }, session);
+          currentOrderId = prepared.order_id || '';
+
+          return actions.subscription.create({
+            plan_id: paypalConfig.plan_id,
+            custom_id: currentOrderId || undefined,
+            application_context: {
+              brand_name: 'Chirp',
+              locale: 'es-AR',
+              shipping_preference: 'NO_SHIPPING',
+              user_action: 'SUBSCRIBE_NOW',
+            },
+          });
+        },
+        onApprove: async (data) => {
+          setStatus('PayPal aprobó la suscripción. Activando ChirpCheck Gold...');
+          await postPayment('/api/payments/paypal/confirm-subscription', {
+            order_id: currentOrderId,
+            subscription_id: data.subscriptionID,
+          }, session);
+
+          const profile = await waitForGold(session, 8);
+          if (profile) {
+            setGoldActiveUi(profile);
+            setStatus(`¡ChirpCheck Gold activado! ${goldUntilLabel(profile)}`, 'ok');
+          } else {
+            setStatus('Suscripción aprobada. La activación puede tardar unos segundos; refrescá tu perfil en un momento.', 'ok');
+          }
+        },
+        onCancel: () => {
+          setStatus('Compra internacional cancelada. Podés intentarlo nuevamente cuando quieras.');
+        },
+        onError: (error) => {
+          console.error('[Chirp Gold PayPal]', error);
+          setStatus(error?.message || 'PayPal no pudo iniciar la suscripción.', 'error');
+        },
+      }).render('#paypalButtonContainer');
+    } catch (error) {
+      console.error('[Chirp Gold PayPal init]', error);
+      container.innerHTML = '<button id="payPayPalFallback" class="btn btn-primary gold-btn gold-paypal-btn" type="button">Reintentar compra internacional</button>';
+      $('#payPayPalFallback')?.addEventListener('click', () => {
+        container.dataset.ready = 'false';
+        container.innerHTML = '<div class="gold-paypal-loading">Cargando botón internacional seguro...</div>';
+        initPayPalButtons(session);
+      });
+      setStatus(error.message || 'No pude cargar PayPal.', 'error');
+    }
+  }
+
   function updatePriceLabels(mpConfig) {
     const plan = mpConfig?.plan || {};
     const amount = Number(plan.amount || 0);
@@ -436,20 +546,7 @@
       setStatus(error.message || 'No pude cargar el módulo de pago.', 'error');
     }
 
-    $('#payPayPal')?.addEventListener('click', async (event) => {
-      const btn = event.currentTarget;
-      btn.disabled = true;
-      setStatus('Creando suscripción de PayPal...');
-      try {
-        const data = await postPayment('/api/payments/paypal/subscribe', { plan_id: 'gold_monthly' }, session);
-        if (!data.approve_url) throw new Error('PayPal no devolvió URL de aprobación para la suscripción.');
-        location.href = data.approve_url;
-      } catch (error) {
-        console.error(error);
-        setStatus(error.message || 'No pude iniciar la suscripción de PayPal.', 'error');
-        btn.disabled = false;
-      }
-    });
+    initPayPalButtons(session);
   }
 
   async function waitForGold(session, tries = 10) {
