@@ -244,3 +244,116 @@
   border: 4px solid #fff;
   box-shadow: var(--shadow);
 }
+
+/* =========================
+   Autoverificación / ChirpCheck containment
+   Evita que las insignias empujen el contenido fuera del card.
+   ========================= */
+
+.verification-card,
+.verification-card * {
+  box-sizing: border-box;
+}
+
+.verification-card {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.verification-card .section-title {
+  min-width: 0;
+  align-items: flex-start;
+}
+
+.verification-card .section-title > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.verification-card .section-title > .chip {
+  flex: 0 1 auto;
+  max-width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 32px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  flex-wrap: wrap;
+  white-space: normal;
+  line-height: 1.2;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.verification-card .section-title .verification-badge,
+.verification-card .section-title .chirpcheck-badge {
+  margin-left: 2px;
+}
+
+.verification-card__body,
+.verification-card__status,
+.verification-card__numbers,
+.chirpcheck-tier-grid,
+.chirpcheck-tier {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.verification-card__status strong,
+.verification-card__status span,
+.verification-card__numbers span,
+.chirpcheck-tier small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.verification-card__numbers {
+  flex-wrap: wrap;
+}
+
+.verification-card .chirpcheck-tier b {
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 6px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.verification-card .chirpcheck-tier .verification-badge,
+.verification-card .chirpcheck-tier .chirpcheck-badge {
+  flex: 0 0 1.05em;
+  margin-left: 0;
+}
+
+.chirp__name .verification-badge,
+.user-row b .verification-badge,
+.notification-row b .verification-badge,
+.dm-row b .verification-badge,
+.profile-card h2 .verification-badge,
+#dmPeerName .verification-badge {
+  flex: 0 0 auto;
+  max-width: 1.05em;
+}
+
+.chirp__name,
+.user-row b,
+.notification-row b,
+.dm-row b,
+.profile-card h2,
+#dmPeerName {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 560px) {
+  .verification-card .section-title {
+    flex-direction: column;
+  }
+
+  .verification-card .section-title > .chip {
+    align-self: flex-start;
+    text-align: left;
+  }
+}
