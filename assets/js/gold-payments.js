@@ -92,7 +92,6 @@
     const response = await fetch('/api/payments/mercadopago/public-config', { cache: 'no-store' });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || 'No pude cargar la configuración pública de pago.');
-    if (!data.public_key) throw new Error('Falta la Public Key de pago en Vercel.');
     return data;
   }
 
@@ -256,12 +255,12 @@
       return 'No se pudo generar o usar el token seguro de la tarjeta. Revisá número, vencimiento, CVV y que la Public Key corresponda al mismo ambiente que el Access Token.';
     }
 
-    if (text.includes('unauthorized') || text.includes('invalid access token') || text.includes('401')) {
-      return 'Mercado Pago rechazó las credenciales. Revisá que MERCADOPAGO_PUBLIC_KEY y MERCADOPAGO_ACCESS_TOKEN sean ambos TEST o ambos producción.';
+    if (text.includes('invalid access token') || text.includes('401')) {
+      return 'Mercado Pago rechazó el Access Token. Revisá MERCADOPAGO_ACCESS_TOKEN.';
     }
 
-    if (text.includes('payer_email')) {
-      return 'Falta o es inválido el email del pagador.';
+    if (text.includes('policy') || text.includes('forbidden') || text.includes('403') || text.includes('unauthorized')) {
+      return 'Mercado Pago bloqueó el checkout hosted. Revisá que el Access Token TEST sea válido y que suscripciones esté habilitado en esa app.';
     }
 
     return error?.message || 'Mercado Pago no pudo crear la suscripción.';
@@ -477,9 +476,7 @@
   function prefillEmail(session) {
     const email = session?.user?.email || '';
     const input = $('#form-checkout__cardholderEmail');
-    const mpInput = $('#mpCheckoutEmail');
     if (input && !input.value) input.value = email;
-    if (mpInput && !mpInput.value) mpInput.value = email;
   }
 
 
@@ -490,31 +487,18 @@
     button.dataset.ready = 'true';
     initMpModeHint(mpConfig);
 
-    const input = $('#mpCheckoutEmail');
-    if (input && !input.value) input.value = session?.user?.email || '';
-
     button.addEventListener('click', async () => {
-      const payerEmail = String(input?.value || session?.user?.email || '').trim();
-      if (!/^\S+@\S+\.\S+$/.test(payerEmail)) {
-        input?.classList.add('is-invalid');
-        input?.focus?.({ preventScroll: false });
-        setStatus('Completá un email válido para abrir Mercado Pago.', 'error');
-        return;
-      }
-
-      input?.classList.remove('is-invalid');
-      setLoading(true, 'Creando link seguro de Mercado Pago...');
+      setLoading(true, 'Abriendo Mercado Pago...');
 
       try {
         const data = await postPayment('/api/payments/mercadopago/checkout', {
           plan_id: 'gold_monthly',
-          payer_email: payerEmail,
         }, session);
 
         const url = data.init_point || data.checkout_url || data.sandbox_init_point || '';
         if (!url) throw new Error('Mercado Pago no devolvió un link de checkout.');
 
-        setStatus('Redirigiendo al checkout oficial de Mercado Pago...');
+        setStatus('Redirigiendo a Mercado Pago para iniciar sesión y aprobar la suscripción...');
         window.location.href = url;
       } catch (error) {
         console.error('[Chirp Gold MP checkout]', error);

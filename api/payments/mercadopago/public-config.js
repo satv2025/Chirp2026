@@ -1,11 +1,11 @@
 const { sendJson } = require('../../_utils/http.js');
-const { mpPublicKey, mpMode, assertMpCredentialPair } = require('../../_utils/mercadopago.js');
+const { mpMode, assertMpCredentialPair } = require('../../_utils/mercadopago.js');
 const { getPlan } = require('../../_utils/plans.js');
 
 module.exports = async function handler(req, res) {
   try {
     assertMpCredentialPair();
-    const publicKey = mpPublicKey();
+    const publicKey = process.env.MERCADOPAGO_PUBLIC_KEY || '';
     const plan = getPlan('gold_monthly');
     const mode = mpMode();
 
@@ -15,7 +15,7 @@ module.exports = async function handler(req, res) {
       mode,
       public_key: publicKey,
       locale: 'es-AR',
-      using_preapproval_plan: Boolean(process.env.MP_PREAPPROVAL_PLAN_ID),
+      checkout_flow: 'preapproval_plan_hosted',
       plan: {
         id: plan.id,
         name: plan.name,

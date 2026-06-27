@@ -48,7 +48,6 @@ async function mpFetch(path, options = {}) {
     headers: {
       Authorization: `Bearer ${mpAccessToken()}`,
       'Content-Type': 'application/json',
-      ...(mpAccessToken().startsWith('TEST-') ? { 'X-scope': 'stage' } : {}),
       ...(options.headers || {}),
     },
   });
@@ -80,6 +79,17 @@ function createPreference(payload) {
 
   return mpFetch('/checkout/preferences', {
     method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+function createPreapprovalPlan(payload, idempotencyKey = '') {
+  const headers = {};
+  if (idempotencyKey) headers['X-Idempotency-Key'] = idempotencyKey;
+
+  return mpFetch('/preapproval_plan', {
+    method: 'POST',
+    headers,
     body: JSON.stringify(payload),
   });
 }
@@ -163,6 +173,7 @@ module.exports = {
   mpMode,
   assertMpCredentialPair,
   createPreference,
+  createPreapprovalPlan,
   createPreapproval,
   getPreapproval,
   getPayment,

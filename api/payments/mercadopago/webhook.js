@@ -94,22 +94,51 @@ async function handlePayment({ resourceId, body }) {
 async function handlePreapproval({ resourceId, body }) {
   const preapproval = await getPreapproval(resourceId);
   const orderId = preapproval?.external_reference || '';
+  const preapprovalId = preapproval?.id || resourceId;
+  const preapprovalPlanId = preapproval?.preapproval_plan_id || '';
 
   let order = orderId ? await findGoldOrderById(orderId) : null;
-  if (!order) order = await findGoldOrderByProviderOrder('mercadopago', preapproval.id || resourceId);
+  if (!order) order = await findGoldOrderByProviderOrder('mercadopago', preapprovalId);
+  if (!order && preapprovalPlanId) order = await findGoldOrderByProviderOrder('mercadopago', preapprovalPlanId);
   if (!order) return { ok: true, ignored: 'order_not_found' };
 
-  const status = preapproval?.status || 'unknown';
+  const status = String(preapproval?.status || 'unknown').toLowerCase();
+  const raw = {
+    ...(order.raw || {}),
+    mercadopago_preapproval: preapproval,
+    mercadopago_preapproval_webhook: body,
+    mercadopago_preapproval_plan_id: preapprovalPlanId || null,
+  };
+
+  if (status === 'authorized' || status === 'approved') {
+    const plan = getPlan(order.plan_id || 'gold_monthly');
+    await activateGold({
+      orderId: order.id,
+      userId: order.user_id,
+      days: plan.durationDays,
+      providerPaymentId: '',
+      providerOrderId: preapprovalId,
+      status: 'approved',
+      raw,
+    });
+
+    await updateGoldOrder(order.id, {
+      provider_subscription_id: preapprovalId,
+      checkout_url: preapproval.init_point || order.checkout_url || null,
+      external_reference: order.external_reference || order.id,
+      raw,
+    });
+
+    return { ok: true, activated: true, status };
+  }
 
   await updateGoldOrder(order.id, {
     status,
-    provider_order_id: preapproval.id || resourceId,
+    provider_order_id: preapprovalId,
+    provider_subscription_id: preapprovalId,
     checkout_url: preapproval.init_point || order.checkout_url || null,
-    raw: {
-      ...(order.raw || {}),
-      mercadopago_preapproval: preapproval,
-      mercadopago_preapproval_webhook: body,
-    },
+    external_reference: order.external_reference || order.id,
+    raw,
   });
 
   return { ok: true, status };

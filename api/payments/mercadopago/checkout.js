@@ -2,15 +2,17 @@ const crypto = require('node:crypto');
 const { getSupabaseUserFromRequest } = require('../../_utils/auth.js');
 const { createGoldOrder, updateGoldOrder } = require('../../_utils/chirpSupabase.js');
 const { sendJson, methodNotAllowed, readJson, siteUrl } = require('../../_utils/http.js');
-const { createPreapproval, mpMode, assertMpCredentialPair } = require('../../_utils/mercadopago.js');
+const { createPreapprovalPlan, mpMode, assertMpCredentialPair } = require('../../_utils/mercadopago.js');
 const { getPlan } = require('../../_utils/plans.js');
 
 function mpFriendlyMessage(error) {
   const raw = JSON.stringify(error.details || {}) + ' ' + (error.message || '');
-  if (/invalid.*access|unauthorized|401/i.test(raw)) {
-    return 'Mercado Pago rechazó las credenciales. Revisá que MERCADOPAGO_PUBLIC_KEY y MERCADOPAGO_ACCESS_TOKEN sean ambos TEST o ambos producción.';
+  if (/invalid.*access|invalid_token|401/i.test(raw)) {
+    return 'Mercado Pago rechazó el Access Token. Revisá MERCADOPAGO_ACCESS_TOKEN.';
   }
-  if (/payer_email/i.test(raw)) return 'Mercado Pago rechazó el email del comprador.';
+  if (/403|forbidden|policy|unauthorized/i.test(raw)) {
+    return 'Mercado Pago bloqueó la creación del plan hosted. Revisá que el Access Token sea TEST válido y que la app tenga habilitadas suscripciones.';
+  }
   if (/back_url/i.test(raw)) return 'Mercado Pago rechazó la URL de regreso. Revisá PUBLIC_SITE_URL.';
   return error.message || 'No pude crear el checkout de Mercado Pago.';
 }
@@ -23,9 +25,6 @@ module.exports = async function handler(req, res) {
     const user = await getSupabaseUserFromRequest(req);
     const body = readJson(req);
     const plan = getPlan(body.plan_id || 'gold_monthly');
-
-    const payerEmail = String(body.payer_email || body.email || user.email || '').trim();
-    if (!payerEmail) return sendJson(res, { error: 'Falta email del comprador.' }, 400);
 
     const amount = Number(plan.mercadopago.amount);
     const currency = plan.mercadopago.currency || 'ARS';
@@ -43,26 +42,28 @@ module.exports = async function handler(req, res) {
 
     const base = siteUrl();
 
-    // Checkout oficial de Mercado Pago para suscripciones.
-    // Usamos modelo pending: el comprador elige el medio de pago en Mercado Pago.
-    // No mandamos card_token_id porque Chirp no quiere formulario de tarjeta propio.
+    // Checkout oficial de Mercado Pago para suscripciones SIN pedir email en Chirp.
+    // Creamos un plan dinámico por orden y redirigimos al init_point:
+    // Mercado Pago se encarga del login, email y medio de pago del comprador.
     const payload = {
-      reason: plan.name || 'ChirpCheck Gold mensual',
+      reason: `${plan.name || 'ChirpCheck Gold'} · ${String(order.id).slice(0, 8)}`,
       external_reference: order.id,
-      payer_email: payerEmail,
       auto_recurring: {
         frequency: 1,
         frequency_type: 'months',
         transaction_amount: amount,
         currency_id: currency,
       },
+      payment_methods_allowed: {
+        payment_types: [{}],
+        payment_methods: [{}],
+      },
       back_url: `${base}/gold-return?provider=mercadopago&result=pending&order_id=${order.id}`,
-      status: 'pending',
     };
 
-    let preapproval;
+    let preapprovalPlan;
     try {
-      preapproval = await createPreapproval(payload, crypto.randomUUID());
+      preapprovalPlan = await createPreapprovalPlan(payload, crypto.randomUUID());
     } catch (error) {
       await updateGoldOrder(order.id, {
         status: 'failed',
@@ -78,17 +79,17 @@ module.exports = async function handler(req, res) {
       }, error.statusCode || 500);
     }
 
-    const preapprovalId = preapproval?.id || preapproval?.preapproval_id || '';
-    const initPoint = preapproval?.init_point || preapproval?.sandbox_init_point || '';
+    const preapprovalPlanId = preapprovalPlan?.id || preapprovalPlan?.preapproval_plan_id || '';
+    const initPoint = preapprovalPlan?.init_point || preapprovalPlan?.sandbox_init_point || '';
 
     await updateGoldOrder(order.id, {
-      provider_order_id: preapprovalId || null,
-      provider_subscription_id: preapprovalId || null,
+      provider_order_id: preapprovalPlanId || null,
+      provider_subscription_id: null,
       external_reference: order.id,
       checkout_url: initPoint || null,
-      status: String(preapproval?.status || 'pending').toLowerCase(),
+      status: String(preapprovalPlan?.status || 'pending').toLowerCase(),
       raw: {
-        create_checkout_preapproval: preapproval,
+        create_checkout_preapproval_plan: preapprovalPlan,
         mercadopago_mode: mpMode(),
         checkout_payload_safe: payload,
       },
@@ -96,8 +97,8 @@ module.exports = async function handler(req, res) {
 
     if (!initPoint) {
       return sendJson(res, {
-        error: 'Mercado Pago creó la suscripción pero no devolvió init_point.',
-        details: preapproval || null,
+        error: 'Mercado Pago creó el plan pero no devolvió init_point.',
+        details: preapprovalPlan || null,
       }, 500);
     }
 
@@ -106,8 +107,8 @@ module.exports = async function handler(req, res) {
       provider: 'mercadopago',
       mode: mpMode(),
       order_id: order.id,
-      preapproval_id: preapprovalId,
-      status: String(preapproval?.status || 'pending').toLowerCase(),
+      preapproval_plan_id: preapprovalPlanId,
+      status: String(preapprovalPlan?.status || 'pending').toLowerCase(),
       init_point: initPoint,
       checkout_url: initPoint,
     });
