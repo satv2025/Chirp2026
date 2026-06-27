@@ -561,3 +561,12 @@
 @media (max-width: 900px) {
   .chirp-gold-sidebar-cta { display: none; }
 }
+
+
+/* Oculta promos de compra cuando la cuenta ya tiene Gold. La leftbar queda visible. */
+body.chirp-user-is-gold [data-hide-if-gold],
+body.chirp-user-is-gold .gold-mini-panel,
+body.chirp-user-is-gold .gold-floating-cta,
+body.chirp-user-is-gold .auth-gold-link {
+  display: none !important;
+}

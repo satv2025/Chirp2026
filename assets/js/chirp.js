@@ -123,6 +123,18 @@
     );
   }
 
+  function currentProfileHasGold(p = {}) {
+    if (!p?.is_chirp_gold) return false;
+    if (!p.gold_until) return true;
+    return new Date(p.gold_until).getTime() > Date.now();
+  }
+
+  function applyGoldUiState() {
+    const active = currentProfileHasGold(profile);
+    document.body.classList.toggle('chirp-user-is-gold', active);
+    document.body.dataset.chirpGoldActive = active ? 'true' : 'false';
+  }
+
   function chirpCheckBadgeHTML(p = {}) {
     const level = chirpCheckLevel(p);
     if (!level) return '';
@@ -241,6 +253,7 @@
       data = result.data;
     }
     profile = data;
+    applyGoldUiState();
     hydrateMe();
     return profile;
   }
@@ -263,6 +276,7 @@
   }
 
   function hydrateMe() {
+    applyGoldUiState();
     $$('.js-me-name').forEach((el) => {
       el.innerHTML = profileNameHTML(profile, 'Tu perfil');
       if (profile?.username) el.dataset.chirpUsername = profile.username;

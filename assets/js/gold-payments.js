@@ -88,8 +88,8 @@
   async function getMpConfig() {
     const response = await fetch('/api/payments/mercadopago/public-config', { cache: 'no-store' });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || 'No pude cargar la configuración pública de Mercado Pago.');
-    if (!data.public_key) throw new Error('Falta MERCADOPAGO_PUBLIC_KEY en Vercel.');
+    if (!response.ok) throw new Error(data.error || 'No pude cargar la configuración pública de pago.');
+    if (!data.public_key) throw new Error('Falta la Public Key de pago en Vercel.');
     return data;
   }
 
@@ -106,6 +106,92 @@
     });
   }
 
+
+  function setGoldActiveUi(profile) {
+    const active = isGoldActive(profile);
+    document.body.classList.toggle('is-gold-active', active);
+    document.body.dataset.chirpGoldActive = active ? 'true' : 'false';
+    document.querySelectorAll('[data-hide-if-gold]').forEach((node) => {
+      node.hidden = active;
+    });
+    document.querySelectorAll('.gold-active-account-card').forEach((node) => {
+      node.hidden = !active;
+    });
+  }
+
+  function optionLabel(option) {
+    return (option?.textContent || option?.label || option?.value || '').trim();
+  }
+
+  function syncCustomDropdown(drop) {
+    const selector = drop.dataset.goldSelect;
+    const select = selector ? document.querySelector(selector) : null;
+    const label = drop.querySelector('[data-gold-dropdown-label]');
+    const menu = drop.querySelector('.gold-custom-dropdown__menu');
+    const placeholder = drop.dataset.placeholder || 'Seleccionar';
+    if (!select || !menu || !label) return;
+
+    const options = [...select.options].filter((option) => option.value || optionLabel(option));
+    const selected = options.find((option) => option.value === select.value) || options.find((option) => option.selected);
+    label.textContent = selected ? optionLabel(selected) : placeholder;
+
+    menu.innerHTML = '';
+    if (!options.length) {
+      const empty = document.createElement('button');
+      empty.type = 'button';
+      empty.className = 'gold-custom-dropdown__item is-disabled';
+      empty.disabled = true;
+      empty.textContent = placeholder;
+      menu.appendChild(empty);
+      return;
+    }
+
+    options.forEach((option) => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'gold-custom-dropdown__item';
+      item.textContent = optionLabel(option);
+      item.dataset.value = option.value;
+      item.setAttribute('role', 'option');
+      if (option.value === select.value) item.classList.add('is-selected');
+      item.addEventListener('click', () => {
+        select.value = option.value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        select.dispatchEvent(new Event('input', { bubbles: true }));
+        label.textContent = optionLabel(option);
+        drop.classList.remove('is-open');
+        syncCustomDropdown(drop);
+      });
+      menu.appendChild(item);
+    });
+  }
+
+  function initCustomDropdowns() {
+    document.querySelectorAll('.gold-custom-dropdown').forEach((drop) => {
+      if (drop.dataset.ready === 'true') {
+        syncCustomDropdown(drop);
+        return;
+      }
+      drop.dataset.ready = 'true';
+      const selector = drop.dataset.goldSelect;
+      const select = selector ? document.querySelector(selector) : null;
+      const button = drop.querySelector('.gold-custom-dropdown__button');
+      if (!select || !button) return;
+
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.gold-custom-dropdown.is-open').forEach((other) => {
+          if (other !== drop) other.classList.remove('is-open');
+        });
+        drop.classList.toggle('is-open');
+        syncCustomDropdown(drop);
+      });
+
+      select.addEventListener('change', () => syncCustomDropdown(drop));
+      const observer = new MutationObserver(() => syncCustomDropdown(drop));
+      observer.observe(select, { childList: true, subtree: true, attributes: true });
+      syncCustomDropdown(drop);
+    });
+  }
 
 
   function bindGoldCtas() {
@@ -131,7 +217,7 @@
     if (!form) return;
 
     if (!window.MercadoPago) {
-      setStatus('No cargó MercadoPago.js. Revisá la conexión o el bloqueador.', 'error');
+      setStatus('No cargó el módulo de pago seguro. Revisá la conexión o el bloqueador.', 'error');
       return;
     }
 
@@ -185,10 +271,11 @@
         onFormMounted: (error) => {
           if (error) {
             console.warn('[Chirp Gold MP] form mount error:', error);
-            setStatus('No pude montar el formulario de Mercado Pago.', 'error');
+            setStatus('No pude montar el formulario de pago seguro.', 'error');
             return;
           }
-          setStatus('Completá los datos para activar Chirp Gold con autopago mensual.');
+          initCustomDropdowns();
+          setStatus('Completá los datos para activar ChirpCheck Gold con autopago mensual.');
         },
         onSubmit: async (event) => {
           event.preventDefault();
@@ -199,10 +286,10 @@
             const token = formData.token;
             const payerEmail = formData.cardholderEmail || $('#form-checkout__cardholderEmail')?.value || session.user.email;
 
-            if (!token) throw new Error('Mercado Pago no generó el token de tarjeta. Revisá los datos.');
+            if (!token) throw new Error('No se pudo generar el token seguro de la tarjeta. Revisá los datos.');
             if (!payerEmail) throw new Error('Falta el email del pagador.');
 
-            setStatus('Creando suscripción Chirp Gold...');
+            setStatus('Creando suscripción ChirpCheck Gold...');
             const data = await postPayment('/api/payments/mercadopago/subscribe', {
               plan_id: 'gold_monthly',
               card_token_id: token,
@@ -215,17 +302,18 @@
               },
             }, session);
 
-            if (!data.ok) throw new Error('Mercado Pago no confirmó la suscripción.');
+            if (!data.ok) throw new Error('No se confirmó la suscripción.');
 
             const profile = await waitForGold(session, 6);
             if (profile) {
-              setStatus(`¡Chirp Gold activado! ${goldUntilLabel(profile)}`, 'ok');
+              setGoldActiveUi(profile);
+              setStatus(`¡ChirpCheck Gold activado! ${goldUntilLabel(profile)}`, 'ok');
             } else {
               setStatus('Suscripción creada. La activación puede tardar unos segundos; refrescá tu perfil en un momento.', 'ok');
             }
           } catch (error) {
             console.error('[Chirp Gold MP]', error);
-            setStatus(error.message || 'No pude activar Chirp Gold con Mercado Pago.', 'error');
+            setStatus(error.message || 'No pude activar ChirpCheck Gold.', 'error');
           } finally {
             setLoading(false);
           }
@@ -237,6 +325,7 @@
           return () => {
             progress?.setAttribute('value', '0');
             progress?.classList.remove('is-loading');
+            window.setTimeout(initCustomDropdowns, 80);
           };
         },
       },
@@ -252,16 +341,21 @@
     prefillEmail(session);
 
     const profile = await fetchProfile(session.user.id);
-    if (isGoldActive(profile)) setStatus(goldUntilLabel(profile), 'ok');
-    else setStatus('Tu cuenta todavía no tiene Gold activo. Completá el formulario para activar autopago mensual.');
+    setGoldActiveUi(profile);
+    if (isGoldActive(profile)) {
+      setStatus(`Ya sos ChirpCheck Gold. ${goldUntilLabel(profile)}`, 'ok');
+      return;
+    }
+    setStatus('Tu cuenta todavía no tiene Gold activo. Completá el formulario para activar autopago mensual.');
 
     try {
       const mpConfig = await getMpConfig();
       updatePriceLabels(mpConfig);
+      initCustomDropdowns();
       initMercadoPagoCardForm(mpConfig, session);
     } catch (error) {
       console.error(error);
-      setStatus(error.message || 'No pude cargar Mercado Pago.', 'error');
+      setStatus(error.message || 'No pude cargar el módulo de pago.', 'error');
     }
 
     $('#payPayPal')?.addEventListener('click', async (event) => {
@@ -316,11 +410,11 @@
       }
 
       $('#returnTitle') && ($('#returnTitle').textContent = 'Verificando activación...');
-      setStatus('Esperando confirmación de Chirp Gold...');
+      setStatus('Esperando confirmación de ChirpCheck Gold...');
       const profile = await waitForGold(session, provider === 'mercadopago' ? 14 : 8);
 
       if (profile) {
-        $('#returnTitle') && ($('#returnTitle').textContent = '¡Chirp Gold activado!');
+        $('#returnTitle') && ($('#returnTitle').textContent = '¡ChirpCheck Gold activado!');
         $('#returnMessage') && ($('#returnMessage').textContent = 'Listo, tu perfil ya tiene Gold activo.');
         setStatus(goldUntilLabel(profile), 'ok');
       } else {
@@ -338,6 +432,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     bindGoldCtas();
+    initCustomDropdowns();
 
     if (!CFG || !window.supabase || !sb) {
       setStatus('Falta cargar config.js o Supabase.', 'error');

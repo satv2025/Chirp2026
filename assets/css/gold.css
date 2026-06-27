@@ -557,3 +557,103 @@
     font-size: clamp(2.15rem, 14vw, 3.8rem);
   }
 }
+
+
+/* === Chirp Gold v5: custom dropdowns + estado activo === */
+.gold-native-select {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+.gold-custom-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.gold-custom-dropdown__button {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid rgba(255, 214, 120, .24);
+  border-radius: 16px;
+  background: rgba(15, 12, 18, .78);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 14px;
+  font: inherit;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+}
+
+.gold-custom-dropdown__button::after {
+  content: "⌄";
+  color: #ffd36d;
+  font-weight: 950;
+  transform: translateY(-1px);
+}
+
+.gold-custom-dropdown.is-open .gold-custom-dropdown__button::after {
+  transform: rotate(180deg) translateY(1px);
+}
+
+.gold-custom-dropdown__menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 80;
+  display: none;
+  max-height: 220px;
+  overflow: auto;
+  padding: 8px;
+  border: 1px solid rgba(255, 214, 120, .25);
+  border-radius: 18px;
+  background: rgba(17, 13, 22, .98);
+  box-shadow: 0 22px 60px rgba(0,0,0,.45);
+  backdrop-filter: blur(16px);
+}
+
+.gold-custom-dropdown.is-open .gold-custom-dropdown__menu {
+  display: grid;
+  gap: 6px;
+}
+
+.gold-custom-dropdown__item {
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  padding: 10px 12px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.gold-custom-dropdown__item:hover,
+.gold-custom-dropdown__item.is-selected {
+  background: linear-gradient(135deg, rgba(255, 211, 109, .22), rgba(239, 0, 138, .16));
+}
+
+.gold-field-muted .gold-custom-dropdown__button {
+  color: var(--muted);
+}
+
+.gold-page.is-gold-active .gold-plan-featured,
+.gold-page.is-gold-active [data-hide-if-gold] {
+  display: none !important;
+}
+
+.gold-page.is-gold-active .gold-active-account-card {
+  display: block !important;
+}
