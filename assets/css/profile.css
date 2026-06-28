@@ -1,4 +1,3 @@
-
 .public-profile-tabs {
   display: flex;
   gap: 6px;
@@ -34,7 +33,7 @@
 .public-list-head h2 {
   margin: 0;
   font-size: 24px;
-  letter-spacing: -.045em;
+  letter-spacing: -0.045em;
 }
 
 .public-list-head p {
@@ -74,7 +73,7 @@
   width: 110px;
   height: 110px;
   object-fit: contain;
-  opacity: .9;
+  opacity: 0.9;
 }
 
 @media (max-width: 720px) {
@@ -82,7 +81,7 @@
     position: sticky;
     top: 0;
     z-index: 5;
-    background: rgba(255,250,252,.92);
+    background: rgba(255, 250, 252, 0.92);
     backdrop-filter: blur(12px);
   }
 

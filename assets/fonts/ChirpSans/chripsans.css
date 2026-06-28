@@ -1,0 +1,125 @@
+@font-face {
+  font-family: 'Chirp Sans';
+  src: url('Chirp Sans Thin.eot');
+  src:
+    url('Chirp Sans Thin.eot?#iefix') format('embedded-opentype'),
+    url('Chirp Sans Thin.woff2') format('woff2'),
+    url('Chirp Sans Thin.woff') format('woff'),
+    url('Chirp Sans Thin.otf') format('opentype'),
+    url('Chirp Sans Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chirp Sans';
+  src: url('Chirp Sans ExtraLight.eot');
+  src:
+    url('Chirp Sans ExtraLight.eot?#iefix') format('embedded-opentype'),
+    url('Chirp Sans ExtraLight.woff2') format('woff2'),
+    url('Chirp Sans ExtraLight.woff') format('woff'),
+    url('Chirp Sans ExtraLight.otf') format('opentype'),
+    url('Chirp Sans ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chirp Sans';
+  src: url('Chirp Sans Light.eot');
+  src:
+    url('Chirp Sans Light.eot?#iefix') format('embedded-opentype'),
+    url('Chirp Sans Light.woff2') format('woff2'),
+    url('Chirp Sans Light.woff') format('woff'),
+    url('Chirp Sans Light.otf') format('opentype'),
+    url('Chirp Sans Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chirp Sans';
+  src: url('Chirp Sans Regular.eot');
+  src:
+    url('Chirp Sans Regular.eot?#iefix') format('embedded-opentype'),
+    url('Chirp Sans Regular.woff2') format('woff2'),
+    url('Chirp Sans Regular.woff') format('woff'),
+    url('Chirp Sans Regular.otf') format('opentype'),
+    url('Chirp Sans Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chirp Sans';
+  src: url('Chirp Sans Medium.eot');
+  src:
+    url('Chirp Sans Medium.eot?#iefix') format('embedded-opentype'),
+    url('Chirp Sans Medium.woff2') format('woff2'),
+    url('Chirp Sans Medium.woff') format('woff'),
+    url('Chirp Sans Medium.otf') format('opentype'),
+    url('Chirp Sans Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chirp Sans';
+  src: url('Chirp Sans SemiBold.eot');
+  src:
+    url('Chirp Sans SemiBold.eot?#iefix') format('embedded-opentype'),
+    url('Chirp Sans SemiBold.woff2') format('woff2'),
+    url('Chirp Sans SemiBold.woff') format('woff'),
+    url('Chirp Sans SemiBold.otf') format('opentype'),
+    url('Chirp Sans SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chirp Sans';
+  src: url('Chirp Sans Bold.eot');
+  src:
+    url('Chirp Sans Bold.eot?#iefix') format('embedded-opentype'),
+    url('Chirp Sans Bold.woff2') format('woff2'),
+    url('Chirp Sans Bold.woff') format('woff'),
+    url('Chirp Sans Bold.otf') format('opentype'),
+    url('Chirp Sans Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chirp Sans';
+  src: url('Chirp Sans ExtraBold.eot');
+  src:
+    url('Chirp Sans ExtraBold.eot?#iefix') format('embedded-opentype'),
+    url('Chirp Sans ExtraBold.woff2') format('woff2'),
+    url('Chirp Sans ExtraBold.woff') format('woff'),
+    url('Chirp Sans ExtraBold.otf') format('opentype'),
+    url('Chirp Sans ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chirp Sans';
+  src: url('Chirp Sans Black.eot');
+  src:
+    url('Chirp Sans Black.eot?#iefix') format('embedded-opentype'),
+    url('Chirp Sans Black.woff2') format('woff2'),
+    url('Chirp Sans Black.woff') format('woff'),
+    url('Chirp Sans Black.otf') format('opentype'),
+    url('Chirp Sans Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}

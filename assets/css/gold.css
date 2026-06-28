@@ -1,11 +1,49 @@
+/* =========================================================
+   Chirp Gold · Premium sober
+   Estilo: Chirp claro + rosa + dorado editorial
+   ========================================================= */
+
 .gold-page {
+  --gold: #d9a427;
+  --gold-2: #f3d983;
+  --gold-3: #a46a00;
+  --gold-ink: #4f3300;
+  --gold-muted: #8a6a25;
+  --gold-line: rgba(217, 164, 39, 0.28);
+  --gold-line-strong: rgba(217, 164, 39, 0.42);
+  --gold-surface: rgba(255, 248, 229, 0.72);
+  --gold-surface-strong: rgba(255, 244, 207, 0.9);
+  --gold-shadow: 0 18px 42px rgba(128, 86, 12, 0.1);
+
   min-height: 100vh;
+  overflow-x: clip;
+  color: var(--text);
   background:
-    radial-gradient(circle at 18% 8%, rgba(255, 216, 107, .24), transparent 28rem),
-    radial-gradient(circle at 88% 18%, rgba(255, 74, 170, .18), transparent 24rem),
-    linear-gradient(135deg, #100710, #24101f 48%, #070307);
-  color: #fff;
+    radial-gradient(
+      circle at 14% 0%,
+      rgba(217, 164, 39, 0.16),
+      transparent 30rem
+    ),
+    radial-gradient(
+      circle at 96% 4%,
+      rgba(239, 0, 138, 0.1),
+      transparent 28rem
+    ),
+    linear-gradient(180deg, #fff8fc 0%, #fff 46%, #fff8fc 100%);
 }
+
+.gold-page * {
+  box-sizing: border-box;
+}
+
+.gold-page ::selection {
+  color: #fff;
+  background: var(--pink);
+}
+
+/* =========================================================
+   Shell / base cards
+   ========================================================= */
 
 .gold-shell {
   width: min(1120px, calc(100% - 32px));
@@ -17,28 +55,62 @@
 .gold-plan,
 .gold-benefit,
 .gold-faq {
-  border: 1px solid rgba(255, 255, 255, .12);
-  background: rgba(16, 10, 16, .74);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, .3);
-  backdrop-filter: blur(18px);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-lg, 16px);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-2);
+  backdrop-filter: blur(14px);
 }
+
+.gold-plan,
+.gold-benefit,
+.gold-faq,
+.gold-preview-card,
+.gold-region-selector {
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease,
+    background 0.16s ease;
+}
+
+.gold-plan:hover,
+.gold-benefit:hover,
+.gold-preview-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--gold-line);
+  box-shadow: var(--shadow), var(--gold-shadow);
+}
+
+/* =========================================================
+   Hero
+   ========================================================= */
 
 .gold-hero {
   position: relative;
   overflow: hidden;
-  padding: clamp(26px, 4vw, 54px);
+  padding: clamp(28px, 4vw, 54px);
+  border-color: rgba(245, 220, 232, 0.92);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(217, 164, 39, 0.18),
+      transparent 18rem
+    ),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 252, 0.9));
+  box-shadow: var(--shadow);
 }
 
 .gold-hero::after {
-  content: "";
+  content: '';
   position: absolute;
-  right: -140px;
-  top: -160px;
-  width: 420px;
-  height: 420px;
+  right: -120px;
+  top: -140px;
+  width: 360px;
+  height: 360px;
   border-radius: 999px;
-  background: rgba(255, 216, 107, .12);
-  filter: blur(8px);
+  background: rgba(217, 164, 39, 0.12);
+  filter: blur(10px);
   pointer-events: none;
 }
 
@@ -49,18 +121,25 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
 .gold-back {
   display: inline-flex;
-  color: rgba(255, 255, 255, .78);
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
   text-decoration: none;
-  font-weight: 800;
+  font-weight: 950;
+}
+
+.gold-back::before {
+  content: '←';
+  font-weight: 950;
 }
 
 .gold-back:hover {
-  color: #fff;
+  color: var(--hot);
 }
 
 .gold-secure-chip,
@@ -68,16 +147,28 @@
 .gold-plan-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
+  gap: 7px;
+  min-height: 32px;
+  padding: 0 12px;
   border-radius: 999px;
-  font-weight: 900;
-  font-size: .78rem;
+  font-size: 0.78rem;
+  font-weight: 950;
+  line-height: 1;
 }
 
 .gold-secure-chip {
-  background: rgba(255, 255, 255, .09);
-  color: rgba(255, 255, 255, .82);
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--muted);
+}
+
+.gold-secure-chip::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ok);
+  box-shadow: 0 0 0 3px rgba(21, 147, 109, 0.12);
 }
 
 .gold-hero-layout {
@@ -85,7 +176,7 @@
   z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
-  gap: clamp(24px, 5vw, 54px);
+  gap: clamp(26px, 5vw, 54px);
   align-items: center;
 }
 
@@ -94,34 +185,44 @@
   height: 76px;
   display: grid;
   place-items: center;
-  border-radius: 24px;
-  background: linear-gradient(145deg, #fff1ad, #d89b17 64%, #9c6300);
-  color: #2d1700;
+  border-radius: 18px;
+  border: 1px solid rgba(217, 164, 39, 0.42);
+  background: linear-gradient(145deg, #fff6d7, #e7bd4f 62%, #b47400);
+  color: #3c2700;
   font-size: 42px;
-  font-weight: 900;
-  box-shadow: 0 18px 38px rgba(216, 155, 23, .38);
+  font-weight: 1000;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.72),
+    0 16px 34px rgba(128, 86, 12, 0.16);
 }
 
 .eyebrow {
   margin: 24px 0 8px;
   text-transform: uppercase;
-  letter-spacing: .16em;
-  color: #ffd86b;
-  font-weight: 900;
-  font-size: .76rem;
+  letter-spacing: 0.16em;
+  color: var(--gold-3);
+  font-weight: 950;
+  font-size: 0.76rem;
 }
 
 .gold-hero h1 {
   margin: 0;
   max-width: 760px;
+  color: var(--ink);
   font-size: clamp(2.35rem, 6vw, 5.2rem);
-  line-height: .94;
-  letter-spacing: -.055em;
+  line-height: 0.94;
+  letter-spacing: -0.065em;
+}
+
+.gold-hero h1 span,
+.gold-hero h1 strong {
+  color: var(--gold-3);
 }
 
 .gold-lead {
   max-width: 760px;
-  color: rgba(255, 255, 255, .76);
+  margin: 18px 0 0;
+  color: var(--muted);
   font-size: 1.08rem;
   line-height: 1.55;
 }
@@ -139,40 +240,83 @@
 }
 
 .gold-main-cta {
-  box-shadow: 0 18px 36px rgba(216, 155, 23, .24);
+  color: #3c2700 !important;
+  border-color: rgba(217, 164, 39, 0.34) !important;
+  background: linear-gradient(135deg, #fff4cc, #e8be4f 54%, #c8860b) !important;
+  box-shadow: 0 14px 30px rgba(128, 86, 12, 0.18);
+}
+
+.gold-main-cta:hover {
+  filter: saturate(1.04) contrast(1.01);
+  box-shadow: 0 16px 34px rgba(128, 86, 12, 0.22);
 }
 
 .gold-status {
   margin-top: 22px;
   padding: 14px 16px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, .08);
-  color: rgba(255, 255, 255, .84);
-  font-weight: 800;
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--muted);
+  font-weight: 900;
 }
 
 .gold-status.is-ok {
-  background: rgba(44, 204, 113, .18);
-  color: #bfffd7;
+  border-color: #afe8d7;
+  background: #effcf8;
+  color: #146b53;
 }
 
 .gold-status.is-error {
-  background: rgba(255, 80, 90, .18);
-  color: #ffc2c6;
+  border-color: #ffb7cd;
+  background: #fff0f3;
+  color: #9d1742;
 }
+
+/* =========================================================
+   Preview
+   ========================================================= */
 
 .gold-preview-card {
   position: relative;
-  border: 1px solid rgba(255, 216, 107, .22);
-  border-radius: 30px;
+  overflow: hidden;
+  border: 1px solid var(--gold-line);
+  border-radius: 18px;
   padding: 22px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .055)),
-    rgba(13, 8, 13, .78);
-  box-shadow: inset 0 1px rgba(255, 255, 255, .12), 0 24px 70px rgba(0, 0, 0, .32);
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(217, 164, 39, 0.16),
+      transparent 9rem
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(255, 248, 229, 0.78)
+    );
+  box-shadow: var(--shadow-2);
+}
+
+.gold-preview-card::after {
+  content: '';
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(217, 164, 39, 0.72),
+    transparent
+  );
+  pointer-events: none;
 }
 
 .gold-preview-profile {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 54px minmax(0, 1fr) auto;
   gap: 12px;
@@ -184,20 +328,23 @@
   height: 54px;
   display: grid;
   place-items: center;
-  border-radius: 18px;
-  background: linear-gradient(145deg, #ff72ba, #ff3399);
-  font-weight: 900;
+  border-radius: 14px;
+  background: linear-gradient(145deg, var(--pink-2), var(--pink));
+  color: #fff;
+  font-weight: 950;
   font-size: 1.4rem;
+  box-shadow: 0 10px 22px rgba(239, 0, 138, 0.16);
 }
 
 .gold-preview-profile strong {
   display: block;
+  color: var(--ink);
   font-size: 1rem;
 }
 
 .gold-preview-profile p {
   margin: 2px 0 0;
-  color: rgba(255, 255, 255, .58);
+  color: var(--muted);
 }
 
 .gold-check {
@@ -206,18 +353,23 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: linear-gradient(145deg, #fff1ad, #d89b17);
-  color: #2b1700;
-  font-weight: 900;
+  border: 1px solid rgba(217, 164, 39, 0.38);
+  background: #fff6d7;
+  color: var(--gold-3);
+  font-weight: 1000;
 }
 
 .gold-preview-post {
+  position: relative;
+  z-index: 1;
   margin: 22px 0;
-  color: rgba(255, 255, 255, .84);
+  color: var(--text);
   line-height: 1.5;
 }
 
 .gold-preview-meta {
+  position: relative;
+  z-index: 1;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
@@ -226,11 +378,16 @@
 .gold-preview-meta span {
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, .09);
-  color: rgba(255, 255, 255, .74);
-  font-size: .78rem;
-  font-weight: 800;
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
 }
+
+/* =========================================================
+   Benefits
+   ========================================================= */
 
 .gold-benefits-grid {
   display: grid;
@@ -240,7 +397,20 @@
 }
 
 .gold-benefit {
+  position: relative;
+  overflow: hidden;
   padding: 24px;
+}
+
+.gold-benefit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-top: 3px solid transparent;
+  background: linear-gradient(90deg, rgba(217, 164, 39, 0.38), transparent 38%)
+    top left / 100% 3px no-repeat;
+  pointer-events: none;
+  opacity: 0.72;
 }
 
 .gold-benefit-icon {
@@ -248,16 +418,19 @@
   height: 42px;
   display: grid;
   place-items: center;
-  border-radius: 16px;
-  background: rgba(255, 216, 107, .16);
-  color: #ffd86b;
-  font-weight: 900;
+  border-radius: 12px;
+  border: 1px solid rgba(217, 164, 39, 0.32);
+  background: #fff6d7;
+  color: var(--gold-3);
+  font-weight: 1000;
 }
 
 .gold-benefit h2,
 .gold-plan h2,
 .gold-faq h2 {
   margin: 16px 0 8px;
+  color: var(--ink);
+  letter-spacing: -0.045em;
 }
 
 .gold-benefit p,
@@ -265,9 +438,13 @@
 .gold-note,
 .gold-faq p,
 .gold-form-intro {
-  color: rgba(255, 255, 255, .72);
+  color: var(--muted);
   line-height: 1.52;
 }
+
+/* =========================================================
+   Grid / plans
+   ========================================================= */
 
 .gold-grid {
   display: grid;
@@ -277,11 +454,12 @@
 }
 
 .gold-grid-main {
-  grid-template-columns: minmax(0, 1.35fr) minmax(290px, .65fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(290px, 0.65fr);
   align-items: start;
 }
 
 .gold-plan {
+  position: relative;
   padding: 28px;
 }
 
@@ -293,18 +471,21 @@
 .gold-plan-featured {
   position: relative;
   overflow: hidden;
-  border-color: rgba(255, 216, 107, .22);
+  border-color: var(--gold-line);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(217, 164, 39, 0.15),
+      transparent 10rem
+    ),
+    rgba(255, 255, 255, 0.92);
 }
 
 .gold-plan-featured::before {
-  content: "";
+  content: '';
   position: absolute;
-  inset: -40% auto auto -15%;
-  width: 280px;
-  height: 280px;
-  border-radius: 999px;
-  background: rgba(255, 216, 107, .13);
-  filter: blur(10px);
+  inset: 0;
+  border-top: 3px solid rgba(217, 164, 39, 0.72);
   pointer-events: none;
 }
 
@@ -319,26 +500,28 @@
 }
 
 .gold-pill {
-  background: rgba(255, 216, 107, .18);
-  color: #ffe189;
+  border: 1px solid rgba(217, 164, 39, 0.28);
+  background: #fff6d7;
+  color: var(--gold-3);
 }
 
 .gold-pill-dark {
-  background: rgba(255, 255, 255, .11);
-  color: rgba(255, 255, 255, .88);
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--muted);
 }
 
 .gold-plan-badge {
-  background: rgba(255, 74, 170, .16);
-  color: #ffaad2;
+  background: rgba(239, 0, 138, 0.08);
+  color: var(--hot);
 }
 
 .gold-price {
   margin: 0 0 14px;
+  color: var(--gold-3);
   font-size: 2.25rem;
-  font-weight: 900;
-  color: #ffd86b;
-  letter-spacing: -.03em;
+  font-weight: 1000;
+  letter-spacing: -0.04em;
 }
 
 .gold-summary-box {
@@ -351,34 +534,41 @@
 .gold-summary-box div {
   min-width: 0;
   padding: 14px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, .075);
-  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 14px;
+  border: 1px solid var(--line-2);
+  background: rgba(255, 241, 247, 0.72);
 }
 
 .gold-summary-box span {
   display: block;
-  color: rgba(255, 255, 255, .54);
-  font-size: .76rem;
-  font-weight: 800;
   margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
 }
 
 .gold-summary-box strong {
   display: block;
+  color: var(--text);
   overflow-wrap: anywhere;
 }
+
+/* =========================================================
+   Form
+   ========================================================= */
 
 .gold-card-form {
   position: relative;
   margin-top: 22px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, .1);
+  border-top: 1px solid var(--line-2);
 }
 
 .gold-card-form h3 {
   margin: 0 0 6px;
+  color: var(--ink);
   font-size: 1.25rem;
+  letter-spacing: -0.035em;
 }
 
 .gold-form-grid {
@@ -399,9 +589,9 @@
 }
 
 .gold-field span {
-  font-size: .83rem;
-  font-weight: 900;
-  color: rgba(255, 255, 255, .78);
+  color: var(--muted);
+  font-size: 0.83rem;
+  font-weight: 950;
 }
 
 .gold-field input,
@@ -409,13 +599,16 @@
 .gold-secure-field {
   width: 100%;
   min-height: 48px;
-  border: 1px solid rgba(255, 255, 255, .14);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, .08);
-  color: #fff;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--text);
   box-sizing: border-box;
   outline: none;
-  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
 }
 
 .gold-field input,
@@ -424,8 +617,13 @@
   font: inherit;
 }
 
+.gold-field input::placeholder {
+  color: var(--soft);
+}
+
 .gold-field select option {
-  color: #211221;
+  color: var(--text);
+  background: #fff;
 }
 
 .gold-secure-field {
@@ -451,12 +649,18 @@
   height: 48px !important;
 }
 
+.gold-field input:hover,
+.gold-field select:hover,
+.gold-secure-field:hover {
+  border-color: var(--gold-line-strong);
+}
+
 .gold-field input:focus,
 .gold-field select:focus,
 .gold-secure-field:focus-within {
-  border-color: rgba(255, 216, 107, .72);
-  box-shadow: 0 0 0 4px rgba(255, 216, 107, .12);
-  background: rgba(255, 255, 255, .105);
+  border-color: var(--pink-2);
+  box-shadow: 0 0 0 4px rgba(239, 0, 138, 0.1);
+  background: #fff;
 }
 
 .gold-field-muted {
@@ -474,7 +678,7 @@
   width: 100%;
   height: 8px;
   margin-top: 14px;
-  accent-color: #ffd86b;
+  accent-color: var(--gold);
 }
 
 .gold-progress.is-loading {
@@ -484,12 +688,20 @@
 .gold-note {
   display: block;
   margin-top: 12px;
-  font-size: .88rem;
+  font-size: 0.88rem;
 }
 
 .gold-next-card {
-  opacity: .82;
+  opacity: 0.9;
 }
+
+.gold-active-account-card {
+  display: none;
+}
+
+/* =========================================================
+   FAQ
+   ========================================================= */
 
 .gold-faq {
   padding: 28px;
@@ -504,17 +716,23 @@
 
 .gold-faq-grid div {
   padding: 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, .07);
+  border-radius: 14px;
+  border: 1px solid var(--line-2);
+  background: rgba(255, 241, 247, 0.66);
 }
 
 .gold-faq-grid h3 {
   margin: 0 0 8px;
+  color: var(--ink);
 }
 
 .gold-faq-grid p {
   margin: 0;
 }
+
+/* =========================================================
+   Return page
+   ========================================================= */
 
 .gold-return-shell {
   max-width: 860px;
@@ -527,58 +745,10 @@
   justify-content: center;
 }
 
-@media (max-width: 920px) {
-  .gold-hero-layout,
-  .gold-grid-main,
-  .gold-benefits-grid,
-  .gold-faq-grid {
-    grid-template-columns: 1fr;
-  }
+/* =========================================================
+   Custom dropdowns
+   ========================================================= */
 
-  .gold-preview-card {
-    max-width: 520px;
-  }
-
-  .gold-summary-box {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .gold-shell {
-    width: min(100% - 20px, 1120px);
-    padding: 18px 0 36px;
-  }
-
-  .gold-hero,
-  .gold-plan,
-  .gold-benefit,
-  .gold-faq {
-    border-radius: 22px;
-  }
-
-  .gold-topbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .gold-actions .btn,
-  .gold-main-cta {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .gold-form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .gold-hero h1 {
-    font-size: clamp(2.15rem, 14vw, 3.8rem);
-  }
-}
-
-
-/* === Chirp Gold v5: custom dropdowns + estado activo === */
 .gold-native-select {
   position: absolute !important;
   width: 1px !important;
@@ -599,9 +769,9 @@
 .gold-custom-dropdown__button {
   width: 100%;
   min-height: 46px;
-  border: 1px solid rgba(255, 214, 120, .24);
-  border-radius: 16px;
-  background: rgba(15, 12, 18, .78);
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.84);
   color: var(--text);
   display: flex;
   align-items: center;
@@ -609,20 +779,33 @@
   gap: 10px;
   padding: 0 14px;
   font: inherit;
-  font-weight: 850;
+  font-weight: 900;
   cursor: pointer;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
 }
 
 .gold-custom-dropdown__button::after {
-  content: "⌄";
-  color: #ffd36d;
-  font-weight: 950;
-  transform: translateY(-1px);
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  color: var(--gold-3);
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.16s ease;
+}
+
+.gold-custom-dropdown.is-open .gold-custom-dropdown__button {
+  border-color: var(--pink-2);
+  box-shadow: 0 0 0 4px rgba(239, 0, 138, 0.1);
+  background: #fff;
 }
 
 .gold-custom-dropdown.is-open .gold-custom-dropdown__button::after {
-  transform: rotate(180deg) translateY(1px);
+  transform: translateY(2px) rotate(225deg);
 }
 
 .gold-custom-dropdown__menu {
@@ -635,10 +818,10 @@
   max-height: 220px;
   overflow: auto;
   padding: 8px;
-  border: 1px solid rgba(255, 214, 120, .25);
-  border-radius: 18px;
-  background: rgba(17, 13, 22, .98);
-  box-shadow: 0 22px 60px rgba(0,0,0,.45);
+  border: 1px solid var(--gold-line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
 }
 
@@ -649,40 +832,72 @@
 
 .gold-custom-dropdown__item {
   border: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: transparent;
   color: var(--text);
   text-align: left;
   padding: 10px 12px;
   font: inherit;
-  font-weight: 800;
+  font-weight: 850;
   cursor: pointer;
 }
 
 .gold-custom-dropdown__item:hover,
 .gold-custom-dropdown__item.is-selected {
-  background: linear-gradient(135deg, rgba(255, 211, 109, .22), rgba(239, 0, 138, .16));
+  color: var(--hot);
+  background: var(--card-2);
 }
 
 .gold-field-muted .gold-custom-dropdown__button {
   color: var(--muted);
 }
 
+/* =========================================================
+   Estado Gold activo
+   ========================================================= */
+
 .gold-page.is-gold-active .gold-plan-featured,
 .gold-page.is-gold-active [data-hide-if-gold] {
   display: none !important;
 }
 
-.gold-page.is-gold-active .gold-active-account-card {
-  display: block !important;
+.gold-page.is-gold-active .gold-side-stack {
+  min-width: 150.5%;
+  max-width: 150.5%;
 }
 
+.gold-page.is-gold-active .gold-active-account-card {
+  display: block !important;
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(21, 147, 109, 0.24);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(21, 147, 109, 0.1),
+      transparent 10rem
+    ),
+    rgba(255, 255, 255, 0.92);
+}
 
-/* v6: campos seguros clickeables + dropdowns custom sin tapar inputs */
+.gold-page.is-gold-active .gold-active-account-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--ok);
+}
+
+/* =========================================================
+   Loading / secure fields
+   ========================================================= */
+
 .gold-card-form.is-loading .gold-secure-field,
 .gold-card-form.is-loading .gold-field input,
 .gold-card-form.is-loading .gold-custom-dropdown__button {
-  opacity: .8;
+  opacity: 0.78;
 }
 
 .gold-secure-field *,
@@ -698,13 +913,16 @@
   pointer-events: auto;
 }
 
-/* === Chirp Gold v7: campos de tarjeta nativos, 100% escribibles === */
+/* =========================================================
+   Native card fields
+   ========================================================= */
+
 input.gold-secure-field {
   padding: 0 14px !important;
   font: inherit !important;
-  font-weight: 800 !important;
-  letter-spacing: .02em;
-  caret-color: #ffd36d;
+  font-weight: 850 !important;
+  letter-spacing: 0.02em;
+  caret-color: var(--pink);
   cursor: text !important;
   pointer-events: auto !important;
   user-select: text !important;
@@ -712,13 +930,13 @@ input.gold-secure-field {
 }
 
 input.gold-secure-field::placeholder {
-  color: rgba(255, 255, 255, .42);
+  color: var(--soft);
 }
 
 input.gold-secure-field:focus {
-  border-color: rgba(255, 216, 107, .72) !important;
-  box-shadow: 0 0 0 4px rgba(255, 216, 107, .12) !important;
-  background: rgba(255, 255, 255, .105) !important;
+  border-color: var(--pink-2) !important;
+  box-shadow: 0 0 0 4px rgba(239, 0, 138, 0.1) !important;
+  background: #fff !important;
 }
 
 .gold-secure-field:not(input) iframe,
@@ -733,14 +951,17 @@ input.gold-secure-field:focus {
   pointer-events: auto !important;
 }
 
-/* PayPal internacional */
+/* =========================================================
+   PayPal internacional
+   ========================================================= */
+
 .gold-paypal-card {
-  border-color: rgba(251, 191, 36, .22);
+  border-color: var(--gold-line);
 }
 
 .gold-price-small {
   font-size: clamp(1.35rem, 2.4vw, 2rem);
-  margin: .35rem 0 .55rem;
+  margin: 0.35rem 0 0.55rem;
 }
 
 .gold-paypal-btn {
@@ -748,21 +969,31 @@ input.gold-secure-field:focus {
   justify-content: center;
 }
 
+/* =========================================================
+   Region selector
+   ========================================================= */
 
-/* === Chirp Gold v9: selector custom Argentina / Internacional === */
 .gold-region-selector {
   position: relative;
   z-index: 3;
   margin: 22px 0 18px;
   padding: 18px;
-  border: 1px solid rgba(255, 216, 107, .16);
-  border-radius: 22px;
-  background: rgba(255, 255, 255, .065);
+  border: 1px solid var(--gold-line);
+  border-radius: 16px;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(217, 164, 39, 0.12),
+      transparent 8rem
+    ),
+    rgba(255, 255, 255, 0.82);
 }
 
 .gold-region-selector h3 {
   margin: 0 0 6px;
+  color: var(--ink);
   font-size: 1.08rem;
+  letter-spacing: -0.035em;
 }
 
 .gold-region-dropdown {
@@ -777,36 +1008,52 @@ input.gold-secure-field:focus {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  border: 1px solid rgba(255, 216, 107, .26);
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(255, 216, 107, .14), rgba(255, 74, 170, .08)), rgba(15, 12, 18, .86);
-  color: #fff;
+  border: 1px solid var(--gold-line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text);
   padding: 12px 16px;
   cursor: pointer;
   font: inherit;
   text-align: left;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
+}
+
+.gold-region-dropdown__button:hover,
+.gold-region-dropdown.is-open .gold-region-dropdown__button {
+  border-color: var(--pink-2);
+  box-shadow: 0 0 0 4px rgba(239, 0, 138, 0.08);
+  background: #fff;
 }
 
 .gold-region-dropdown__button::after {
-  content: "⌄";
-  color: #ffd86b;
-  font-size: 1.1rem;
-  font-weight: 950;
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  color: var(--gold-3);
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.16s ease;
 }
 
 .gold-region-dropdown.is-open .gold-region-dropdown__button::after {
-  transform: rotate(180deg);
+  transform: translateY(2px) rotate(225deg);
 }
 
 .gold-region-dropdown__button span {
   display: block;
+  color: var(--text);
   font-weight: 950;
 }
 
 .gold-region-dropdown__button small {
   display: block;
-  color: rgba(255, 255, 255, .62);
-  font-weight: 800;
+  color: var(--muted);
+  font-weight: 850;
 }
 
 .gold-region-dropdown__menu {
@@ -818,10 +1065,10 @@ input.gold-secure-field:focus {
   display: none;
   gap: 8px;
   padding: 8px;
-  border: 1px solid rgba(255, 216, 107, .26);
-  border-radius: 20px;
-  background: rgba(17, 13, 22, .98);
-  box-shadow: 0 22px 60px rgba(0,0,0,.48);
+  border: 1px solid var(--gold-line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
 }
 
@@ -833,29 +1080,34 @@ input.gold-secure-field:focus {
   display: grid;
   gap: 3px;
   border: 0;
-  border-radius: 15px;
+  border-radius: 12px;
   padding: 12px 14px;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   text-align: left;
   font: inherit;
   cursor: pointer;
 }
 
 .gold-region-dropdown__item strong {
-  font-size: .96rem;
+  color: var(--ink);
+  font-size: 0.96rem;
 }
 
 .gold-region-dropdown__item span {
-  color: rgba(255,255,255,.62);
-  font-size: .88rem;
-  font-weight: 750;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 800;
 }
 
 .gold-region-dropdown__item:hover,
 .gold-region-dropdown__item.is-selected {
-  background: linear-gradient(135deg, rgba(255, 211, 109, .22), rgba(239, 0, 138, .16));
+  background: var(--card-2);
 }
+
+/* =========================================================
+   Payment panels
+   ========================================================= */
 
 .gold-payment-panel {
   display: none;
@@ -881,25 +1133,17 @@ input.gold-secure-field:focus {
 
 .gold-international-form {
   padding-top: 18px;
-  border-top: 1px solid rgba(255,255,255,.1);
+  border-top: 1px solid var(--line-2);
 }
 
 .gold-summary-box-two {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-@media (max-width: 640px) {
-  .gold-payment-panel__head {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+/* =========================================================
+   PayPal SDK
+   ========================================================= */
 
-  .gold-summary-box-two {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* === Chirp Gold v10: PayPal SDK directo === */
 .gold-paypal-buttons {
   width: 100%;
   min-height: 52px;
@@ -907,7 +1151,7 @@ input.gold-secure-field:focus {
 }
 
 .gold-paypal-buttons iframe {
-  border-radius: 14px !important;
+  border-radius: 12px !important;
 }
 
 .gold-paypal-loading {
@@ -916,25 +1160,27 @@ input.gold-secure-field:focus {
   justify-content: center;
   min-height: 52px;
   width: 100%;
-  border: 1px solid rgba(255, 216, 107, .18);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, .075);
-  color: rgba(255, 255, 255, .82);
-  font-weight: 800;
+  border: 1px solid var(--gold-line);
+  border-radius: 12px;
+  background: var(--gold-surface);
+  color: var(--muted);
+  font-weight: 850;
 }
 
+/* =========================================================
+   Mercado Pago
+   ========================================================= */
 
-/* === Chirp Gold v11: Mercado Pago remaster === */
 .gold-mp-test-hint {
   margin-top: 14px;
   padding: 14px 16px;
-  border: 1px solid rgba(255, 216, 107, .28);
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(255, 216, 107, .12), rgba(239, 0, 138, .08));
-  color: rgba(255,255,255,.84);
+  border: 1px solid var(--gold-line);
+  border-radius: 14px;
+  background: var(--gold-surface);
+  color: var(--muted);
   display: grid;
   gap: 6px;
-  font-size: .9rem;
+  font-size: 0.9rem;
 }
 
 .gold-mp-test-hint[hidden] {
@@ -942,23 +1188,22 @@ input.gold-secure-field:focus {
 }
 
 .gold-mp-test-hint strong {
-  color: #ffd86b;
+  color: var(--gold-3);
   font-weight: 950;
 }
 
-.gold-card-form[data-mp-mode="test"] .gold-payment-panel__head,
-body[data-mp-mode="test"] #goldArgentinaPayment .gold-payment-panel__head {
-  border-color: rgba(255, 216, 107, .24);
+.gold-card-form[data-mp-mode='test'] .gold-payment-panel__head,
+body[data-mp-mode='test'] #goldArgentinaPayment .gold-payment-panel__head {
+  border-color: var(--gold-line);
 }
 
 .gold-field input.is-invalid,
 .gold-secure-field.is-invalid,
 .gold-custom-dropdown__button.is-invalid {
-  border-color: rgba(255, 82, 132, .82) !important;
-  box-shadow: 0 0 0 4px rgba(255, 82, 132, .14) !important;
+  border-color: rgba(217, 48, 101, 0.72) !important;
+  box-shadow: 0 0 0 4px rgba(217, 48, 101, 0.12) !important;
 }
 
-/* === Chirp Gold v12: Mercado Pago checkout oficial === */
 .gold-mp-redirect-card .gold-summary-box {
   margin-top: 18px;
 }
@@ -968,6 +1213,114 @@ body[data-mp-mode="test"] #goldArgentinaPayment .gold-payment-panel__head {
 }
 
 #mpCheckoutButton[disabled] {
-  opacity: .68;
+  opacity: 0.68;
   cursor: wait;
+}
+
+/* =========================================================
+   Accessibility
+   ========================================================= */
+
+.gold-page a:focus-visible,
+.gold-page button:focus-visible,
+.gold-page input:focus-visible,
+.gold-page select:focus-visible {
+  outline: 3px solid rgba(239, 0, 138, 0.18);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 920px) {
+  .gold-hero-layout,
+  .gold-grid-main,
+  .gold-benefits-grid,
+  .gold-faq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gold-preview-card {
+    max-width: 520px;
+  }
+
+  .gold-summary-box {
+    grid-template-columns: 1fr;
+  }
+
+  .gold-page.is-gold-active .gold-side-stack {
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .gold-shell {
+    width: min(100% - 20px, 1120px);
+    padding: 18px 0 36px;
+  }
+
+  .gold-hero,
+  .gold-plan,
+  .gold-benefit,
+  .gold-faq {
+    border-radius: 14px;
+  }
+
+  .gold-hero {
+    padding: 22px;
+  }
+
+  .gold-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .gold-actions .btn,
+  .gold-main-cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .gold-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gold-hero h1 {
+    font-size: clamp(2.15rem, 14vw, 3.8rem);
+  }
+
+  .gold-payment-panel__head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .gold-summary-box-two {
+    grid-template-columns: 1fr;
+  }
+
+  .gold-preview-profile {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+  }
+
+  .gold-avatar {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gold-plan,
+  .gold-benefit,
+  .gold-faq,
+  .gold-preview-card,
+  .gold-region-selector,
+  .gold-field input,
+  .gold-field select,
+  .gold-secure-field,
+  .gold-custom-dropdown__button,
+  .gold-region-dropdown__button {
+    transition: none !important;
+  }
 }

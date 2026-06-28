@@ -1,5 +1,3 @@
-/* Chirp icon system: SVG masks inherit currentColor. Nothing is hardcoded pink. */
-
 .ui-icon,
 .action-icon {
   display: inline-block;
