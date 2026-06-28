@@ -35,7 +35,7 @@
   padding: 0 12px;
   border-radius: 10px;
   color: var(--muted);
-  font-weight: 950;
+  font-weight: 700;
 }
 .side-link:hover,
 .side-link.is-active {
@@ -74,7 +74,7 @@
 .pagebar small {
   display: block;
   color: var(--muted);
-  font-weight: 850;
+  font-weight: 750;
   margin-top: 2px;
 }
 

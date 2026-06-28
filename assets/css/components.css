@@ -3,7 +3,7 @@
   align-items: center;
   gap: 10px;
   font-size: 23px;
-  font-weight: 950;
+  font-weight: 750;
   letter-spacing: -0.045em;
 }
 .brand img {
@@ -37,7 +37,7 @@
   padding: 10px 12px;
   border-radius: 4px;
   color: var(--muted);
-  font-weight: 900;
+  font-weight: 700;
 }
 .navlink:hover,
 .navlink.is-active {
@@ -54,7 +54,7 @@
   padding: 0 16px;
   border-radius: 4px;
   border: 1px solid transparent;
-  font-weight: 950;
+  font-weight: 750;
   letter-spacing: -0.01em;
   transition:
     transform 0.14s ease,
@@ -170,7 +170,7 @@
 .field-label {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 950;
+  font-weight: 750;
 }
 .fieldbox {
   min-height: 50px;
@@ -198,7 +198,7 @@
 }
 .form-hint {
   color: var(--soft);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .chip {
@@ -211,7 +211,7 @@
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.82);
   color: var(--pink) !important;
-  font-weight: 950;
+  font-weight: 750;
 }
 
 .chirpy-chat-pro .chip {
@@ -226,7 +226,7 @@
 }
 .trending-tag small {
   color: var(--muted);
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .avatar {
@@ -358,7 +358,6 @@
   }
 }
 
-
 /* === ChirpCheck Gold promos v3 === */
 .chirp-gold-nav-link {
   position: relative;
@@ -366,15 +365,15 @@
 }
 
 .chirp-gold-nav-link::after {
-  content: "Gold";
+  content: 'Gold';
   margin-left: auto;
   padding: 3px 8px;
   border-radius: 999px;
-  font-size: .68rem;
-  font-weight: 950;
+  font-size: 0.68rem;
+  font-weight: 750;
   color: #4a2b00;
   background: linear-gradient(135deg, #fff0a8, #ffd34d 55%, #ffb000);
-  box-shadow: 0 8px 22px rgba(255, 190, 36, .24);
+  box-shadow: 0 8px 22px rgba(255, 190, 36, 0.24);
 }
 
 .chirp-gold-nav-icon {
@@ -382,38 +381,48 @@
   height: 22px;
   border-radius: 999px;
   background: linear-gradient(135deg, #fff4b8, #ffd24a 48%, #ff9f1c);
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,.58), 0 7px 18px rgba(255, 183, 28, .28);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.58),
+    0 7px 18px rgba(255, 183, 28, 0.28);
 }
 
 .chirp-gold-nav-icon::before {
-  content: "✓";
+  content: '✓';
   display: grid;
   place-items: center;
   width: 100%;
   height: 100%;
   color: #5b3500;
-  font-weight: 1000;
-  font-size: .82rem;
+  font-weight: 750;
+  font-size: 0.82rem;
 }
 
 .gold-mini-panel {
   position: relative;
   overflow: hidden;
-  border-color: rgba(255, 199, 64, .34) !important;
+  border-color: rgba(255, 199, 64, 0.34) !important;
   background:
-    radial-gradient(circle at 92% 0%, rgba(255, 214, 86, .28), transparent 7.5rem),
-    linear-gradient(135deg, rgba(255,255,255,.92), rgba(255, 248, 221, .72)) !important;
+    radial-gradient(
+      circle at 92% 0%,
+      rgba(255, 214, 86, 0.28),
+      transparent 7.5rem
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.92),
+      rgba(255, 248, 221, 0.72)
+    ) !important;
 }
 
 .gold-mini-panel::after {
-  content: "";
+  content: '';
   position: absolute;
   right: -35px;
   bottom: -45px;
   width: 110px;
   height: 110px;
   border-radius: 999px;
-  background: rgba(255, 205, 65, .24);
+  background: rgba(255, 205, 65, 0.24);
   pointer-events: none;
 }
 
@@ -425,11 +434,11 @@
   gap: 6px;
   padding: 6px 10px;
   border-radius: 999px;
-  font-size: .74rem;
-  font-weight: 950;
+  font-size: 0.74rem;
+  font-weight: 750;
   color: #5c3800;
   background: linear-gradient(135deg, #fff4bd, #ffd75c);
-  box-shadow: 0 10px 24px rgba(255, 191, 38, .18);
+  box-shadow: 0 10px 24px rgba(255, 191, 38, 0.18);
 }
 
 .gold-mini-panel h3,
@@ -459,18 +468,18 @@
   justify-content: center;
   padding: 11px 14px;
   border-radius: 999px;
-  font-size: .82rem;
-  font-weight: 950;
+  font-size: 0.82rem;
+  font-weight: 750;
   color: #4a2b00;
   text-decoration: none;
   background: linear-gradient(135deg, #fff2aa, #ffd24a 55%, #ffae1a);
-  box-shadow: 0 16px 38px rgba(255, 184, 29, .34);
-  border: 1px solid rgba(255, 255, 255, .7);
+  box-shadow: 0 16px 38px rgba(255, 184, 29, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .gold-header-link {
   color: #7a4b00 !important;
-  font-weight: 950 !important;
+  font-weight: 750 !important;
 }
 
 .gold-landing-band {
@@ -482,11 +491,19 @@
   gap: 18px;
   padding: clamp(18px, 3vw, 28px);
   border-radius: var(--radius-lg, 28px);
-  border: 1px solid rgba(255, 199, 64, .34);
+  border: 1px solid rgba(255, 199, 64, 0.34);
   background:
-    radial-gradient(circle at 100% 0%, rgba(255, 211, 74, .30), transparent 15rem),
-    linear-gradient(135deg, rgba(255,255,255,.96), rgba(255, 248, 221, .86));
-  box-shadow: var(--shadow, 0 24px 70px rgba(0,0,0,.10));
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255, 211, 74, 0.3),
+      transparent 15rem
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(255, 248, 221, 0.86)
+    );
+  box-shadow: var(--shadow, 0 24px 70px rgba(0, 0, 0, 0.1));
 }
 
 .gold-landing-actions {
@@ -500,24 +517,29 @@
   margin-top: 12px;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid rgba(255, 199, 64, .28);
-  background: rgba(255, 246, 214, .72);
+  border: 1px solid rgba(255, 199, 64, 0.28);
+  background: rgba(255, 246, 214, 0.72);
   color: var(--muted);
-  font-weight: 850;
+  font-weight: 750;
   line-height: 1.45;
 }
 
 .auth-gold-link a {
   color: #7a4b00;
-  font-weight: 950;
+  font-weight: 750;
 }
 
 @media (max-width: 900px) {
-  .gold-floating-cta { display: inline-flex; }
-  .gold-landing-band { grid-template-columns: 1fr; }
-  .gold-landing-actions { justify-content: flex-start; }
+  .gold-floating-cta {
+    display: inline-flex;
+  }
+  .gold-landing-band {
+    grid-template-columns: 1fr;
+  }
+  .gold-landing-actions {
+    justify-content: flex-start;
+  }
 }
-
 
 /* === ChirpCheck Gold leftbar CTA v4 === */
 .chirp-gold-sidebar-cta {
@@ -529,13 +551,17 @@
   justify-content: center;
   gap: 10px;
   color: #4a2b00 !important;
-  font-weight: 1000;
+  font-weight: 750;
   text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, .78);
+  border: 1px solid rgba(255, 255, 255, 0.78);
   background:
-    radial-gradient(circle at 18% 18%, rgba(255,255,255,.78), transparent 3.2rem),
+    radial-gradient(
+      circle at 18% 18%,
+      rgba(255, 255, 255, 0.78),
+      transparent 3.2rem
+    ),
     linear-gradient(135deg, #fff2a8, #ffd24a 52%, #ffad1a);
-  box-shadow: 0 16px 34px rgba(255, 184, 29, .28);
+  box-shadow: 0 16px 34px rgba(255, 184, 29, 0.28);
 }
 
 .chirp-gold-sidebar-cta:hover {
@@ -552,16 +578,17 @@
   border-radius: 999px;
   color: #fff8da;
   background: linear-gradient(135deg, #5b3500, #a86900);
-  font-size: .72rem;
+  font-size: 0.72rem;
   line-height: 1;
-  letter-spacing: .02em;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+  letter-spacing: 0.02em;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
 @media (max-width: 900px) {
-  .chirp-gold-sidebar-cta { display: none; }
+  .chirp-gold-sidebar-cta {
+    display: none;
+  }
 }
-
 
 /* Oculta promos de compra cuando la cuenta ya tiene Gold. La leftbar queda visible. */
 body.chirp-user-is-gold [data-hide-if-gold],

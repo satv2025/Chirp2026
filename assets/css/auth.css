@@ -57,7 +57,7 @@
 .auth-link a,
 .auth-legal a {
   color: var(--hot);
-  font-weight: 950;
+  font-weight: 700;
 }
 
 .fieldbox--password {

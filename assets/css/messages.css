@@ -43,7 +43,7 @@
 .dm-row small {
   display: block;
   color: var(--muted);
-  font-weight: 850;
+  font-weight: 750;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -98,7 +98,7 @@
   display: block;
   margin-top: 5px;
   opacity: 0.72;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .dm-compose {
@@ -134,7 +134,7 @@
   color: #fff;
   background: var(--pink);
   font-size: 12px;
-  font-weight: 950;
+  font-weight: 750;
   line-height: 1;
   box-shadow: 0 8px 18px rgba(239, 0, 138, 0.22);
 }

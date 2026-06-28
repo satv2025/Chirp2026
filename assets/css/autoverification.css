@@ -42,7 +42,7 @@
 
 .verification-card__status span {
   color: var(--muted);
-  font-weight: 850;
+  font-weight: 750;
 }
 
 .verification-meter {
@@ -67,7 +67,7 @@
   gap: 10px;
   color: var(--muted);
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 750;
 }
 
 .verification-card__note {
@@ -255,7 +255,7 @@
 
 .chirpcheck-tier small {
   color: var(--muted);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.35;
 }
 
