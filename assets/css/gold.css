@@ -1324,3 +1324,7 @@ body[data-mp-mode='test'] #goldArgentinaPayment .gold-payment-panel__head {
     transition: none !important;
   }
 }
+
+#paypalButtonContainer,.gold-paypal-buttons {
+padding-top: 2em:
+}
