@@ -19,16 +19,12 @@
   overflow-x: clip;
   color: var(--text);
   background:
-    radial-gradient(
-      circle at 14% 0%,
+    radial-gradient(circle at 14% 0%,
       rgba(217, 164, 39, 0.16),
-      transparent 30rem
-    ),
-    radial-gradient(
-      circle at 96% 4%,
+      transparent 30rem),
+    radial-gradient(circle at 96% 4%,
       rgba(239, 0, 138, 0.1),
-      transparent 28rem
-    ),
+      transparent 28rem),
     linear-gradient(180deg, #fff8fc 0%, #fff 46%, #fff8fc 100%);
 }
 
@@ -74,14 +70,6 @@
     background 0.16s ease;
 }
 
-.gold-plan:hover,
-.gold-benefit:hover,
-.gold-preview-card:hover {
-  transform: translateY(-1px);
-  border-color: var(--gold-line);
-  box-shadow: var(--shadow), var(--gold-shadow);
-}
-
 /* =========================================================
    Hero
    ========================================================= */
@@ -92,11 +80,9 @@
   padding: clamp(28px, 4vw, 54px);
   border-color: rgba(245, 220, 232, 0.92);
   background:
-    radial-gradient(
-      circle at 100% 0%,
+    radial-gradient(circle at 100% 0%,
       rgba(217, 164, 39, 0.18),
-      transparent 18rem
-    ),
+      transparent 18rem),
     linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 252, 0.9));
   box-shadow: var(--shadow);
 }
@@ -284,16 +270,12 @@
   border-radius: 18px;
   padding: 22px;
   background:
-    radial-gradient(
-      circle at 100% 0%,
+    radial-gradient(circle at 100% 0%,
       rgba(217, 164, 39, 0.16),
-      transparent 9rem
-    ),
-    linear-gradient(
-      135deg,
+      transparent 9rem),
+    linear-gradient(135deg,
       rgba(255, 255, 255, 0.96),
-      rgba(255, 248, 229, 0.78)
-    );
+      rgba(255, 248, 229, 0.78));
   box-shadow: var(--shadow-2);
 }
 
@@ -305,12 +287,10 @@
   bottom: 0;
   height: 3px;
   border-radius: 999px 999px 0 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(217, 164, 39, 0.72),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(217, 164, 39, 0.72),
+      transparent);
   pointer-events: none;
 }
 
@@ -407,8 +387,7 @@
   position: absolute;
   inset: 0;
   border-top: 3px solid transparent;
-  background: linear-gradient(90deg, rgba(217, 164, 39, 0.38), transparent 38%)
-    top left / 100% 3px no-repeat;
+  background: linear-gradient(90deg, rgba(217, 164, 39, 0.38), transparent 38%) top left / 100% 3px no-repeat;
   pointer-events: none;
   opacity: 0.72;
 }
@@ -473,11 +452,9 @@
   overflow: hidden;
   border-color: var(--gold-line);
   background:
-    radial-gradient(
-      circle at 100% 0%,
+    radial-gradient(circle at 100% 0%,
       rgba(217, 164, 39, 0.15),
-      transparent 10rem
-    ),
+      transparent 10rem),
     rgba(255, 255, 255, 0.92);
 }
 
@@ -634,9 +611,9 @@
 }
 
 .gold-secure-field iframe,
-.gold-secure-field > iframe,
-.gold-secure-field > div,
-.gold-secure-field > div iframe {
+.gold-secure-field>iframe,
+.gold-secure-field>div,
+.gold-secure-field>div iframe {
   width: 100% !important;
   height: 48px !important;
   min-height: 48px !important;
@@ -872,11 +849,9 @@
   overflow: hidden;
   border-color: rgba(21, 147, 109, 0.24);
   background:
-    radial-gradient(
-      circle at 100% 0%,
+    radial-gradient(circle at 100% 0%,
       rgba(21, 147, 109, 0.1),
-      transparent 10rem
-    ),
+      transparent 10rem),
     rgba(255, 255, 255, 0.92);
 }
 
@@ -940,9 +915,9 @@ input.gold-secure-field:focus {
 }
 
 .gold-secure-field:not(input) iframe,
-.gold-secure-field:not(input) > iframe,
-.gold-secure-field:not(input) > div,
-.gold-secure-field:not(input) > div iframe {
+.gold-secure-field:not(input)>iframe,
+.gold-secure-field:not(input)>div,
+.gold-secure-field:not(input)>div iframe {
   width: 100% !important;
   height: 48px !important;
   min-height: 48px !important;
@@ -981,11 +956,9 @@ input.gold-secure-field:focus {
   border: 1px solid var(--gold-line);
   border-radius: 16px;
   background:
-    radial-gradient(
-      circle at 100% 0%,
+    radial-gradient(circle at 100% 0%,
       rgba(217, 164, 39, 0.12),
-      transparent 8rem
-    ),
+      transparent 8rem),
     rgba(255, 255, 255, 0.82);
 }
 
@@ -1150,10 +1123,6 @@ input.gold-secure-field:focus {
   margin-top: 14px;
 }
 
-.gold-paypal-buttons iframe {
-  border-radius: 12px !important;
-}
-
 .gold-paypal-loading {
   display: flex;
   align-items: center;
@@ -1234,6 +1203,7 @@ body[data-mp-mode='test'] #goldArgentinaPayment .gold-payment-panel__head {
    ========================================================= */
 
 @media (max-width: 920px) {
+
   .gold-hero-layout,
   .gold-grid-main,
   .gold-benefits-grid,
@@ -1311,6 +1281,7 @@ body[data-mp-mode='test'] #goldArgentinaPayment .gold-payment-panel__head {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .gold-plan,
   .gold-benefit,
   .gold-faq,
@@ -1323,8 +1294,4 @@ body[data-mp-mode='test'] #goldArgentinaPayment .gold-payment-panel__head {
   .gold-region-dropdown__button {
     transition: none !important;
   }
-}
-
-#paypalButtonContainer,.gold-paypal-buttons {
-padding-top: 2em:
 }
