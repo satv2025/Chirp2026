@@ -119,11 +119,6 @@
   font-weight: 700;
 }
 
-.gold-back::before {
-  content: '←';
-  font-weight: 700;
-}
-
 .gold-back:hover {
   color: var(--hot);
 }
