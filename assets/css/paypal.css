@@ -1,0 +1,1779 @@
+#zoid-paypal-buttons-uid_c2ed4fc7ef_mty6mdg6mdk {
+    height: 175px;
+}
+
+body,
+html {
+    font-family: PayPal Plain, system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+}
+
+.height-100 {
+    height: 100%;
+}
+
+.buttons-container {
+    transition: all 0.3s ease-in-out;
+    height: 100%;
+    padding-top: 1em;
+}
+
+iframe[title=pbf],
+iframe[title=ppfniframe] {
+    display: none;
+}
+
+.paypal-button-clicked,
+.paypal-button-clicked:focus,
+.paypal-button-clicked:focus::after {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+html,
+body {
+    font-family: PayPal Plain, system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    overflow: hidden;
+    text-align: left;
+}
+
+body {
+    display: inline-block;
+    vertical-align: top;
+    border-collapse: collapse;
+}
+
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+    box-sizing: border-box;
+}
+
+span {
+    display: inline-block;
+}
+
+.hidden {
+    position: absolute !important;
+    visibility: hidden !important;
+}
+
+.hidden * {
+    visibility: hidden !important;
+}
+
+.paypal-button-container {
+    display: block;
+    white-space: nowrap;
+    margin: 0;
+    background: 0;
+    border: 0;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    z-index: 0;
+    font-size: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.paypal-button {
+    border: 1px solid transparent;
+    border-radius: 0 3px 3px 0;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    vertical-align: top;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.paypal-button * {
+    cursor: pointer;
+}
+
+.paypal-button-container.paypal-button-env-test .paypal-button-text {
+    background: rgba(0, 0, 0, 0.5) !important;
+    color: transparent !important;
+    text-shadow: none !important;
+}
+
+.paypal-button-card {
+    cursor: pointer;
+}
+
+.paypal-logo {
+    padding: 0;
+    display: inline-block;
+    background: none;
+    border: none;
+    width: auto;
+}
+
+.paypal-button-text,
+.paypal-button-space {
+    display: block;
+    min-width: 0;
+    flex: 0 0 auto;
+    overflow: hidden;
+    white-space: pre;
+}
+
+.paypal-button-label-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    min-width: 0px;
+}
+
+.paypal-button-label-container img {
+    height: 100%;
+}
+
+.paypal-button>.paypal-button-label-container {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.paypal-button>.paypal-button-label-container * {
+    vertical-align: middle;
+    text-align: left;
+}
+
+.paypal-button-label-container>.paypal-logo {
+    height: 100%;
+}
+
+.paypal-button-tagline {
+    max-width: 100%;
+    font-size: initial;
+    font-weight: 400;
+    display: block;
+    text-align: center;
+    width: auto;
+}
+
+.paypal-button .paypal-button-spinner {
+    position: absolute;
+    height: 50%;
+    aspect-ratio: 1;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    box-sizing: border-box;
+    border: 3px solid rgba(0, 0, 0, .2);
+    border-top-color: rgba(33, 128, 192, 0.8);
+    border-radius: 100%;
+    animation: paypal-button-spinner-rotation .7s infinite linear;
+}
+
+@keyframes paypal-button-spinner-rotation {
+    from {
+        transform: translateX(-50%) translateY(-50%) rotate(0deg);
+    }
+
+    to {
+        transform: translateX(-50%) translateY(-50%) rotate(359deg);
+    }
+}
+
+.paypal-button .paypal-button-spinner {
+    display: none !important;
+}
+
+.paypal-button.paypal-button-loading * {
+    display: none !important;
+}
+
+.paypal-button.paypal-button-loading .paypal-button-spinner {
+    display: block !important;
+}
+
+.paypal-button-container .paypal-vault-header {
+    margin-top: 10px;
+}
+
+@media only screen and (max-width: 249px) {
+    .paypal-button-container .paypal-button-row.paypal-button-wallet.paypal-button-wallet-menu .paypal-button {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        width: 100%;
+    }
+}
+
+.paypal-button.paypal-button-text-color-black {
+    color: #2C2E2F;
+}
+
+.paypal-button-rebrand.paypal-button-text-color-black {
+    color: #000000;
+}
+
+.paypal-button.paypal-button-text-color-white,
+.paypal-button-rebrand.paypal-button-text-color-white {
+    color: #fff;
+}
+
+.paypal-rebrand.paypal-button.paypal-button-text-color-black {
+    color: #000000;
+}
+
+.paypal-button.paypal-button-text-color-black .paypal-button-spinner {
+    border: 3px solid rgba(100, 100, 100, .2);
+    border-top-color: rgba(33, 128, 192, 0.8);
+}
+
+.paypal-button.paypal-button-text-color-white .paypal-button-spinner {
+    border: 3px solid rgba(200, 200, 200, 0.2);
+    border-top-color: rgba(255, 255, 255, .85);
+}
+
+.paypal-button-rebrand.paypal-button-text-color-black .paypal-button-spinner {
+    border: 2px solid rgba(0, 0, 0, 1);
+    border-top-color: transparent;
+}
+
+.paypal-button-rebrand.paypal-button-text-color-white .paypal-button-spinner {
+    border: 2px solid rgba(255, 255, 255, 1);
+    border-top-color: transparent;
+}
+
+.paypal-button.paypal-button-rebrand.paypal-button-color-blue,
+.paypal-button-row.paypal-button-rebrand.paypal-button-color-blue .menu-button {
+    background: #60CDFF;
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-rebrand.paypal-button-color-blue:hover {
+        background: #54B4E0;
+        overflow: inherit;
+    }
+
+    .paypal-button.paypal-button-rebrand[data-funding-source=venmo].paypal-button-color-blue:hover {
+        background: #0073E0;
+    }
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-rebrand.paypal-button-color-blue:active {
+        background: #3DB5FF;
+        overflow: inherit;
+    }
+
+    .paypal-button.paypal-button-rebrand[data-funding-source=venmo].paypal-button-color-blue:active {
+        background: #0074FF;
+    }
+}
+
+.paypal-button.paypal-button-rebrand.paypal-button-color-darkblue,
+.paypal-button-row.paypal-button-rebrand.paypal-button-color-darkblue .menu-button {
+    background: #002991;
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-rebrand.paypal-button-color-darkblue:hover {
+        background: #0038BA;
+        overflow: inherit;
+    }
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-rebrand.paypal-button-color-darkblue:active {
+        background: #0057D9;
+        overflow: inherit;
+    }
+}
+
+.paypal-button.paypal-button-rebrand.paypal-button-color-black,
+.paypal-button-row.paypal-button-rebrand.paypal-button-color-black .menu-button {
+    background: #000000;
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-rebrand.paypal-button-color-black:hover {
+        background: #333333;
+        overflow: inherit;
+    }
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-rebrand.paypal-button-color-black:active {
+        background: #696969;
+        overflow: inherit;
+    }
+}
+
+.paypal-button.paypal-button-rebrand.paypal-button-color-white,
+.paypal-button-row.paypal-button-rebrand.paypal-button-color-white .menu-button {
+    background: #FFFFFF;
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-rebrand.paypal-button-color-white:hover {
+        background: #F2F2F2;
+        overflow: inherit;
+    }
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-rebrand.paypal-button-color-white:active {
+        background: #E9E9E9;
+        overflow: inherit;
+    }
+}
+
+.paypal-button.paypal-button-color-gold,
+.paypal-button-row.paypal-button-color-gold .menu-button {
+    background: #ffc439;
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-color-gold:hover {
+        filter: brightness(0.95);
+        overflow: inherit;
+    }
+}
+
+.paypal-button.paypal-button-color-gold:focus {
+    outline: none;
+}
+
+.paypal-button.paypal-button-color-gold:focus::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    border: 0.125rem solid #009cde;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0.5rem #0000a6;
+    pointer-events: none;
+}
+
+.paypal-button-rebrand:focus {
+    outline: none;
+}
+
+.paypal-button-rebrand:focus::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    bottom: 3px;
+    left: 3px;
+    border: 0.125rem solid #FFFFFF;
+    border-radius: max(0px, calc(var(--btn-radius, 4px) - 3px));
+    box-shadow: 0 0 0 0.2rem #0066F5;
+    pointer-events: none;
+}
+
+.paypal-button.paypal-button-color-blue,
+.paypal-button-row.paypal-button-color-blue .menu-button {
+    background: #0070ba;
+}
+
+.paypal-button[data-funding-source=venmo].paypal-button-color-blue,
+.paypal-button.paypal-button-rebrand[data-funding-source=venmo].paypal-button-color-blue {
+    background: #008CFF;
+}
+
+/* For APM funding sources, default button color to be defined by payment scheme branding guidelines */
+.paypal-button[data-funding-source=blik].paypal-button-color-default {
+    background: #2C2E2F;
+}
+
+.paypal-button.paypal-button-rebrand[data-funding-source=blik].paypal-button-color-default,
+.paypal-button.paypal-button-rebrand[data-funding-source=boleto].paypal-button-color-default,
+.paypal-button.paypal-button-rebrand[data-funding-source=ideal].paypal-button-color-default {
+    background: #000000;
+}
+
+.paypal-button[data-funding-source=bancontact].paypal-button-color-default {
+    background: linear-gradient(to right, #1E3764, #005AB9);
+}
+
+.paypal-button[data-funding-source=paidy].paypal-button-color-default {
+    background: linear-gradient(to right, #FF009C, #A6009C);
+}
+
+.paypal-button[data-funding-source=boleto].paypal-button-color-default {
+    background: #2C2E2F;
+}
+
+.paypal-button[data-funding-source=boletobancario].paypal-button-color-default {
+    background: #2C2E2F;
+}
+
+.paypal-button[data-funding-source=eps].paypal-button-color-default {
+    background: #C8036F;
+}
+
+.paypal-button[data-funding-source=giropay].paypal-button-color-default {
+    background: #003A7D;
+}
+
+.paypal-button[data-funding-source=ideal].paypal-button-color-default {
+    background: #2C2E2F;
+}
+
+.paypal-button[data-funding-source=mercadopago].paypal-button-color-default {
+    background: #1D2647;
+}
+
+.paypal-button[data-funding-source=multibanco].paypal-button-color-default {
+    background: #1866AB;
+}
+
+.paypal-button[data-funding-source=mybank].paypal-button-color-default {
+    background: #1A4B67;
+}
+
+.paypal-button[data-funding-source=oxxo].paypal-button-color-default {
+    background: #D8232A;
+}
+
+.paypal-button[data-funding-source=p24].paypal-button-color-default {
+    background: #D03238;
+}
+
+.paypal-button[data-funding-source=sofort].paypal-button-color-default {
+    background: #393A41;
+}
+
+.paypal-button[data-funding-source=trustly].paypal-button-color-default {
+    background: #003140;
+}
+
+.paypal-button[data-funding-source=wechatpay].paypal-button-color-default {
+    background: #4D4D4D;
+}
+
+.paypal-button[data-funding-source=payu].paypal-button-color-default {
+    background: #002124;
+}
+
+.paypal-button[data-funding-source=satispay].paypal-button-color-default {
+    background: #E62601;
+}
+
+.paypal-button[data-funding-source=itau].paypal-button-color-default {
+    background: #003087;
+}
+
+.paypal-button[data-funding-source=sepa].paypal-button-color-default {
+    background: #eee;
+}
+
+/* APM button hover actions */
+.paypal-button[data-funding-source=bancontact].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=blik].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=boleto].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=boletobancario].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=eps].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=giropay].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=ideal].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=mercadopago].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=multibanco].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=mybank].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=oxxo].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=p24].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=sofort].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=trustly].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=payu].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=satispay].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=paidy].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=wechatpay].paypal-button-color-default:hover,
+.paypal-button[data-funding-source=itau].paypal-button-color-default:hover {
+    filter: brightness(1.2);
+    overflow: inherit;
+}
+
+.paypal-button[data-funding-source=sepa].paypal-button-color-default:hover {
+    filter: brightness(0.95);
+    overflow: inherit;
+}
+
+/* APM button on focus actions (legacy only) */
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=blik].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=bancontact].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=boleto].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=boletobancario].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=eps].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=giropay].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=ideal].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=mercadopago].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=multibanco].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=mybank].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=oxxo].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=p24].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=sofort].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=trustly].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=payu].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=satispay].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=paidy].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=wechatpay].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=itau].paypal-button-color-default:focus,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=sepa].paypal-button-color-default:focus {
+    outline: none;
+}
+
+/* APM button after focus actions (legacy only) */
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=blik].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=bancontact].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=boleto].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=boletobancario].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=eps].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=giropay].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=ideal].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=mercadopago].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=multibanco].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=mybank].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=oxxo].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=p24].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=sofort].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=trustly].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=payu].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=satispay].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=paidy].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=wechatpay].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=itau].paypal-button-color-default:focus::after,
+.paypal-button:not(.paypal-button-rebrand)[data-funding-source=sepa].paypal-button-color-default:focus::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    border: 0.125rem solid #009cde;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0.5rem #0000a6;
+    pointer-events: none;
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-color-blue:hover {
+        filter: brightness(0.95);
+        overflow: inherit;
+    }
+}
+
+.paypal-button.paypal-button-color-blue:focus {
+    outline: none;
+}
+
+.paypal-button.paypal-button-color-blue:focus::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    border: 0.125rem solid #0000a6;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0.5rem #009cde;
+    pointer-events: none;
+}
+
+.paypal-button.paypal-button-color-silver,
+.paypal-button-row.paypal-button-color-silver .menu-button {
+    background: #eee;
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-color-silver:hover {
+        filter: brightness(0.95);
+        overflow: inherit;
+    }
+}
+
+.paypal-button.paypal-button-color-silver:focus {
+    outline: none;
+}
+
+.paypal-button.paypal-button-color-silver:focus::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    border: 0.125rem solid #009cde;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0.5rem #0000a6;
+    pointer-events: none;
+}
+
+.paypal-button.paypal-button-color-darkblue,
+.paypal-button-row.paypal-button-color-darkblue .menu-button {
+    background: #003087;
+}
+
+.paypal-button.paypal-button-color-darkblue:hover {
+    filter: brightness(1.2);
+    overflow: inherit;
+}
+
+.paypal-button.paypal-button-color-darkblue:focus {
+    outline: none;
+}
+
+.paypal-button.paypal-button-color-darkblue:focus::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    border: 0.125rem solid #009cde;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0.5rem #0000a6;
+    pointer-events: none;
+}
+
+.paypal-button.paypal-button-color-black,
+.paypal-button-row.paypal-button-color-black .menu-button {
+    background: #2C2E2F;
+}
+
+.paypal-button.paypal-button-color-black:hover {
+    filter: brightness(1.2);
+    overflow: inherit;
+}
+
+.paypal-button.paypal-button-color-black:focus {
+    outline: none;
+}
+
+.paypal-button.paypal-button-color-black:focus::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    border: 0.125rem solid #009cde;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0.5rem #0000a6;
+    pointer-events: none;
+}
+
+.paypal-button.paypal-button-color-white,
+.paypal-button-row.paypal-button-color-white .menu-button {
+    background: #fff;
+    border: 1px solid #555;
+}
+
+@media (hover: hover) {
+    .paypal-button.paypal-button-color-white:hover {
+        filter: brightness(0.95);
+        overflow: inherit;
+    }
+}
+
+.paypal-button.paypal-button-color-white:focus {
+    outline: none;
+}
+
+.paypal-button.paypal-button-color-white:focus::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    border: 0.125rem solid #009cde;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0.5rem #0000a6;
+    pointer-events: none;
+}
+
+.paypal-button .paypal-button-card {
+    position: relative;
+}
+
+.paypal-button .paypal-button-card::after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.paypal-button .paypal-button-card:hover {
+    filter: brightness(1.2);
+    overflow: inherit;
+}
+
+.paypal-button .paypal-button-card:focus {
+    outline: none;
+}
+
+.paypal-button .paypal-button-card:focus::after {
+    box-shadow: 0px 0px 1px 3px #0c67ff inset;
+}
+
+.paypal-button .paypal-button-text {
+    position: absolute;
+    visibility: hidden;
+}
+
+.paypal-button .paypal-button-text.immediate:not(.paypal-personalization-text):not(.hidden) {
+    position: static;
+    visibility: visible;
+    max-width: 100%;
+    opacity: 1;
+}
+
+.paypal-button .paypal-vault-label {
+    max-width: 60%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.dom-ready .paypal-button .paypal-button-text:not(.immediate):not(.paypal-personalization-text):not(.hidden) {
+    position: static;
+    visibility: visible;
+    max-width: 0%;
+    opacity: 0;
+    animation: show-text 1s 0s forwards;
+}
+
+@keyframes show-text {
+    0% {
+        max-width: 0%;
+        opacity: 0;
+    }
+
+    100% {
+        max-width: 100%;
+        opacity: 1;
+    }
+}
+
+.paypal-button-label-container {
+    font-family: system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+}
+
+.paypal-button-rebrand .paypal-button-label-container {
+    font-family: PayPal Plain, system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+}
+
+.paypal-button-rebrand[data-funding-source=paypal] .paypal-button-label-container,
+.paypal-button-rebrand[data-funding-source=credit] .paypal-button-label-container,
+.paypal-button-rebrand[data-funding-source=paylater] .paypal-button-label-container {
+    font-family: PayPal Pro Book, system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+}
+
+.paypal-button-rebrand[data-funding-source=venmo] .paypal-button-label-container {
+    font-family: Scto Grotesk A, system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+}
+
+/* targeting only credit and paylater buttons for the logo swap */
+.paypal-button-rebrand[data-funding-source=credit],
+.paypal-button-rebrand[data-funding-source=paylater] {
+    container-type: size;
+    container-name: paylater-credit-btn;
+}
+
+.paypal-button-rebrand .paypal-logo-pp-rebrand {
+    display: none;
+}
+
+/* At smaller sizes, swap out the full paypal watermark for the smaller pp monogram. At 150px-200px wide: 25-40px show wordmark, 45px triggers monogram. */
+@container paylater-credit-btn ((max-width: 197px) and (min-height: 43px)) or ((max-width: 147px) and (max-height: 43px)) or ((max-width: 250px) and (min-height: 60px)) {
+    .paypal-button-label-container>.paypal-logo-paypal-rebrand {
+        display: none;
+    }
+
+    .paypal-button-label-container>.paypal-logo-pp-rebrand {
+        display: inline-block;
+    }
+}
+
+.paypal-button {
+    display: inline-block;
+    text-align: center;
+    height: 100%;
+}
+
+.paypal-button.paypal-button-shape-sharp {
+    --btn-radius: 0px;
+    border-radius: 0px;
+}
+
+.paypal-button.paypal-button-shape-rect {
+    --btn-radius: 4px;
+    border-radius: 4px;
+}
+
+.paypal-button.paypal-button-shape-pill {
+    --btn-radius: 9999px;
+    border-radius: 9999px;
+}
+
+.paypal-button-row.paypal-button-shape-sharp .menu-button {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.paypal-button-row.paypal-button-shape-rect .menu-button {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.paypal-button-row.paypal-button-shape-pill .menu-button {
+    border-top-right-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+}
+
+.paypal-button-card {
+    display: inline-block;
+    height: 100%;
+}
+
+.paypal-button-row {
+    container-type: size;
+}
+
+@media only screen and (min-width: 75px) {
+    .paypal-button-label-container {
+        gap: 3px;
+    }
+
+    .paypal-button-container {
+        min-width: 75px;
+        max-width: 150px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text,
+    .paypal-button-container .paypal-button-row .paypal-button-space {
+        font-size: 10px;
+        line-height: 14px;
+    }
+
+    [data-funding-source=paypal] .paypal-button-text,
+    [data-funding-source=paylater] .paypal-button-text,
+    [data-funding-source=credit] .paypal-button-text {
+        margin-top: -1px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text * {
+        margin-top: 1px;
+    }
+
+    .paypal-button-row {
+        height: 25px;
+        vertical-align: top;
+        min-height: 25px;
+        max-height: 30px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical {
+        margin-bottom: 8px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .paypal-button {
+        display: inline-block;
+        text-align: center;
+        height: 100%;
+    }
+
+    .paypal-button .paypal-button-spinner {
+        height: 13px;
+        width: 13px;
+    }
+
+    .paypal-button>.paypal-button-label-container {
+        margin: 0px 4vw;
+        height: 14px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container {
+        height: 25px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container .paypal-button-text {
+        line-height: 25px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container {
+        height: 18px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-space,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-space {
+        line-height: 18px;
+    }
+
+    .paypal-button.paypal-button-shape-sharp {
+        --btn-radius: 0px;
+        border-radius: 0px;
+    }
+
+    .paypal-button.paypal-button-shape-rect {
+        --btn-radius: 4px;
+        border-radius: 4px;
+    }
+
+    .paypal-button.paypal-button-shape-pill {
+        --btn-radius: 13px;
+        border-radius: 13px;
+    }
+
+    .paypal-button-row.paypal-button-shape-sharp .menu-button {
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .paypal-button-row.paypal-button-shape-rect .menu-button {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    .paypal-button-row.paypal-button-shape-pill .menu-button {
+        border-top-right-radius: 13px;
+        border-bottom-right-radius: 13px;
+    }
+
+    .paypal-button-tagline .paypal-button-text {
+        height: 13px;
+        line-height: 13px;
+    }
+
+    .paypal-button-card {
+        display: inline-block;
+        height: 100%;
+    }
+
+    .paypal-button-row.paypal-button-wallet.paypal-button-wallet-menu .paypal-button {
+        width: calc(100% - 27px);
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .menu-button {
+        height: 25px;
+        width: 25px;
+    }
+}
+
+@media only screen and (min-width: 75px) and (max-width: 320px) {
+
+    .paypal-button-container .paypal-button-row .paypal-button-text,
+    .paypal-button-container .paypal-button-row .paypal-button-space {
+        font-size: 10px;
+        margin-top: -1px;
+        line-height: 14px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text * {
+        margin-top: 1px;
+    }
+
+    .paypal-button>.paypal-button-label-container {
+        margin: 0px 4vw;
+        height: 14px;
+    }
+}
+
+@media only screen and (min-width: 75px) and (max-width: 300px) {
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-0 {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-1 {
+        display: none;
+    }
+
+    .paypal-button-container.paypal-button-layout-horizontal.paypal-button-number-multiple .paypal-button-tagline {
+        display: none;
+    }
+}
+
+@media only screen and (min-width: 300px) {
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-0 {
+        display: inline-block;
+        width: calc(50% - 2px);
+        margin-right: 4px;
+    }
+
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-1 {
+        display: inline-block;
+        width: calc(50% - 2px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row.paypal-button-wallet.paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(60% - 2px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row:not(.paypal-button-wallet).paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(40% - 2px);
+    }
+
+    .paypal-button-container.paypal-button-layout-horizontal.paypal-button-number-multiple .paypal-button-tagline {
+        display: block;
+    }
+}
+
+@media only screen and (min-width: 150px) {
+    .paypal-button-label-container {
+        gap: 3px;
+    }
+
+    .paypal-button-container {
+        min-width: 150px;
+        max-width: 200px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text,
+    .paypal-button-container .paypal-button-row .paypal-button-space {
+        font-size: 10px;
+        line-height: 14px;
+    }
+
+    [data-funding-source=paypal] .paypal-button-text,
+    [data-funding-source=paylater] .paypal-button-text,
+    [data-funding-source=credit] .paypal-button-text {
+        margin-top: -1px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text * {
+        margin-top: 1px;
+    }
+
+    .paypal-button-row {
+        height: 25px;
+        vertical-align: top;
+        min-height: 25px;
+        max-height: 55px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical {
+        margin-bottom: 8px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .paypal-button {
+        display: inline-block;
+        text-align: center;
+        height: 100%;
+    }
+
+    .paypal-button .paypal-button-spinner {
+        height: 13px;
+        width: 13px;
+    }
+
+    .paypal-button>.paypal-button-label-container {
+        margin: 0px 4vw;
+        height: 14px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container {
+        height: 25px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container .paypal-button-text {
+        line-height: 25px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container {
+        height: 18px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-space,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-space {
+        line-height: 18px;
+    }
+
+    .paypal-button.paypal-button-shape-sharp {
+        --btn-radius: 0px;
+        border-radius: 0px;
+    }
+
+    .paypal-button.paypal-button-shape-rect {
+        --btn-radius: 4px;
+        border-radius: 4px;
+    }
+
+    .paypal-button.paypal-button-shape-pill {
+        --btn-radius: 13px;
+        border-radius: 13px;
+    }
+
+    .paypal-button-row.paypal-button-shape-sharp .menu-button {
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .paypal-button-row.paypal-button-shape-rect .menu-button {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    .paypal-button-row.paypal-button-shape-pill .menu-button {
+        border-top-right-radius: 13px;
+        border-bottom-right-radius: 13px;
+    }
+
+    .paypal-button-tagline .paypal-button-text {
+        height: 13px;
+        line-height: 13px;
+    }
+
+    .paypal-button-card {
+        display: inline-block;
+        height: 100%;
+    }
+
+    .paypal-button-row.paypal-button-wallet.paypal-button-wallet-menu .paypal-button {
+        width: calc(100% - 27px);
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .menu-button {
+        height: 25px;
+        width: 25px;
+    }
+}
+
+@media only screen and (min-width: 150px) and (max-width: 320px) {
+
+    .paypal-button-container .paypal-button-row .paypal-button-text,
+    .paypal-button-container .paypal-button-row .paypal-button-space {
+        font-size: 10px;
+        margin-top: -1px;
+        line-height: 14px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text * {
+        margin-top: 1px;
+    }
+
+    .paypal-button>.paypal-button-label-container {
+        margin: 0px 4vw;
+        height: 14px;
+    }
+}
+
+@media only screen and (min-width: 150px) and (max-width: 300px) {
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-0 {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-1 {
+        display: none;
+    }
+
+    .paypal-button-container.paypal-button-layout-horizontal.paypal-button-number-multiple .paypal-button-tagline {
+        display: none;
+    }
+}
+
+@media only screen and (min-width: 300px) {
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-0 {
+        display: inline-block;
+        width: calc(50% - 2px);
+        margin-right: 4px;
+    }
+
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-1 {
+        display: inline-block;
+        width: calc(50% - 2px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row.paypal-button-wallet.paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(60% - 2px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row:not(.paypal-button-wallet).paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(40% - 2px);
+    }
+
+    .paypal-button-container.paypal-button-layout-horizontal.paypal-button-number-multiple .paypal-button-tagline {
+        display: block;
+    }
+}
+
+@media only screen and (min-width: 200px) {
+    .paypal-button-label-container {
+        gap: 4px;
+    }
+
+    .paypal-button-container {
+        min-width: 200px;
+        max-width: 300px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text,
+    .paypal-button-container .paypal-button-row .paypal-button-space {
+        font-size: 13px;
+        line-height: 18px;
+    }
+
+    [data-funding-source=paypal] .paypal-button-text,
+    [data-funding-source=paylater] .paypal-button-text,
+    [data-funding-source=credit] .paypal-button-text {
+        margin-top: -1px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text * {
+        margin-top: 1px;
+    }
+
+    .paypal-button-row {
+        height: 35px;
+        vertical-align: top;
+        min-height: 35px;
+        max-height: 55px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical {
+        margin-bottom: 11px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .paypal-button {
+        display: inline-block;
+        text-align: center;
+        height: 100%;
+    }
+
+    .paypal-button .paypal-button-spinner {
+        height: 18px;
+        width: 18px;
+    }
+
+    .paypal-button>.paypal-button-label-container {
+        margin: 0px 4vw;
+        height: 18px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container {
+        height: 33px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container .paypal-button-text {
+        line-height: 33px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container {
+        height: 23px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-space,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-space {
+        line-height: 23px;
+    }
+
+    .paypal-button.paypal-button-shape-sharp {
+        --btn-radius: 0px;
+        border-radius: 0px;
+    }
+
+    .paypal-button.paypal-button-shape-rect {
+        --btn-radius: 4px;
+        border-radius: 4px;
+    }
+
+    .paypal-button.paypal-button-shape-pill {
+        --btn-radius: 18px;
+        border-radius: 18px;
+    }
+
+    .paypal-button-row.paypal-button-shape-sharp .menu-button {
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .paypal-button-row.paypal-button-shape-rect .menu-button {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    .paypal-button-row.paypal-button-shape-pill .menu-button {
+        border-top-right-radius: 18px;
+        border-bottom-right-radius: 18px;
+    }
+
+    .paypal-button-tagline .paypal-button-text {
+        height: 18px;
+        line-height: 18px;
+    }
+
+    .paypal-button-card {
+        display: inline-block;
+        height: 100%;
+    }
+
+    .paypal-button-row.paypal-button-wallet.paypal-button-wallet-menu .paypal-button {
+        width: calc(100% - 37px);
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .menu-button {
+        height: 35px;
+        width: 35px;
+    }
+}
+
+@media only screen and (min-width: 200px) and (max-width: 320px) {
+
+    .paypal-button-container .paypal-button-row .paypal-button-text,
+    .paypal-button-container .paypal-button-row .paypal-button-space {
+        font-size: 13px;
+        margin-top: -1px;
+        line-height: 18px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text * {
+        margin-top: 1px;
+    }
+
+    .paypal-button>.paypal-button-label-container {
+        margin: 0px 4vw;
+        height: 18px;
+    }
+}
+
+@media only screen and (min-width: 200px) and (max-width: 300px) {
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-0 {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-1 {
+        display: none;
+    }
+
+    .paypal-button-container.paypal-button-layout-horizontal.paypal-button-number-multiple .paypal-button-tagline {
+        display: none;
+    }
+}
+
+@media only screen and (min-width: 300px) {
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-0 {
+        display: inline-block;
+        width: calc(50% - 2px);
+        margin-right: 4px;
+    }
+
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-1 {
+        display: inline-block;
+        width: calc(50% - 2px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row.paypal-button-wallet.paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(60% - 2px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row:not(.paypal-button-wallet).paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(40% - 2px);
+    }
+
+    .paypal-button-container.paypal-button-layout-horizontal.paypal-button-number-multiple .paypal-button-tagline {
+        display: block;
+    }
+}
+
+@media only screen and (min-width: 300px) {
+    .paypal-button-label-container {
+        gap: 5px;
+    }
+
+    .paypal-button-container {
+        min-width: 300px;
+        max-width: 500px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text,
+    .paypal-button-container .paypal-button-row .paypal-button-space {
+        font-size: 16px;
+        line-height: 22px;
+    }
+
+    [data-funding-source=paypal] .paypal-button-text,
+    [data-funding-source=paylater] .paypal-button-text,
+    [data-funding-source=credit] .paypal-button-text {
+        margin-top: -2px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text * {
+        margin-top: 2px;
+    }
+
+    .paypal-button-row {
+        height: 45px;
+        vertical-align: top;
+        min-height: 30px;
+        max-height: 55px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical {
+        margin-bottom: 14px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .paypal-button {
+        display: inline-block;
+        text-align: center;
+        height: 100%;
+    }
+
+    .paypal-button .paypal-button-spinner {
+        height: 23px;
+        width: 23px;
+    }
+
+    .paypal-button>.paypal-button-label-container {
+        margin: 0px 4vw;
+        height: 22px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container {
+        height: 41px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container .paypal-button-text {
+        line-height: 41px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container {
+        height: 28px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-space,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-space {
+        line-height: 28px;
+    }
+
+    .paypal-button.paypal-button-shape-sharp {
+        --btn-radius: 0px;
+        border-radius: 0px;
+    }
+
+    .paypal-button.paypal-button-shape-rect {
+        --btn-radius: 4px;
+        border-radius: 4px;
+    }
+
+    .paypal-button.paypal-button-shape-pill {
+        --btn-radius: 23px;
+        border-radius: 23px;
+    }
+
+    .paypal-button-row.paypal-button-shape-sharp .menu-button {
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .paypal-button-row.paypal-button-shape-rect .menu-button {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    .paypal-button-row.paypal-button-shape-pill .menu-button {
+        border-top-right-radius: 23px;
+        border-bottom-right-radius: 23px;
+    }
+
+    .paypal-button-tagline .paypal-button-text {
+        height: 23px;
+        line-height: 23px;
+    }
+
+    .paypal-button-card {
+        display: inline-block;
+        height: 100%;
+    }
+
+    .paypal-button-row.paypal-button-wallet.paypal-button-wallet-menu .paypal-button {
+        width: calc(100% - 47px);
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .menu-button {
+        height: 45px;
+        width: 45px;
+    }
+}
+
+@media only screen and (min-width: 300px) and (max-width: 320px) {
+
+    .paypal-button-container .paypal-button-row .paypal-button-text,
+    .paypal-button-container .paypal-button-row .paypal-button-space {
+        font-size: 16px;
+        margin-top: -2px;
+        line-height: 22px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text * {
+        margin-top: 2px;
+    }
+
+    .paypal-button>.paypal-button-label-container {
+        margin: 0px 4vw;
+        height: 22px;
+    }
+}
+
+@media only screen and (min-width: 300px) and (max-width: 300px) {
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-0 {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-1 {
+        display: none;
+    }
+
+    .paypal-button-container.paypal-button-layout-horizontal.paypal-button-number-multiple .paypal-button-tagline {
+        display: none;
+    }
+}
+
+@media only screen and (min-width: 300px) {
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-0 {
+        display: inline-block;
+        width: calc(50% - 3px);
+        margin-right: 6px;
+    }
+
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-1 {
+        display: inline-block;
+        width: calc(50% - 3px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row.paypal-button-wallet.paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(60% - 3px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row:not(.paypal-button-wallet).paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(40% - 3px);
+    }
+
+    .paypal-button-container.paypal-button-layout-horizontal.paypal-button-number-multiple .paypal-button-tagline {
+        display: block;
+    }
+}
+
+@media only screen and (min-width: 500px) {
+    .paypal-button-label-container {
+        gap: 6px;
+    }
+
+    .paypal-button-container {
+        min-width: 500px;
+        max-width: 685px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text,
+    .paypal-button-container .paypal-button-row .paypal-button-space {
+        font-size: 20px;
+        line-height: 24px;
+    }
+
+    [data-funding-source=paypal] .paypal-button-text,
+    [data-funding-source=paylater] .paypal-button-text,
+    [data-funding-source=credit] .paypal-button-text {
+        margin-top: -2px;
+    }
+
+    .paypal-button-container .paypal-button-row .paypal-button-text * {
+        margin-top: 2px;
+    }
+
+    .paypal-button-row {
+        height: 55px;
+        vertical-align: bottom;
+        min-height: 40px;
+        max-height: 85px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical {
+        margin-bottom: 17px;
+    }
+
+    .paypal-button-row.paypal-button-layout-vertical:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .paypal-button {
+        display: inline-block;
+        text-align: center;
+        height: 100%;
+    }
+
+    .paypal-button .paypal-button-spinner {
+        height: 28px;
+        width: 28px;
+    }
+
+    .paypal-button>.paypal-button-label-container {
+        margin: 0px 4vw;
+        height: 24px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container {
+        height: 49px;
+    }
+
+    .paypal-button[data-funding-source=applepay] .paypal-button-label-container .paypal-button-text {
+        line-height: 49px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container {
+        height: 33px;
+    }
+
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=eps] .paypal-button-label-container .paypal-button-space,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-text,
+    .paypal-button[data-funding-source=mybank] .paypal-button-label-container .paypal-button-space {
+        line-height: 33px;
+    }
+
+    .paypal-button.paypal-button-shape-sharp {
+        --btn-radius: 0px;
+        border-radius: 0px;
+    }
+
+    .paypal-button.paypal-button-shape-rect {
+        --btn-radius: 4px;
+        border-radius: 4px;
+    }
+
+    .paypal-button.paypal-button-shape-pill {
+        --btn-radius: 28px;
+        border-radius: 28px;
+    }
+
+    .paypal-button-row.paypal-button-shape-sharp .menu-button {
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .paypal-button-row.paypal-button-shape-rect .menu-button {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    .paypal-button-row.paypal-button-shape-pill .menu-button {
+        border-top-right-radius: 28px;
+        border-bottom-right-radius: 28px;
+    }
+
+    .paypal-button-tagline .paypal-button-text {
+        height: 28px;
+        line-height: 28px;
+    }
+
+    .paypal-button-card {
+        display: inline-block;
+        height: 100%;
+    }
+
+    .paypal-button-row.paypal-button-wallet.paypal-button-wallet-menu .paypal-button {
+        width: calc(100% - 57px);
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .menu-button {
+        height: 55px;
+        width: 55px;
+    }
+}
+
+@media only screen and (min-width: 500px) {
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-0 {
+        display: inline-block;
+        width: calc(50% - 4px);
+        margin-right: 8px;
+    }
+
+    .paypal-button-row.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-number-1 {
+        display: inline-block;
+        width: calc(50% - 4px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row.paypal-button-wallet.paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(60% - 4px);
+    }
+
+    .paypal-button-container.paypal-button-wallet .paypal-button-row:not(.paypal-button-wallet).paypal-button-layout-horizontal.paypal-button-number-multiple {
+        width: calc(40% - 4px);
+    }
+
+    .paypal-button-container.paypal-button-layout-horizontal.paypal-button-number-multiple .paypal-button-tagline {
+        display: block;
+    }
+}
+
+.paypal-powered-by {
+    text-align: center;
+    margin: 10px auto;
+    height: 14px;
+    font-family: system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    font-style: italic;
+    font-stretch: normal;
+    color: #7b8388;
+    position: relative;
+    margin-right: 3px;
+    bottom: 3px;
+}
+
+.paypal-powered-by>.paypal-button-text,
+.paypal-powered-by>.paypal-logo {
+    display: inline-block;
+    vertical-align: middle;
+    height: 16px;
+    line-height: 16px;
+    font-size: 11px;
+}
