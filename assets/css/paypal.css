@@ -3,7 +3,7 @@
 
 * {
     box-sizing: border-box;
-    font-family: 'Chirp Sans';
+    font-family: 'Chirp Sans' !important;
 }
 
 #zoid-paypal-buttons-uid_c2ed4fc7ef_mty6mdg6mdk {
