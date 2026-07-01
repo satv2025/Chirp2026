@@ -501,6 +501,10 @@
   letter-spacing: -0.04em;
 }
 
+#goldCheckout .gold-price:not(.gold-payment-panel .gold-price):not(.gold-payment-panel__head .gold-price) {
+  display: none;
+}
+
 .gold-summary-box {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
