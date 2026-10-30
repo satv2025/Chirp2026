@@ -24,8 +24,8 @@
     <link rel="stylesheet" href="/assets/css/autoverification.css">
     <link rel="stylesheet" href="/assets/css/profile.css">
     <link rel="stylesheet" href="/assets/css/sh-st.css">
-    <link rel="stylesheet" href="https://player.chirp.com.ar/assets/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://player.chirp.com.ar/assets/styles.css" media="print" onload="this.media='all'">
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="/assets/js/config.js"></script>
     <script defer src="/assets/js/autoverification.js"></script>
     <script defer src="/assets/js/chirp.js"></script>
@@ -77,7 +77,8 @@
         </div>
       </aside>
       <main class="main-column shst-main shst-main--shorts">
-        <header class="pagebar shst-pagebar"><div><h1>Shorts</h1><small>Videos que no querés dejar de ver.</small></div><button class="btn btn-primary shst-create-short" type="button" id="newShort">+ Crear</button></header>
+        <header class="pagebar shst-pagebar"><div><h1>Shorts</h1><small>Videos que no querés dejar de ver.</small></div><div class="shst-create-actions"><button class="btn btn-soft shst-create-short" type="button" id="newShort">+ Crear Short</button><button class="btn btn-primary shst-record-short" type="button" id="recordShort"><span class="ui-icon ui-icon-camera" aria-hidden="true"></span> Grabar Short</button></div></header>
+        <div class="shst-short-quick"><button type="button" class="btn btn-primary" id="recordShortFeed" aria-label="Grabar un Short">Grabar Short</button><button type="button" class="btn btn-soft" id="newShortFeed">Subir video</button></div>
         <section id="shortsFeed" class="shst-short-feed" aria-label="Videos cortos" tabindex="0"><div class="shst-empty">Cargando Shorts...</div></section>
         <div class="shst-feed-footer" id="shortsNext"><button type="button" class="btn btn-soft" id="moreShorts">Ver más Shorts</button></div>
       </main>

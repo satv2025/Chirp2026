@@ -144,7 +144,7 @@
   }
 
   // Grabador nativo del navegador: sin dependencias externas ni conexión al abrir la página.
-  function createPost(kind) {
+  function createPost(kind, options = {}) {
     const short = kind === 'short';
     const title = short ? 'Nuevo Short' : 'Nueva Story';
     const maxSeconds = 180; // 3 minutos para Shorts y Stories (cámara y galería)
@@ -193,22 +193,37 @@
     const orientationLabel = $('#shstCameraOrientation', layer);
     const status = $('#shstUploadStatus', layer);
     const submit = $('#shstSubmit', layer);
-    const camera = {stream: null, recorder: null, chunks: [], token: 0, busy: false, facing: 'user', deviceId: '', mode: 'video', muted: false, timer: 0, startedAt: 0, recordedDuration: 0, recordedFile: null, file: null, previewUrl: '', disposed: false, publishing: false};
+    const camera = {canvas: null, captureStream: null, captureFrame: 0, captureOrientation: '', stream: null, recorder: null, chunks: [], token: 0, busy: false, facing: 'user', deviceId: '', mode: 'video', muted: false, timer: 0, startedAt: 0, recordedDuration: 0, recordedFile: null, file: null, previewUrl: '', disposed: false, publishing: false};
     const timeLabel = $('#shstCameraTime', layer);
     const maxLabel = '03:00';
     const formatTime = seconds => `${String(Math.floor(seconds / 60)).padStart(2,'0')}:${String(seconds % 60).padStart(2,'0')}`;
     const message = str => { if (!camera.disposed) status.textContent = str; };
+    // En teléfonos prevalece la orientación física del dispositivo, ya que
+    // videoWidth/videoHeight pueden conservar la orientación nativa del sensor.
+    // En webcams de escritorio prevalece la proporción real de los fotogramas.
+    const isHandheld = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      (navigator.maxTouchPoints > 1 && matchMedia('(pointer: coarse)').matches);
+    function cameraOrientation() {
+      const track = camera.stream?.getVideoTracks?.()[0];
+      const settings = track?.getSettings?.() || {};
+      const width = Number(live.videoWidth || settings.width || 0);
+      const height = Number(live.videoHeight || settings.height || 0);
+      if (isHandheld()) {
+        // El viewport visual responde también a barras del navegador y giro real.
+        const vw = window.visualViewport?.width || innerWidth;
+        const vh = window.visualViewport?.height || innerHeight;
+        if (Math.abs(vw - vh) > 40) return vw > vh ? 'landscape' : 'portrait';
+        if (screen.orientation?.type) return screen.orientation.type.startsWith('landscape') ? 'landscape' : 'portrait';
+      }
+      if (width && height) return width > height ? 'landscape' : 'portrait';
+      return matchMedia('(orientation: landscape)').matches ? 'landscape' : 'portrait';
+    }
     function syncCameraOrientation() {
       if (!camera.stream || camera.disposed) return;
-      const settings = camera.stream.getVideoTracks()[0]?.getSettings?.() || {};
-      const width = live.videoWidth || settings.width || 0;
-      const height = live.videoHeight || settings.height || 0;
-      // Dimension natural de los fotogramas; no confundir giro de cámara con cámara delantera.
-      // Algunos móviles rotan el sensor al girar: por eso escuchamos también resize.
-      const horizontal = width && height ? width > height : window.innerWidth > window.innerHeight;
-      const mode = horizontal ? 'landscape' : 'portrait';
+      const mode = camera.captureOrientation && camera.recorder?.state === 'recording'
+        ? camera.captureOrientation : cameraOrientation();
       cameraStage.dataset.orientation = mode;
-      orientationLabel.textContent = horizontal ? 'Horizontal' : 'Vertical';
+      orientationLabel.textContent = mode === 'landscape' ? 'Horizontal' : 'Vertical';
       orientationLabel.hidden = false;
     }
     // El evento resize del elemento de video avisa cambios del frame entregado por la cámara.
@@ -217,12 +232,21 @@
     const orientationEvents = new AbortController();
     window.addEventListener('orientationchange', syncCameraOrientation, {signal: orientationEvents.signal});
     window.addEventListener('resize', syncCameraOrientation, {signal: orientationEvents.signal});
+    window.visualViewport?.addEventListener('resize', syncCameraOrientation, {signal: orientationEvents.signal});
+    screen.orientation?.addEventListener?.('change', syncCameraOrientation, {signal: orientationEvents.signal});
     function releasePreview() {
       if (camera.previewUrl) URL.revokeObjectURL(camera.previewUrl);
       camera.previewUrl = '';
       preview.replaceChildren();
     }
+    function releaseCapture() {
+      if (camera.captureFrame) cancelAnimationFrame(camera.captureFrame);
+      camera.captureFrame = 0;
+      camera.captureStream?.getVideoTracks?.().forEach(t => t.stop());
+      camera.captureStream = null; camera.canvas = null; camera.captureOrientation = '';
+    }
     function endStream() {
+      releaseCapture();
       if (camera.stream) camera.stream.getTracks().forEach(track => track.stop());
       camera.stream = null;
       live.pause();
@@ -382,14 +406,54 @@
       $('#shstStop',layer).disabled = true;
       message('Preparando tu video...');
     }
+    // El MediaRecorder nativo puede registrar el sensor en horizontal aun cuando
+    // el teléfono esté vertical. Canvas produce un flujo con el aspecto elegido
+    // ANTES de grabar, sin deformar ni recortar la imagen de la cámara.
+    function recordingStream() {
+      camera.captureOrientation = cameraOrientation();
+      if (!HTMLCanvasElement.prototype.captureStream || !live.videoWidth || !live.videoHeight) return camera.stream;
+      const canvas = document.createElement('canvas');
+      canvas.width = camera.captureOrientation === 'landscape' ? 1280 : 720;
+      canvas.height = camera.captureOrientation === 'landscape' ? 720 : 1280;
+      const ctx = canvas.getContext('2d', {alpha:false});
+      if (!ctx) return camera.stream;
+      camera.canvas = canvas;
+      let lastFrame = -1000;
+      const draw = now => {
+        if (!camera.canvas || camera.disposed) return;
+        // Máximo 30 dibujos/seg: no gastar GPU/CPU innecesariamente.
+        if (now - lastFrame >= 33) {
+          lastFrame=now;
+          ctx.fillStyle='#090609'; ctx.fillRect(0,0,canvas.width,canvas.height);
+          const sw=live.videoWidth, sh=live.videoHeight;
+          if (sw && sh) {
+            const scale=Math.min(canvas.width/sw,canvas.height/sh);
+            const dw=sw*scale,dh=sh*scale;
+            ctx.save();
+            if (live.dataset.facing==='user') {ctx.translate(canvas.width,0);ctx.scale(-1,1);}
+            ctx.drawImage(live,(canvas.width-dw)/2,(canvas.height-dh)/2,dw,dh);
+            ctx.restore();
+          }
+        }
+        camera.captureFrame=requestAnimationFrame(draw);
+      };
+      draw();
+      try {
+        const composed=canvas.captureStream(30);
+        const videoTracks=composed.getVideoTracks();
+        const audioTracks=camera.stream.getAudioTracks();
+        camera.captureStream = composed;
+        return new MediaStream([...videoTracks,...audioTracks]);
+      } catch(e) {releaseCapture();return camera.stream;}
+    }
     function startRecording() {
       if (!camera.stream || camera.busy || camera.recorder?.state === 'recording') return;
       let recorder;
       try {
         const mime = selectMime();
         const opts = mime ? {mimeType:mime,videoBitsPerSecond:1_650_000,audioBitsPerSecond:96_000} : {videoBitsPerSecond:1_650_000,audioBitsPerSecond:96_000};
-        recorder = new MediaRecorder(camera.stream,opts);
-      } catch (error) {message(error.message || 'No se pudo comenzar a grabar.');return;}
+        recorder = new MediaRecorder(recordingStream(),opts);
+      } catch (error) {releaseCapture();message(error.message || 'No se pudo comenzar a grabar.');return;}
       const token = camera.token;
       camera.recorder = recorder;
       camera.chunks = [];
@@ -414,7 +478,7 @@
         setFile(file,true,Math.min(maxSeconds,elapsed));
       };
       try { recorder.start(500); }
-      catch (err) {camera.recorder=null;message('No se pudo comenzar a grabar.');return;}
+      catch (err) {camera.recorder=null;releaseCapture();message('No se pudo comenzar a grabar.');return;}
       timeLabel.textContent=`00:00 / ${maxLabel}`;
       camera.timer = setInterval(() => {
         const time = (Date.now() - camera.startedAt) / 1000;
@@ -431,13 +495,16 @@
       const canvas = document.createElement('canvas');
       // Preservar la orientación y la proporción del sensor, sin deformar ni recortar.
       const width=live.videoWidth,height=live.videoHeight;
-      const scale=Math.min(1, 1280/Math.max(width,height));
-      canvas.width=Math.max(1,Math.round(width*scale));
-      canvas.height=Math.max(1,Math.round(height*scale));
+      const horizontal=cameraOrientation()==='landscape';
+      canvas.width=horizontal?1280:720;
+      canvas.height=horizontal?720:1280;
       const context=canvas.getContext('2d');
       if (!context) {message('No se pudo tomar la fotografía.');return;}
-      if (live.dataset.facing === 'user') { context.translate(canvas.width,0); context.scale(-1,1); }
-      context.drawImage(live,0,0,width,height,0,0,canvas.width,canvas.height);
+      context.fillStyle='#090609';context.fillRect(0,0,canvas.width,canvas.height);
+      const scale=Math.min(canvas.width/width, canvas.height/height);
+      const dw=width*scale, dh=height*scale;
+      if (live.dataset.facing==='user') {context.translate(canvas.width,0);context.scale(-1,1);}
+      context.drawImage(live,(canvas.width-dw)/2,(canvas.height-dh)/2,dw,dh);
       const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.9));
       if (!blob) {message('No se pudo guardar la fotografía.');return;}
       const file = new File([blob],`chirp-story-${Date.now()}.jpg`,{type:'image/jpeg'});
@@ -517,6 +584,11 @@
       let path='';
       const bucket=short ? 'chirp-shorts' : 'chirp-stories';
       try {
+        if (!current.user?.id) {
+          const session=await sb.auth.getSession();
+          current.user=session.data?.session?.user;
+        }
+        if (!current.user?.id) throw new Error('Iniciá sesión para publicar.');
         message('Preparando archivo...');
         // Algunos navegadores informan duración Infinity en WebM recién grabados.
         // Usar el tiempo real del MediaRecorder en vez de leer esa metadata.
@@ -547,6 +619,10 @@
         }
       }
     });
+    if (options.autoCamera) {
+      // Abrir la cámara únicamente después del clic explícito del usuario.
+      openCamera();
+    }
   }
 
   // --------------------- SHORTS ---------------------
@@ -727,7 +803,7 @@
     return [...ids];
   }
   async function loadStories() {
-    const ids = await followedStoryAuthors();
+    const ids = await Promise.race([followedStoryAuthors(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Stories no responde. Revisá tu conexión.')),12000))]);
     const now = new Date().toISOString();
     const maxStories = page === 'home' ? 48 : 250;
     // Dividir la lista evita URLs excesivamente largas si seguís cientos de perfiles.
@@ -866,22 +942,30 @@
     const {data}=await sb.from('profiles').select('id,username,display_name,avatar_url').eq('id',current.user.id).maybeSingle();
     current.profile=data||{id:current.user.id};current.profiles.set(current.user.id,current.profile);
     if(page==='shorts') {
-      $('#newShort')?.addEventListener('click',()=>createPost('short'));
       $('#moreShorts')?.addEventListener('click',()=>loadShortPage());
       await loadShortPage();
     }
     if(page==='stories'||page==='home') {
-      $('#newStory')?.addEventListener('click',()=>createPost('story'));
-      try{await loadStories();if(page==='home')renderStoryTray($('#homeStories'));else renderStoryScreen();}
+      try{await Promise.race([loadStories(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Stories tarda demasiado. Reintentá.')),15000))]);if(page==='home')renderStoryTray($('#homeStories'));else renderStoryScreen();}
       catch(e){showError(e);}
       if(page==='stories'&&new URLSearchParams(location.search).get('create')==='1')createPost('story');
     }
   }
   document.addEventListener('DOMContentLoaded', () => {
+    // Los botones funcionan sin esperar a Supabase, feed ni consultas de perfiles.
+    $('#newShort')?.addEventListener('click', () => createPost('short'));
+    $('#recordShort')?.addEventListener('click', () => createPost('short', {autoCamera:true}));
+    $('#newShortFeed')?.addEventListener('click', () => createPost('short'));
+    $('#recordShortFeed')?.addEventListener('click', () => createPost('short', {autoCamera:true}));
+    $('#newStory')?.addEventListener('click', () => createPost('story'));
+    $('#recordStory')?.addEventListener('click', () => createPost('story', {autoCamera:true}));
     if (page === 'home') {
       const run = () => start().catch(showError);
       if ('requestIdleCallback' in window) requestIdleCallback(run, {timeout: 1500});
       else setTimeout(run, 350);
     } else start().catch(showError);
+    if (page === 'shorts' && new URLSearchParams(location.search).get('create') === '1') {
+      createPost('short');
+    }
   });
 })();

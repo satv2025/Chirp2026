@@ -1223,14 +1223,12 @@
       return;
     }
     const html = [];
-    for (const c of chirps) html.push(await chirpHtml(c));
+    html.push(...await Promise.all(chirps.map(c => chirpHtml(c))));
     container.innerHTML = html.join('');
-    await hydrateMyChirpActions(
-      container,
-      (chirps || []).map((c) => c.id)
-    );
+    // Mostrar los chirps inmediatamente: likes y multimedia se hidratan después.
     bindActions(container);
-    initChirpPlayers(container);
+    void hydrateMyChirpActions(container,(chirps || []).map(c => c.id));
+    void initChirpPlayers(container);
   }
 
   function bindActions(root) {
@@ -1515,7 +1513,7 @@
       .select('*, profiles:author_id(*), chirp_media(*)')
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
-      .limit(50);
+      .limit(12);
     if (error)
       return (box.innerHTML = empty(
         'No pude cargar el timeline',
@@ -3028,9 +3026,14 @@
     clearTimeout(realtimeRefreshTimer);
     realtimeRefreshTimer = setTimeout(async () => {
       try {
-        await loadTrending();
-
-        if (page === 'home') await loadFeed();
+        if (/^(chirps|chirp_hashtags|hashtags):/.test(reason)) await loadTrending();
+        // Evitar recargar todo el timeline por cada DM, notificación o follow.
+        if (page === 'home' && /^(chirps|chirp_media):/.test(reason)) {
+          if (!window.__chirpLastTimelineRefresh || Date.now() - window.__chirpLastTimelineRefresh > 12000) {
+            window.__chirpLastTimelineRefresh=Date.now();
+            await loadFeed();
+          }
+        }
         if (page === 'profile') await loadMyProfile();
         if (page === 'bookmarks') await loadBookmarks();
         if (page === 'notifications') await loadNotifications();
