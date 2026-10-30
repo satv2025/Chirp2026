@@ -1848,6 +1848,8 @@
       'update-password',
       'auth',
       'home',
+      'shorts',
+      'stories',
       'explore',
       'notifications',
       'bookmarks',
@@ -3108,6 +3110,8 @@
 
     const privatePages = [
       'home',
+      'shorts',
+      'stories',
       'explore',
       'notifications',
       'bookmarks',

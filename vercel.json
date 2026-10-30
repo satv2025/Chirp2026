@@ -23,7 +23,7 @@
       "destination": "/u.html?username=:username"
     },
     {
-      "source": "/:username((?!login|signin|register|signup|reset|update-password|auth|home|explore|notifications|bookmarks|profile|settings|support|messages|chirpy|legal|embed|gold|gold-return|chirp|api|assets|favicon.ico|robots.txt|sitemap.xml).*)",
+      "source": "/:username((?!login|signin|register|signup|shorts|stories|reset|update-password|auth|home|explore|notifications|bookmarks|profile|settings|support|messages|chirpy|legal|embed|gold|gold-return|chirp|api|assets|favicon.ico|robots.txt|sitemap.xml).*)",
       "destination": "/u.html?username=:username"
     }
   ]

@@ -3,7 +3,7 @@
 
 * {
   box-sizing: border-box;
-  font-family: 'Chirp Sans';
+  font-family: 'Chirp Sans', Arial, sans-serif;
 }
 
 :root {

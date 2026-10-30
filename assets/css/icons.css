@@ -151,3 +151,7 @@ html[data-device='mobile'] .mobile-nav .ui-icon-chirpy {
   width: 33px;
   height: 33px;
 }
+
+.ui-icon-shorts{--icon-url:url('/assets/img/icons/shorts.svg')}
+.ui-icon-stories{--icon-url:url('/assets/img/icons/stories.svg')}
+body[data-page="shorts"] .side-link[data-route="shorts"],body[data-page="stories"] .side-link[data-route="stories"]{color:var(--hot);background:var(--card-2)}
