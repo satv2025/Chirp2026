@@ -147,7 +147,7 @@
   function createPost(kind) {
     const short = kind === 'short';
     const title = short ? 'Nuevo Short' : 'Nueva Story';
-    const maxSeconds = short ? 90 : 30;
+    const maxSeconds = 180; // 3 minutos para Shorts y Stories (cámara y galería)
     const maxBytes = (short ? 100 : 50) * 1024 * 1024;
     const inputAccept = short ? 'video/mp4,video/webm' : 'image/jpeg,image/png,image/webp,video/mp4,video/webm';
     const cameraIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H9l-2 3H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-3-3z"/><circle cx="12" cy="13" r="3.5"/></svg>';
@@ -162,7 +162,7 @@
           <label class="shst-source-option shst-source-gallery" for="shstFile">${galleryIcon}<span><strong>Subir archivo</strong><small>Desde tu dispositivo</small></span><input id="shstFile" type="file" accept="${inputAccept}"></label>
         </div>
         <div id="shstCamera" class="shst-camera" hidden>
-          <div class="shst-camera-stage"><video id="shstCameraLive" autoplay muted playsinline></video><div class="shst-camera-top"><span class="shst-camera-indicator" id="shstCameraIndicator">Cámara lista</span><span class="shst-camera-time" id="shstCameraTime">00:00 / ${short ? '01:30' : '00:30'}</span></div></div>
+          <div class="shst-camera-stage" id="shstCameraStage" data-orientation="portrait"><video id="shstCameraLive" autoplay muted playsinline></video><div class="shst-camera-top"><span class="shst-camera-indicator" id="shstCameraIndicator">Cámara lista</span><span class="shst-camera-time" id="shstCameraTime">00:00 / 03:00</span></div><span class="shst-camera-orientation" id="shstCameraOrientation" aria-live="polite" hidden></span></div>
           ${short ? '' : '<div class="shst-camera-modes" role="group" aria-label="Modo de cámara"><button type="button" id="shstModePhoto">Foto</button><button type="button" class="is-active" id="shstModeVideo">Video</button></div>'}
           <div class="shst-camera-tools">
             <button class="shst-camera-tool" type="button" id="shstFlip" title="Cambiar cámara" aria-label="Cambiar cámara">${flipIcon}<span>Girar</span></button>
@@ -179,7 +179,7 @@
         </div>
         <div class="shst-upload-preview" id="shstPreview" aria-live="polite"></div>
         <button type="button" class="shst-retake" id="shstRetake" hidden>Volver a grabar</button>
-        <p class="shst-upload-hint">${short ? 'Videos hasta 90 segundos · 100 MB' : 'Videos hasta 30 segundos · 50 MB'}</p>
+        <p class="shst-upload-hint">${short ? 'Videos hasta 3 minutos · 100 MB' : 'Fotos o videos hasta 3 minutos · 50 MB'}</p>
         <label class="shst-caption-label" for="shstCaption">Descripción</label><textarea id="shstCaption" maxlength="${short ? '500' : '250'}" rows="2" placeholder="Escribí algo..."></textarea>
         <p class="shst-upload-status" id="shstUploadStatus" aria-live="polite"></p>
         <button class="btn btn-primary btn-wide" type="submit" id="shstSubmit" disabled>Publicar ${short ? 'Short' : 'Story'}</button>
@@ -189,13 +189,34 @@
     const preview = $('#shstPreview', layer);
     const cameraArea = $('#shstCamera', layer);
     const live = $('#shstCameraLive', layer);
+    const cameraStage = $('#shstCameraStage', layer);
+    const orientationLabel = $('#shstCameraOrientation', layer);
     const status = $('#shstUploadStatus', layer);
     const submit = $('#shstSubmit', layer);
     const camera = {stream: null, recorder: null, chunks: [], token: 0, busy: false, facing: 'user', deviceId: '', mode: 'video', muted: false, timer: 0, startedAt: 0, recordedDuration: 0, recordedFile: null, file: null, previewUrl: '', disposed: false, publishing: false};
     const timeLabel = $('#shstCameraTime', layer);
-    const maxLabel = short ? '01:30' : '00:30';
+    const maxLabel = '03:00';
     const formatTime = seconds => `${String(Math.floor(seconds / 60)).padStart(2,'0')}:${String(seconds % 60).padStart(2,'0')}`;
     const message = str => { if (!camera.disposed) status.textContent = str; };
+    function syncCameraOrientation() {
+      if (!camera.stream || camera.disposed) return;
+      const settings = camera.stream.getVideoTracks()[0]?.getSettings?.() || {};
+      const width = live.videoWidth || settings.width || 0;
+      const height = live.videoHeight || settings.height || 0;
+      // Dimension natural de los fotogramas; no confundir giro de cámara con cámara delantera.
+      // Algunos móviles rotan el sensor al girar: por eso escuchamos también resize.
+      const horizontal = width && height ? width > height : window.innerWidth > window.innerHeight;
+      const mode = horizontal ? 'landscape' : 'portrait';
+      cameraStage.dataset.orientation = mode;
+      orientationLabel.textContent = horizontal ? 'Horizontal' : 'Vertical';
+      orientationLabel.hidden = false;
+    }
+    // El evento resize del elemento de video avisa cambios del frame entregado por la cámara.
+    live.addEventListener('loadedmetadata', syncCameraOrientation);
+    live.addEventListener('resize', syncCameraOrientation);
+    const orientationEvents = new AbortController();
+    window.addEventListener('orientationchange', syncCameraOrientation, {signal: orientationEvents.signal});
+    window.addEventListener('resize', syncCameraOrientation, {signal: orientationEvents.signal});
     function releasePreview() {
       if (camera.previewUrl) URL.revokeObjectURL(camera.previewUrl);
       camera.previewUrl = '';
@@ -206,6 +227,7 @@
       camera.stream = null;
       live.pause();
       live.srcObject = null;
+      orientationLabel.hidden = true;
     }
     function clearRecordingTimer() { if (camera.timer) clearInterval(camera.timer); camera.timer = 0; }
     function stopAndDiscardRecording() {
@@ -228,6 +250,7 @@
     }
     layer.shstDispose = () => {
       camera.disposed = true;
+      orientationEvents.abort();
       closeCamera();
       releasePreview();
     };
@@ -250,6 +273,13 @@
         element.preload = 'metadata';
       } else element.alt = 'Vista previa de la fotografía';
       preview.append(element);
+      const setPreviewOrientation = () => {
+        if (!preview.contains(element)) return;
+        const w = element.tagName === 'VIDEO' ? element.videoWidth : element.naturalWidth;
+        const h = element.tagName === 'VIDEO' ? element.videoHeight : element.naturalHeight;
+        if (w && h) preview.dataset.orientation = w > h ? 'landscape' : 'portrait';
+      };
+      element.addEventListener(element.tagName === 'VIDEO' ? 'loadedmetadata' : 'load', setPreviewOrientation, {once:true});
       message(fromRecorder ? 'Grabación lista para publicar.' : 'Archivo listo para publicar.');
     }
     function syncCameraButtons() {
@@ -299,8 +329,11 @@
       $('#shstCameras', layer).setAttribute('aria-expanded','false');
       message('Solicitando acceso a la cámara...');
       syncCameraButtons();
+      const isHorizontal = window.innerWidth > window.innerHeight;
       const video = deviceId ? {deviceId: {exact: deviceId}} : {
-        facingMode: {ideal:camera.facing}, width:{ideal:1080},height:{ideal:1920},aspectRatio:{ideal:9/16}
+        facingMode: {ideal: camera.facing},
+        width: {ideal: isHorizontal ? 1920 : 1080},
+        height: {ideal: isHorizontal ? 1080 : 1920}
       };
       let stream = null;
       try {
@@ -320,6 +353,7 @@
         live.srcObject = stream;
         live.dataset.facing = stream.getVideoTracks()[0]?.getSettings()?.facingMode || (deviceId ? 'environment' : camera.facing);
         await live.play().catch(()=>{});
+        syncCameraOrientation();
         message('');
         timeLabel.textContent = `00:00 / ${maxLabel}`;
       } catch (error) {
@@ -353,7 +387,7 @@
       let recorder;
       try {
         const mime = selectMime();
-        const opts = mime ? {mimeType:mime,videoBitsPerSecond:2_500_000} : {videoBitsPerSecond:2_500_000};
+        const opts = mime ? {mimeType:mime,videoBitsPerSecond:1_650_000,audioBitsPerSecond:96_000} : {videoBitsPerSecond:1_650_000,audioBitsPerSecond:96_000};
         recorder = new MediaRecorder(camera.stream,opts);
       } catch (error) {message(error.message || 'No se pudo comenzar a grabar.');return;}
       const token = camera.token;
@@ -395,13 +429,15 @@
         message('La cámara todavía no está lista.');return;
       }
       const canvas = document.createElement('canvas');
-      canvas.width = 720; canvas.height = 1280;
-      const width=live.videoWidth,height=live.videoHeight,aspect=720/1280;
-      const cropWidth=Math.min(width,height*aspect),cropHeight=cropWidth/aspect;
+      // Preservar la orientación y la proporción del sensor, sin deformar ni recortar.
+      const width=live.videoWidth,height=live.videoHeight;
+      const scale=Math.min(1, 1280/Math.max(width,height));
+      canvas.width=Math.max(1,Math.round(width*scale));
+      canvas.height=Math.max(1,Math.round(height*scale));
       const context=canvas.getContext('2d');
       if (!context) {message('No se pudo tomar la fotografía.');return;}
-      if (live.dataset.facing === 'user') { context.translate(720,0); context.scale(-1,1); }
-      context.drawImage(live,(width-cropWidth)/2,(height-cropHeight)/2,cropWidth,cropHeight,0,0,720,1280);
+      if (live.dataset.facing === 'user') { context.translate(canvas.width,0); context.scale(-1,1); }
+      context.drawImage(live,0,0,width,height,0,0,canvas.width,canvas.height);
       const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.9));
       if (!blob) {message('No se pudo guardar la fotografía.');return;}
       const file = new File([blob],`chirp-story-${Date.now()}.jpg`,{type:'image/jpeg'});
@@ -485,7 +521,7 @@
         // Algunos navegadores informan duración Infinity en WebM recién grabados.
         // Usar el tiempo real del MediaRecorder en vez de leer esa metadata.
         const duration=camera.recordedFile === file ? camera.recordedDuration : (await fileInfo(file,type)).duration;
-        if (type === 'video' && duration > maxSeconds+.3) throw new Error(`El video supera los ${maxSeconds} segundos permitidos.`);
+        if (type === 'video' && duration > maxSeconds) throw new Error(`El video supera los ${maxSeconds} segundos permitidos.`);
         path=`${current.user.id}/${crypto.randomUUID()}.${ext}`;
         message('Subiendo contenido...');
         await uploadMedia(bucket,path,file,status);
@@ -676,9 +712,33 @@
   }
 
   // --------------------- STORIES ---------------------
+  async function followedStoryAuthors() {
+    // En el feed de Stories se muestran SOLO perfiles seguidos, y las Stories propias.
+    // La consulta se ejecuta antes del listado para no descargar material no seguido.
+    const ids = new Set([current.user.id]);
+    const batchSize = 1000;
+    for (let start = 0; ; start += batchSize) {
+      const result = await sb.from('follows').select('following_id')
+        .eq('follower_id', current.user.id).range(start, start + batchSize - 1);
+      const rows = getError(result) || [];
+      rows.forEach(row => { if (row.following_id) ids.add(row.following_id); });
+      if (rows.length < batchSize) break;
+    }
+    return [...ids];
+  }
   async function loadStories() {
-    const result = await sb.from('st_stories').select('id,author_id,caption,media_path,media_kind,duration_seconds,created_at,expires_at').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(page === 'home' ? 48 : 250);
-    current.stories = getError(result) || [];
+    const ids = await followedStoryAuthors();
+    const now = new Date().toISOString();
+    const maxStories = page === 'home' ? 48 : 250;
+    // Dividir la lista evita URLs excesivamente largas si seguís cientos de perfiles.
+    const chunks=[];
+    for (let start=0; start<ids.length; start+=70) chunks.push(ids.slice(start,start+70));
+    const responses = await Promise.all(chunks.map(chunk =>
+      sb.from('st_stories').select('id,author_id,caption,media_path,media_kind,duration_seconds,created_at,expires_at')
+        .in('author_id',chunk).gt('expires_at',now).order('created_at',{ascending:false}).limit(maxStories)
+    ));
+    current.stories = responses.flatMap(result => getError(result) || [])
+      .sort((a,b) => b.created_at.localeCompare(a.created_at)).slice(0,maxStories);
     await loadProfiles(current.stories.map(s => s.author_id));
     const map = new Map();
     current.stories.forEach(s=> {if(!map.has(s.author_id))map.set(s.author_id,[]);map.get(s.author_id).push(s);});
@@ -693,7 +753,7 @@
   function renderStoryTray(container) {
     if(!container)return;
     const hasMine = current.groups.some(g=>g.id===current.user.id);
-    container.innerHTML = `<button class="shst-story-tile shst-new-story" type="button" data-create-story><span class="shst-story-add">＋</span><span>Nueva</span></button>` + current.groups.slice(0,page==='home'?12:50).map(g=>storyTile(g, g.id===current.user.id)).join('') + (!current.groups.length ? '<span class="shst-muted shst-tray-placeholder">Todavía no hay historias.</span>':'');
+    container.innerHTML = `<button class="shst-story-tile shst-new-story" type="button" data-create-story><span class="shst-story-add">＋</span><span>Nueva</span></button>` + current.groups.slice(0,page==='home'?12:50).map(g=>storyTile(g, g.id===current.user.id)).join('') + (!current.groups.length ? '<span class="shst-muted shst-tray-placeholder">Las historias de quienes seguís aparecerán acá.</span>':'');
     container.onclick = e=>{ if(e.target.closest('[data-create-story]')) createPost('story'); const b=e.target.closest('[data-story-user]');if(b)openStory(b.dataset.storyUser); };
   }
   function renderStoryScreen() {
@@ -702,7 +762,7 @@
     grid.innerHTML=current.groups.length?current.groups.map(g=>{
       const p=prof(g.id);
       return `<button class="shst-story-card" data-story-user="${html(g.id)}"><span class="shst-story-card-avatar"><img src="${html(avatar(p))}" alt=""></span><strong>${html(nameOf(p))}</strong><small>@${html(p.username||'usuario')} · ${g.entries.length} ${g.entries.length===1?'historia':'historias'}</small></button>`;
-    }).join(''):'<div class="shst-empty">Todavía no hay historias. ¡Creá la primera!</div>';
+    }).join(''):'<div class="shst-empty">Acá vas a ver las historias de las cuentas que seguís. También podés crear la tuya.</div>';
     grid.onclick=e=>{const b=e.target.closest('[data-story-user]');if(b)openStory(b.dataset.storyUser);};
   }
   function resetStoryTimer() {cancelAnimationFrame(current.storyTimer);current.storyTimer=0;const v=$('#storyViewer video');if(v)v.pause();}

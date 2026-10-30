@@ -1,0 +1,19 @@
+CHIRP 2026 · Shorts + Stories · Cámara adaptativa y feed de seguidos
+
+Si ya instalaste la versión 3 minutos:
+- Extraé este parche encima de la carpeta raíz de tu repositorio Chirp2026.
+- Conservá tus fuentes originales en assets/fonts/ChirpSans; NO borres esa carpeta.
+- Publicá los cambios con GitHub Desktop.
+- No hay SQL nuevo para el filtro por cuentas seguidas. Si todavía no aplicaste
+  la actualización de 3 minutos, ejecutá sql/chirp_SH_ST_3min_actualizar.sql.
+
+CAMBIOS
+- Formato de cámara detectado según video real: vertical u horizontal.
+- Vista previa y foto sin estiramiento ni recorte forzado a vertical.
+- Stories del inicio y de /stories.html: solo cuentas seguidas + historias propias.
+- Filtro de autores aplicado en Supabase antes de traer las historias.
+- Se mantiene el máximo de 3 minutos, con grabación y subida desde galería.
+
+NOTA: Esto filtra el FEED; no reemplaza políticas de privacidad RLS. El video
+codificado conserva la orientación entregada por el navegador/cámara; el giro
+físico durante una grabación depende del soporte del dispositivo.
