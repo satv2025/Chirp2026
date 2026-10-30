@@ -1228,7 +1228,61 @@
     // Mostrar los chirps inmediatamente: likes y multimedia se hidratan después.
     bindActions(container);
     void hydrateMyChirpActions(container,(chirps || []).map(c => c.id));
+    void hydrateShortChirpCards(container,(chirps || []).map(c => c.id));
     void initChirpPlayers(container);
+  }
+
+  // Un Short enlazado a un Chirp muestra las mismas interacciones en el timeline.
+  // Esto se hidrata DESPUÉS del render: no bloquea Home ni el perfil.
+  async function hydrateShortChirpCards(root, chirpIds = []) {
+    if (!root || !chirpIds.length || !user?.id) return;
+    try {
+      const result = await sb.from('sh_videos').select('id,chirp_id').in('chirp_id', chirpIds);
+      if (result.error || !result.data?.length) return;
+      const map = new Map(result.data.map(v => [v.chirp_id,v.id]));
+      const videoIds = result.data.map(v => v.id);
+      const mine = await sb.from('sh_dislikes').select('video_id').eq('user_id',user.id).in('video_id',videoIds);
+      const own = new Set((mine.data || []).map(v => v.video_id));
+      root.querySelectorAll('.chirp[data-chirp-id]').forEach(card => {
+        const videoId = map.get(card.dataset.chirpId);
+        if (!videoId || card.querySelector('.js-short-dislike')) return;
+        card.dataset.shortId = videoId;
+        const actions = card.querySelector('.chirp__actions');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'action-btn js-short-dislike' + (own.has(videoId) ? ' is-active' : '');
+        button.title = 'No me gusta este Short';
+        button.setAttribute('aria-label','No me gusta');
+        button.textContent = '♢ No me gusta';
+        actions?.append(button);
+        const link = document.createElement('a');
+        link.href = `/shorts.html?video=${encodeURIComponent(videoId)}`;
+        link.className = 'chirp-short-link';
+        link.textContent = 'Ver en Shorts';
+        const body = card.querySelector('.chirp__body');
+        if (actions && body) body.insertBefore(link,actions);
+      });
+      if (root.dataset.shortDislikesBound === '1') return;
+      root.dataset.shortDislikesBound = '1';
+      root.addEventListener('click', async event => {
+        const button = event.target.closest('.js-short-dislike');
+        if (!button || !root.contains(button)) return;
+        const card = button.closest('.chirp[data-short-id]');
+        const videoId = card?.dataset.shortId;
+        if (!videoId || !user?.id) return;
+        button.disabled = true;
+        try {
+          const keys = {video_id:videoId,user_id:user.id};
+          const result = button.classList.contains('is-active')
+            ? await sb.from('sh_dislikes').delete().match(keys)
+            : await sb.from('sh_dislikes').insert(keys);
+          if (result.error) throw result.error;
+          button.classList.toggle('is-active');
+          if (button.classList.contains('is-active')) card.querySelector('.js-like')?.classList.remove('is-active');
+        } catch (error) { toast('No se pudo actualizar',error.message,'error'); }
+        finally { button.disabled = false; }
+      });
+    } catch (error) {console.warn('No se pudieron cargar reacciones de Shorts',error);}
   }
 
   function bindActions(root) {
@@ -2822,14 +2876,11 @@
 
     box.innerHTML =
       (data || [])
-        .map(
-          (
-            msg
-          ) => `<div class="dm-message ${msg.sender_id === user.id ? 'is-me' : ''}">
-      ${esc(msg.body)}
+        .map((msg) => `<div class="dm-message ${msg.sender_id === user.id ? 'is-me' : ''}">
+      ${msg.story_id ? `<a class="dm-story-reference" href="/stories.html?story=${encodeURIComponent(msg.story_id)}">↪ Respuesta a una Story · Ver historia</a>` : ''}
+      <span class="dm-message-text">${esc(msg.body)}</span>
       <small>${ago(msg.created_at)}</small>
-    </div>`
-        )
+    </div>`)
         .join('') ||
       `<div class="empty"><strong>Nuevo chat</strong><span>Mandá el primer mensaje.</span></div>`;
     box.scrollTop = box.scrollHeight;

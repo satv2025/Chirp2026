@@ -622,8 +622,25 @@
         const caption=$('#shstCaption',layer).value.trim();
         const payload=short ? {author_id:current.user.id,caption,media_path:path,duration_seconds:duration} :
           {author_id:current.user.id,caption,media_path:path,media_kind:type,duration_seconds:duration};
-        const insert=await sb.from(short ? 'sh_videos' : 'st_stories').insert(payload).select('id').single();
-        if (insert.error) {await sb.storage.from(bucket).remove([path]);throw insert.error;}
+        let nativeChirpId = null;
+        try {
+          if (short) {
+            const native = getError(await sb.from('chirps').insert({author_id:current.user.id,content:caption.slice(0,280) || 'Nuevo Short',visibility:'public'}).select('id').single());
+            nativeChirpId = native.id;
+            // La misma copia del archivo se muestra en Shorts y en el timeline.
+            getError(await sb.from('chirp_media').insert({chirp_id:nativeChirpId,user_id:current.user.id,storage_bucket:bucket,storage_path:path,media_type:'video',sort_order:0}));
+            payload.chirp_id = nativeChirpId;
+          }
+          getError(await sb.from(short ? 'sh_videos' : 'st_stories').insert(payload).select('id').single());
+        } catch (dbError) {
+          if (nativeChirpId) {
+            const cleanup = await sb.from('chirps').delete().eq('id',nativeChirpId).eq('author_id',current.user.id);
+            if(cleanup.error) console.warn('Revisar Chirp incompleto:',nativeChirpId,cleanup.error);
+          }
+          const cleanup = await sb.storage.from(bucket).remove([path]);
+          if(cleanup.error) console.warn('Archivo pendiente de limpieza:',cleanup.error);
+          throw dbError;
+        }
         closeOverlay('shstComposer');
         notify(short ? '¡Short publicado!' : '¡Story publicada!');
         if (short) await resetShorts();
@@ -650,7 +667,7 @@
   function shortCardMarkup(s, url) {
     const p = prof(s.author_id);
     const own = s.author_id === current.user.id;
-    return `<article class="shst-short" data-short-id="${html(s.id)}" data-author-id="${html(s.author_id)}">
+    return `<article class="shst-short" data-short-id="${html(s.id)}" data-chirp-id="${html(s.chirp_id || '')}" data-author-id="${html(s.author_id)}">
       <video class="shst-short-video" playsinline preload="metadata" muted loop src="${html(url)}"></video>
       <div class="shst-short-shade"></div>
       <button class="shst-sound" type="button" data-action="sound" aria-label="Activar sonido">♫</button>
@@ -658,6 +675,7 @@
       <div class="shst-short-content"><a class="shst-short-user" href="${profileLink(p)}"><img src="${html(avatar(p))}" alt=""><strong>@${html(p.username || 'usuario')}</strong></a>${!own ? `<button class="shst-follow" data-action="follow" type="button">Seguir</button>` : ''}
         ${s.caption ? `<p>${html(s.caption)}</p>` : ''}</div>
       <div class="shst-short-actions"><button data-action="like" aria-label="Me gusta"><span class="shst-action-symbol">♡</span><small data-count="likes">0</small></button>
+        <button data-action="dislike" aria-label="No me gusta"><span class="shst-action-symbol">👎</span><small data-count="dislikes">0</small></button>
         <button data-action="comments" aria-label="Comentarios"><span class="shst-action-symbol">▢</span><small data-count="comments">0</small></button>
         <button data-action="share" aria-label="Compartir"><span class="shst-action-symbol">↗</span><small>Compartir</small></button>
         ${own ? '<button data-action="delete" aria-label="Eliminar Short"><span class="shst-action-symbol">×</span><small>Eliminar</small></button>' : ''}
@@ -738,16 +756,21 @@
     if (!card?.isConnected) return;
     const id = card.dataset.shortId;
     try {
-      const [likes,comments,own,follow] = await Promise.all([
-        sb.from('sh_likes').select('*',{count:'exact',head:true}).eq('video_id',id),
-        sb.from('sh_comments').select('*',{count:'exact',head:true}).eq('video_id',id),
-        sb.from('sh_likes').select('video_id').eq('video_id',id).eq('user_id',current.user.id).maybeSingle(),
-        sb.from('follows').select('follower_id').eq('following_id',card.dataset.authorId).eq('follower_id',current.user.id).maybeSingle()
+      const chirpId = card.dataset.chirpId;
+      const [likes,comments,own,follow,dislikes,ownDislike] = await Promise.all([
+        chirpId ? sb.from('likes').select('*',{count:'exact',head:true}).eq('chirp_id',chirpId) : sb.from('sh_likes').select('*',{count:'exact',head:true}).eq('video_id',id),
+        chirpId ? sb.from('chirp_replies').select('*',{count:'exact',head:true}).eq('chirp_id',chirpId).is('deleted_at',null) : sb.from('sh_comments').select('*',{count:'exact',head:true}).eq('video_id',id),
+        chirpId ? sb.from('likes').select('chirp_id').eq('chirp_id',chirpId).eq('user_id',current.user.id).maybeSingle() : sb.from('sh_likes').select('video_id').eq('video_id',id).eq('user_id',current.user.id).maybeSingle(),
+        sb.from('follows').select('follower_id').eq('following_id',card.dataset.authorId).eq('follower_id',current.user.id).maybeSingle(),
+        sb.from('sh_dislikes').select('*',{count:'exact',head:true}).eq('video_id',id),
+        sb.from('sh_dislikes').select('video_id').eq('video_id',id).eq('user_id',current.user.id).maybeSingle()
       ]);
       if (!card.isConnected) return;
       $('[data-count="likes"]',card).textContent = tr(likes.count ?? 0);
       $('[data-count="comments"]',card).textContent = tr(comments.count ?? 0);
+      $('[data-count="dislikes"]',card).textContent = tr(dislikes.count ?? 0);
       $('[data-action="like"]',card).classList.toggle('is-liked',Boolean(own.data));
+      $('[data-action="dislike"]',card).classList.toggle('is-disliked',Boolean(ownDislike.data));
       const f = $('[data-action="follow"]',card); if (f) { f.textContent = follow.data ? 'Siguiendo' : 'Seguir'; f.classList.toggle('is-following',Boolean(follow.data)); }
     } catch (e) { console.warn(e); }
   }
@@ -759,8 +782,23 @@
       if (action === 'sound') { v.muted = !v.muted; control.textContent = v.muted ? '♫' : '♪';control.setAttribute('aria-label',v.muted?'Activar sonido':'Silenciar'); }
       else if (action === 'play') {if(v.paused) await v.play();else v.pause();control.textContent = v.paused ? '▶' : 'Ⅱ';}
       else if (action === 'like') {
-        if (control.classList.contains('is-liked')) getError(await sb.from('sh_likes').delete().match({video_id:id,user_id:current.user.id}));
-        else getError(await sb.from('sh_likes').insert({video_id:id,user_id:current.user.id}));
+        const chirpId = card.dataset.chirpId;
+        const table = chirpId ? 'likes' : 'sh_likes';
+        const keys = chirpId ? {chirp_id:chirpId,user_id:current.user.id} : {video_id:id,user_id:current.user.id};
+        if (control.classList.contains('is-liked')) getError(await sb.from(table).delete().match(keys));
+        else {
+          getError(await sb.from('sh_dislikes').delete().match({video_id:id,user_id:current.user.id}));
+          getError(await sb.from(table).insert(keys));
+        }
+        await refreshShortMeta(card);
+      } else if (action === 'dislike') {
+        const chirpId = card.dataset.chirpId;
+        if (control.classList.contains('is-disliked')) getError(await sb.from('sh_dislikes').delete().match({video_id:id,user_id:current.user.id}));
+        else {
+          const like = chirpId ? {chirp_id:chirpId,user_id:current.user.id} : {video_id:id,user_id:current.user.id};
+          getError(await sb.from(chirpId ? 'likes' : 'sh_likes').delete().match(like));
+          getError(await sb.from('sh_dislikes').insert({video_id:id,user_id:current.user.id}));
+        }
         await refreshShortMeta(card);
       } else if (action === 'comments') { v.pause(); await openComments(id); }
       else if (action === 'share') {
@@ -776,8 +814,12 @@
         await refreshShortMeta(card);
       } else if (action === 'delete') {
         if (!confirm('¿Eliminar este Short?')) return;
-        const row = getError(await sb.from('sh_videos').select('media_path').eq('id',id).eq('author_id',current.user.id).single());
+        const row = getError(await sb.from('sh_videos').select('media_path,chirp_id').eq('id',id).eq('author_id',current.user.id).single());
         getError(await sb.from('sh_videos').delete().eq('id',id).eq('author_id',current.user.id));
+        if (row.chirp_id) {
+          const gone = await sb.from('chirps').update({deleted_at:new Date().toISOString()}).eq('id',row.chirp_id).eq('author_id',current.user.id);
+          if(gone.error) console.warn('El Chirp asociado debe archivarse manualmente',gone.error);
+        }
         const rm = await sb.storage.from('chirp-shorts').remove([row.media_path]); if(rm.error) console.warn('Archivo pendiente de limpieza',rm.error);
         card.remove(); current.shortCards = current.shortCards.filter(c=>c!==card); notify('Short eliminado');
         if (current.shortCards.length) activateShort(current.shortCards[0]);
@@ -786,10 +828,15 @@
     } catch(err) {showError(err);} finally {control.disabled = false;}
   }
   async function openComments(videoId) {
+    const linkedChirpId = $(`[data-short-id="${videoId}"]`)?.dataset.chirpId || '';
+    const commentTable = linkedChirpId ? 'chirp_replies' : 'sh_comments';
+    const commentKey = linkedChirpId ? 'chirp_id' : 'video_id';
     const layer = openOverlay('shstComments', `<section class="shst-comments shst-dialog" role="dialog" aria-modal="true" aria-label="Comentarios"><header class="shst-dialog-head"><h2>Comentarios</h2><button class="shst-close" data-close aria-label="Cerrar" type="button">×</button></header><div class="shst-comments-list" id="shstCommentsList">Cargando...</div><form id="shstCommentForm"><input maxlength="500" id="shstCommentText" placeholder="Escribí un comentario..." required><button type="submit" class="btn btn-primary">Enviar</button></form></section>`,'shst-modal-comments');
     const view = $('#shstCommentsList',layer);
     async function refresh() {
-      const rows = getError(await sb.from('sh_comments').select('id,author_id,content,created_at').eq('video_id',videoId).order('created_at',{ascending:false}).limit(100));
+      let query = sb.from(commentTable).select('id,author_id,content,created_at').eq(commentKey,linkedChirpId || videoId).order('created_at',{ascending:false}).limit(100);
+      if (linkedChirpId) query = query.is('deleted_at',null);
+      const rows = getError(await query);
       await loadProfiles(rows.map(r=>r.author_id));
       view.innerHTML = rows.length ? rows.map(c=>{
         const p=prof(c.author_id);return `<div class="shst-comment"><img src="${html(avatar(p))}" alt=""><div><a href="${profileLink(p)}">@${html(p.username||'usuario')}</a><p>${html(c.content)}</p></div>${c.author_id===current.user.id?`<button data-delete-comment="${html(c.id)}" title="Eliminar" aria-label="Eliminar comentario">×</button>`:''}</div>`;
@@ -798,12 +845,12 @@
     try {await refresh();}catch(e){showError(e);}
     view.addEventListener('click',async e=>{
       const b=e.target.closest('[data-delete-comment]');if(!b)return;
-      try{getError(await sb.from('sh_comments').delete().eq('id',b.dataset.deleteComment).eq('author_id',current.user.id));await refresh();}catch(err){showError(err);}
+      try{getError(linkedChirpId ? await sb.from('chirp_replies').update({deleted_at:new Date().toISOString()}).eq('id',b.dataset.deleteComment).eq('author_id',current.user.id) : await sb.from('sh_comments').delete().eq('id',b.dataset.deleteComment).eq('author_id',current.user.id));await refresh();}catch(err){showError(err);}
     });
     $('#shstCommentForm',layer).addEventListener('submit',async e=>{
       e.preventDefault();const input=$('#shstCommentText',layer),content=input.value.trim();if(!content)return;
       const button=$('button[type="submit"]',e.target);button.disabled=true;
-      try{getError(await sb.from('sh_comments').insert({video_id:videoId,author_id:current.user.id,content}));input.value='';await refresh();const card=$(`[data-short-id="${videoId}"]`);if(card)refreshShortMeta(card);}catch(err){showError(err);}finally{button.disabled=false;}
+      try{getError(await sb.from(commentTable).insert({[commentKey]:linkedChirpId || videoId,author_id:current.user.id,content}));input.value='';await refresh();const card=$(`[data-short-id="${videoId}"]`);if(card)refreshShortMeta(card);}catch(err){showError(err);}finally{button.disabled=false;}
     });
     layer.addEventListener('click',e=>{if(e.target.closest('[data-close]')){const card=$(`[data-short-id="${videoId}"]`);if(card && current.playing===$('video',card))current.playing.play().catch(()=>{});}});
   }
@@ -877,6 +924,14 @@
     openOverlay('storyViewer','<section class="shst-story-viewer" role="dialog" aria-modal="true" aria-label="Historia"><div id="shstStoryBody" class="shst-story-body"></div></section>','shst-modal-story');
     await renderStoryViewer();
   }
+  function openStoryById(storyId) {
+    const index = current.groups.findIndex(group => group.entries.some(story => story.id === storyId));
+    if (index < 0) { notify('Esta Story ya no está disponible.'); return; }
+    current.index = index;
+    current.part = current.groups[index].entries.findIndex(story => story.id === storyId);
+    openOverlay('storyViewer','<section class="shst-story-viewer" role="dialog" aria-modal="true" aria-label="Historia"><div id="shstStoryBody" class="shst-story-body"></div></section>','shst-modal-story');
+    void renderStoryViewer();
+  }
   async function renderStoryViewer() {
     resetStoryTimer();
     const g=current.groups[current.index], s=g?.entries[current.part], mount=$('#shstStoryBody');
@@ -893,7 +948,7 @@
         <div class="shst-story-media">${s.media_kind==='video'?`<video src="${html(url)}" playsinline autoplay preload="auto"></video>`:`<img src="${html(url)}" alt="Historia de ${html(nameOf(p))}">`}</div>
         ${s.caption?`<div class="shst-story-caption">${html(s.caption)}</div>`:''}
         <button class="shst-story-prev" type="button" data-story-prev aria-label="Historia anterior">‹</button><button class="shst-story-next" type="button" data-story-next aria-label="Siguiente historia">›</button>
-        <footer class="shst-story-bottom">${own?'<button class="shst-story-reactions" type="button" data-story-stats>Vistas y respuestas</button>':`<form id="shstReplyForm"><input id="shstReply" maxlength="250" placeholder="Respondé esta historia..." required><button type="submit" aria-label="Enviar respuesta">➤</button></form>`}</footer>`;
+        <footer class="shst-story-bottom">${own?'<button class="shst-story-reactions" type="button" data-story-stats>Visualizaciones</button>':`<form id="shstReplyForm"><input id="shstReply" maxlength="250" placeholder="Respondé esta historia..." required><button type="submit" aria-label="Enviar respuesta">➤</button></form>`}</footer>`;
       $('[data-story-prev]',mount).onclick=()=>storyNext(-1);
       $('[data-story-next]',mount).onclick=()=>storyNext(1);
       $('[data-close]',mount).onclick=()=>closeOverlay('storyViewer');
@@ -910,7 +965,7 @@
       if(replyForm)replyForm.onsubmit=async e=>{
         e.preventDefault();const input=$('#shstReply',mount),value=input?.value.trim();if(!value)return;
         const button=$('button',replyForm);button.disabled=true;
-        try{getError(await sb.from('st_replies').insert({story_id:s.id,author_id:current.user.id,content:value}));input.value='';notify('Respuesta enviada');}
+        try{getError(await sb.from('direct_messages').insert({sender_id:current.user.id,receiver_id:s.author_id,body:value,story_id:s.id}));input.value='';notify('Respuesta enviada por mensaje privado');}
         catch(err){showError(err);}finally{button.disabled=false;}
       };
       // Solo una visualización por persona y Story.
@@ -934,7 +989,7 @@
     }catch(e){showError(e);closeOverlay('storyViewer');}
   }
   async function openStoryStats(storyId) {
-    const layer=openOverlay('shstStoryStats',`<section class="shst-dialog shst-stat-dialog" role="dialog" aria-modal="true" aria-label="Vistas y respuestas"><header class="shst-dialog-head"><h2>Tu historia</h2><button type="button" class="shst-close" data-close aria-label="Cerrar">×</button></header><div class="shst-stat-list" id="shstStatList">Cargando...</div></section>`);
+    const layer=openOverlay('shstStoryStats',`<section class="shst-dialog shst-stat-dialog" role="dialog" aria-modal="true" aria-label="Visualizaciones"><header class="shst-dialog-head"><h2>Tu historia</h2><button type="button" class="shst-close" data-close aria-label="Cerrar">×</button></header><div class="shst-stat-list" id="shstStatList">Cargando...</div></section>`);
     try{
       const [views,replies]=await Promise.all([
         sb.from('st_views').select('viewer_id,viewed_at').eq('story_id',storyId).order('viewed_at',{ascending:false}),
@@ -943,7 +998,8 @@
       const v=getError(views),r=getError(replies);
       await loadProfiles([...v.map(e=>e.viewer_id),...r.map(e=>e.author_id)]);
       $('#shstStatList',layer).innerHTML=`<h3>Vistas (${v.length})</h3>${v.length?v.map(e=>{const p=prof(e.viewer_id);return `<a class="shst-stat-person" href="${profileLink(p)}"><img src="${html(avatar(p))}" alt=""><span>${html(nameOf(p))}</span></a>`;}).join(''):'<p class="shst-muted">Todavía no hay vistas.</p>'}
-        <h3>Respuestas (${r.length})</h3>${r.length?r.map(e=>{const p=prof(e.author_id);return `<div class="shst-stat-person"><img src="${html(avatar(p))}" alt=""><div><b>${html(nameOf(p))}</b><p>${html(e.content)}</p></div></div>`;}).join(''):'<p class="shst-muted">Todavía no hay respuestas.</p>'}`;
+        <h3>Respuestas anteriores (${r.length})</h3>${r.length?r.map(e=>{const p=prof(e.author_id);return `<div class="shst-stat-person"><img src="${html(avatar(p))}" alt=""><div><b>${html(nameOf(p))}</b><p>${html(e.content)}</p></div></div>`;}).join(''):'<p class="shst-muted">Todavía no hay respuestas.</p>'}`;
+      $('#shstStatList',layer).insertAdjacentHTML('beforeend', '<a class="btn btn-primary btn-wide" href="/messages.html">Abrir mensajes privados</a><p class="shst-muted">Las nuevas respuestas llegan a tus DMs.</p>');
     }catch(err){showError(err);}
   }
   document.addEventListener('keydown', e=>{
@@ -967,7 +1023,7 @@
       await loadShortPage();
     }
     if(page==='stories'||page==='home') {
-      try{await Promise.race([loadStories(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Stories tarda demasiado. Reintentá.')),15000))]);if(page==='home')renderStoryTray($('#homeStories'));else renderStoryScreen();}
+      try{await Promise.race([loadStories(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Stories tarda demasiado. Reintentá.')),15000))]);if(page==='home')renderStoryTray($('#homeStories'));else { renderStoryScreen(); const target = new URLSearchParams(location.search).get('story'); if(target && /^[0-9a-f-]{36}$/i.test(target)) openStoryById(target); }}
       catch(e){showError(e);}
       if(page==='stories'&&new URLSearchParams(location.search).get('create')==='1')createPost('story');
     }

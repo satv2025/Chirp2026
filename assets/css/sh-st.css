@@ -212,3 +212,10 @@
 .shst-camera-stage[data-orientation="landscape"]{aspect-ratio:16/9;width:100%}
 .shst-camera-stage[data-orientation="portrait"]{aspect-ratio:9/16;width:min(100%,260px)}
 @media(max-width:400px){.shst-format-button{gap:7px;padding:10px 6px}.shst-format-button>span:last-child{font-size:13px}}
+
+/* Shorts como Chirps; respuestas a Stories integradas en DMs. */
+.shst-short-actions button.is-disliked .shst-action-symbol{color:#87c7ff;background:rgba(239,248,255,.96)}
+.chirp-short-link{display:inline-flex;width:max-content;max-width:100%;margin:9px 0;padding:7px 11px;border-radius:12px;background:var(--card-2);color:var(--hot);font-size:13px;font-weight:800}
+.js-short-dislike.is-active{color:#477ea7!important}
+.dm-story-reference{display:block;max-width:100%;margin:0 0 8px;padding:9px 11px;border-radius:10px;background:rgba(120,50,94,.10);font-weight:800;font-size:12px;text-decoration:none}
+.dm-message-text{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
