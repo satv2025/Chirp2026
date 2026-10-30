@@ -198,3 +198,17 @@
  .shst-short-quick{padding:0 8px}
  .shst-short-quick button{font-size:12px}
 }
+
+/* Selector directo 9:16 / 16:9. Sin <select> nativo ni listas de fuentes fallback. */
+.shst-format-switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:1px 0 12px}
+.shst-format-button{display:flex;align-items:center;justify-content:center;gap:10px;min-width:0;padding:11px 10px;border:1px solid rgba(255,255,255,.2);border-radius:14px;background:rgba(255,255,255,.08);color:#fff;transition:background .15s,border-color .15s,box-shadow .15s}
+.shst-format-button>span:last-child{display:flex;flex-direction:column;align-items:flex-start;gap:3px;font-weight:850;font-size:14px}
+.shst-format-button small{font-size:11px;font-weight:650;color:#f1d5e4}
+.shst-format-button.is-active{background:#fff;color:#351428;border-color:#fff;box-shadow:0 0 0 2px rgba(239,0,138,.32)}
+.shst-format-button.is-active small{color:#764c64}
+.shst-format-button:disabled{cursor:not-allowed;opacity:.8}
+.shst-format-symbol{display:block;flex:none;border:2px solid currentColor;border-radius:3px;width:19px;height:30px}
+.shst-format-symbol--horizontal{width:30px;height:19px}
+.shst-camera-stage[data-orientation="landscape"]{aspect-ratio:16/9;width:100%}
+.shst-camera-stage[data-orientation="portrait"]{aspect-ratio:9/16;width:min(100%,260px)}
+@media(max-width:400px){.shst-format-button{gap:7px;padding:10px 6px}.shst-format-button>span:last-child{font-size:13px}}

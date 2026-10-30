@@ -87,6 +87,10 @@
       "destination": "/legal.html"
     },
     {
+      "source": "/profile/:username",
+      "destination": "/u.html"
+    },
+    {
       "source": "/u/:username",
       "destination": "/u.html"
     },

@@ -13,7 +13,7 @@
   const html = escapeHTML;
   const avatar = p => p?.avatar_url || '/assets/img/chirpy.png';
   const nameOf = p => p?.display_name || p?.username || 'Usuario';
-  const profileLink = p => `/u/${encodeURIComponent(p?.username || 'usuario')}`;
+  const profileLink = p => `/profile/${encodeURIComponent(p?.username || 'usuario')}`;
   const tr = n => Number.isFinite(n) ? new Intl.NumberFormat('es-AR', {notation: 'compact', maximumFractionDigits: 1}).format(n) : '0';
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
   const current = {user: null, profile: null, profiles: new Map(), stories: [], groups: [], index: -1, part: 0, storyTimer: 0, storyStart: 0, elapsed: 0, paused: false, shortCards: [], playing: null, shortObserver: null, pageIndex: 0, allLoaded: false, loading: false, movieUrl: '', storyUrls: new Map(), panel: null};
@@ -162,6 +162,10 @@
           <label class="shst-source-option shst-source-gallery" for="shstFile">${galleryIcon}<span><strong>Subir archivo</strong><small>Desde tu dispositivo</small></span><input id="shstFile" type="file" accept="${inputAccept}"></label>
         </div>
         <div id="shstCamera" class="shst-camera" hidden>
+          <div class="shst-format-switch" role="group" aria-label="Elegir orientación de la cámara">
+            <button class="shst-format-button" type="button" id="shstFormatVertical" data-format="portrait" aria-pressed="false"><span class="shst-format-symbol shst-format-symbol--vertical" aria-hidden="true"></span><span>Vertical<small>9:16</small></span></button>
+            <button class="shst-format-button" type="button" id="shstFormatHorizontal" data-format="landscape" aria-pressed="false"><span class="shst-format-symbol shst-format-symbol--horizontal" aria-hidden="true"></span><span>Horizontal<small>16:9</small></span></button>
+          </div>
           <div class="shst-camera-stage" id="shstCameraStage" data-orientation="portrait"><video id="shstCameraLive" autoplay muted playsinline></video><div class="shst-camera-top"><span class="shst-camera-indicator" id="shstCameraIndicator">Cámara lista</span><span class="shst-camera-time" id="shstCameraTime">00:00 / 03:00</span></div><span class="shst-camera-orientation" id="shstCameraOrientation" aria-live="polite" hidden></span></div>
           ${short ? '' : '<div class="shst-camera-modes" role="group" aria-label="Modo de cámara"><button type="button" id="shstModePhoto">Foto</button><button type="button" class="is-active" id="shstModeVideo">Video</button></div>'}
           <div class="shst-camera-tools">
@@ -193,7 +197,7 @@
     const orientationLabel = $('#shstCameraOrientation', layer);
     const status = $('#shstUploadStatus', layer);
     const submit = $('#shstSubmit', layer);
-    const camera = {canvas: null, captureStream: null, captureFrame: 0, captureOrientation: '', stream: null, recorder: null, chunks: [], token: 0, busy: false, facing: 'user', deviceId: '', mode: 'video', muted: false, timer: 0, startedAt: 0, recordedDuration: 0, recordedFile: null, file: null, previewUrl: '', disposed: false, publishing: false};
+    const camera = {canvas: null, captureStream: null, captureFrame: 0, captureOrientation: '', manualOrientation: '', stream: null, recorder: null, chunks: [], token: 0, busy: false, facing: 'user', deviceId: '', mode: 'video', muted: false, timer: 0, startedAt: 0, recordedDuration: 0, recordedFile: null, file: null, previewUrl: '', disposed: false, publishing: false};
     const timeLabel = $('#shstCameraTime', layer);
     const maxLabel = '03:00';
     const formatTime = seconds => `${String(Math.floor(seconds / 60)).padStart(2,'0')}:${String(seconds % 60).padStart(2,'0')}`;
@@ -218,14 +222,30 @@
       if (width && height) return width > height ? 'landscape' : 'portrait';
       return matchMedia('(orientation: landscape)').matches ? 'landscape' : 'portrait';
     }
+    // La selección manual manda. La detección automática solo elige el valor inicial.
+    const chosenOrientation = () => camera.manualOrientation || cameraOrientation();
     function syncCameraOrientation() {
-      if (!camera.stream || camera.disposed) return;
-      const mode = camera.captureOrientation && camera.recorder?.state === 'recording'
-        ? camera.captureOrientation : cameraOrientation();
+      if (camera.disposed) return;
+      const recording = camera.recorder?.state === 'recording';
+      const mode = recording && camera.captureOrientation ? camera.captureOrientation : chosenOrientation();
       cameraStage.dataset.orientation = mode;
-      orientationLabel.textContent = mode === 'landscape' ? 'Horizontal' : 'Vertical';
-      orientationLabel.hidden = false;
+      orientationLabel.textContent = mode === 'landscape' ? 'Horizontal · 16:9' : 'Vertical · 9:16';
+      orientationLabel.hidden = !camera.stream;
+      for (const button of $$('.shst-format-button',layer)) {
+        const active = button.dataset.format === mode;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+        button.disabled = recording || camera.publishing;
+      }
     }
+    function chooseOrientation(value) {
+      if (!['portrait','landscape'].includes(value) || camera.recorder?.state === 'recording' || camera.publishing) return;
+      camera.manualOrientation = value;
+      syncCameraOrientation();
+      message(value === 'portrait' ? 'Formato vertical 9:16 seleccionado.' : 'Formato horizontal 16:9 seleccionado.');
+    }
+    $('#shstFormatVertical',layer).addEventListener('click',()=>chooseOrientation('portrait'));
+    $('#shstFormatHorizontal',layer).addEventListener('click',()=>chooseOrientation('landscape'));
     // El evento resize del elemento de video avisa cambios del frame entregado por la cámara.
     live.addEventListener('loadedmetadata', syncCameraOrientation);
     live.addEventListener('resize', syncCameraOrientation);
@@ -353,7 +373,7 @@
       $('#shstCameras', layer).setAttribute('aria-expanded','false');
       message('Solicitando acceso a la cámara...');
       syncCameraButtons();
-      const isHorizontal = window.innerWidth > window.innerHeight;
+      const isHorizontal = chosenOrientation() === 'landscape';
       const video = deviceId ? {deviceId: {exact: deviceId}} : {
         facingMode: {ideal: camera.facing},
         width: {ideal: isHorizontal ? 1920 : 1080},
@@ -410,7 +430,7 @@
     // el teléfono esté vertical. Canvas produce un flujo con el aspecto elegido
     // ANTES de grabar, sin deformar ni recortar la imagen de la cámara.
     function recordingStream() {
-      camera.captureOrientation = cameraOrientation();
+      camera.captureOrientation = chosenOrientation();
       if (!HTMLCanvasElement.prototype.captureStream || !live.videoWidth || !live.videoHeight) return camera.stream;
       const canvas = document.createElement('canvas');
       canvas.width = camera.captureOrientation === 'landscape' ? 1280 : 720;
@@ -487,6 +507,7 @@
       },200);
       message('');
       syncCameraButtons();
+      syncCameraOrientation();
     }
     async function takePhoto() {
       if (!camera.stream || camera.busy || camera.mode !== 'photo' || !live.videoWidth || !live.videoHeight) {
@@ -495,7 +516,7 @@
       const canvas = document.createElement('canvas');
       // Preservar la orientación y la proporción del sensor, sin deformar ni recortar.
       const width=live.videoWidth,height=live.videoHeight;
-      const horizontal=cameraOrientation()==='landscape';
+      const horizontal=chosenOrientation()==='landscape';
       canvas.width=horizontal?1280:720;
       canvas.height=horizontal?720:1280;
       const context=canvas.getContext('2d');

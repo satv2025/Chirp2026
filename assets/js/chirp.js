@@ -1114,7 +1114,7 @@
       chirp.created_at &&
       new Date(chirp.updated_at).getTime() >
         new Date(chirp.created_at).getTime() + 1000;
-    const socialActions = !isEmbed
+    const socialActions = !isEmbed && Boolean(user?.id)
       ? `
             <button class="action-btn js-like" title="Me gusta"><span class="action-icon action-icon-like" aria-hidden="true"></span><b>${chirp.likes_count || 0}</b></button>
             <button class="action-btn js-rechirp" title="Rechirp"><span class="action-icon action-icon-rechirp" aria-hidden="true"></span><b>${chirp.rechirps_count || 0}</b></button>
@@ -1777,7 +1777,7 @@
           quote: 'citó tu Chirp',
           mention: 'te mencionó',
         };
-        return `<a class="notification-row" href="${n.chirp_id ? chirpURL(n.chirp_id) : `/${encodeURIComponent(a.username || '')}`}"><img class="avatar" src="${esc(a.avatar_url || fallbackAvatar(a))}" alt="${esc(a.display_name || 'Usuario')}"><div><b>${profileNameHTML(a, 'Alguien')} ${esc(labels[n.type] || 'interactuó con vos')}</b><small>${ago(n.created_at)}</small></div><span>${n.is_read ? '' : '●'}</span></a>`;
+        return `<a class="notification-row" href="${n.chirp_id ? chirpURL(n.chirp_id) : profileURL(a.username)}"><img class="avatar" src="${esc(a.avatar_url || fallbackAvatar(a))}" alt="${esc(a.display_name || 'Usuario')}"><div><b>${profileNameHTML(a, 'Alguien')} ${esc(labels[n.type] || 'interactuó con vos')}</b><small>${ago(n.created_at)}</small></div><span>${n.is_read ? '' : '●'}</span></a>`;
       })
       .join('');
     await sb
@@ -1878,8 +1878,11 @@
     const pathname = (location.pathname || '').replace(/\/+$/, '');
     const parts = pathname.split('/').filter(Boolean);
     const last = parts.pop() || '';
-    const cleanPath = decodeURIComponent(last).trim().replace(/^@/, '');
+    let cleanPath = '';
+    try { cleanPath = decodeURIComponent(last).trim().replace(/^@/, ''); }
+    catch (_) { return ''; }
 
+    // /profile/usuario, /u/usuario y /usuario utilizan el mismo perfil público.
     if (!cleanPath || reserved.has(cleanPath.toLowerCase())) return '';
     return cleanPath;
   }
@@ -1888,7 +1891,7 @@
     const clean = String(username || '')
       .trim()
       .replace(/^@/, '');
-    return clean ? `/${encodeURIComponent(clean)}` : '/u.html';
+    return clean ? `/profile/${encodeURIComponent(clean)}` : '/profile';
   }
 
   async function loadPublicProfile() {
@@ -1913,6 +1916,12 @@
         'No encontré ese perfil',
         'Revisá que el usuario exista o abrí el link completo.'
       ));
+
+    document.title = `${p.display_name || p.username || 'Perfil'} (@${p.username}) · Chirp`;
+    const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
+    canonical.rel = 'canonical';
+    canonical.href = `${location.origin}${profileURL(p.username)}`;
+    if (!canonical.isConnected) document.head.append(canonical);
 
     const actions = await renderRelationshipButtons(p);
     const cover = p.banner_url
@@ -2596,6 +2605,7 @@
 
   async function renderRelationshipButtons(targetProfile, root = document) {
     if (!targetProfile?.id || targetProfile.id === user?.id) return '';
+    if (!user?.id) return `<div class="profile-actions"><a class="btn btn-primary btn-small" href="/login.html?next=${encodeURIComponent(location.pathname)}">Iniciar sesión para seguir</a></div>`;
     const [following, blocked] = await Promise.all([
       isFollowing(targetProfile.id),
       isBlocked(targetProfile.id),
@@ -3121,7 +3131,6 @@
       'profile',
       'settings',
       'support',
-      'user',
       'chirp',
       'messages',
       'chirpy',
@@ -3135,6 +3144,15 @@
       void loadTrending().catch(err => console.warn('[Chirp] tendencias:', err));
       void refreshIncomingDmBadges().catch(err => console.warn('[Chirp] mensajes:', err));
       initRealtimeCounts();
+    }
+
+    // Los perfiles públicos también pueden abrirse con un enlace directo sin sesión.
+    if (page === 'user') {
+      user = await getSession();
+      if (user) {
+        await ensureProfile();
+        initShell();
+      }
     }
 
     if (page === 'home') {

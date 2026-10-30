@@ -19,6 +19,14 @@
       "destination": "/embed.html"
     },
     {
+      "source": "/profile",
+      "destination": "/profile.html"
+    },
+    {
+      "source": "/profile/:username",
+      "destination": "/u.html?username=:username"
+    },
+    {
       "source": "/u/:username",
       "destination": "/u.html?username=:username"
     },
