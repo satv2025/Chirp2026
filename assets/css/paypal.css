@@ -762,24 +762,24 @@ span {
 }
 
 .paypal-button-label-container {
-    font-family: system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    font-family: 'Chirp Sans' !important;
     font-weight: 500;
 }
 
 .paypal-button-rebrand .paypal-button-label-container {
-    font-family: PayPal Plain, system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    font-family: 'Chirp Sans' !important;
     font-weight: 400;
 }
 
 .paypal-button-rebrand[data-funding-source=paypal] .paypal-button-label-container,
 .paypal-button-rebrand[data-funding-source=credit] .paypal-button-label-container,
 .paypal-button-rebrand[data-funding-source=paylater] .paypal-button-label-container {
-    font-family: PayPal Pro Book, system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    font-family: 'Chirp Sans' !important;
     font-weight: 500;
 }
 
 .paypal-button-rebrand[data-funding-source=venmo] .paypal-button-label-container {
-    font-family: Scto Grotesk A, system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    font-family: 'Chirp Sans' !important;
 }
 
 /* targeting only credit and paylater buttons for the logo swap */
@@ -1759,7 +1759,7 @@ span {
     text-align: center;
     margin: 10px auto;
     height: 14px;
-    font-family: system-ui, -apple-system, Roboto, "Segoe UI", Helvetica-Neue, Helvetica, Arial, sans-serif;
+    font-family: 'Chirp Sans' !important;
     font-size: 11px;
     font-weight: 400;
     font-style: italic;
