@@ -1,9 +1,8 @@
-@import url('https://solargentinotv.com.ar/assets/fonts/Gilroy/Gilroy.css');
 @import url('../fonts/ChirpSans/chripsans.css');
 
 * {
   box-sizing: border-box;
-  font-family: 'Chirp Sans';
+  font-family: 'Chirp Sans' !important;
 }
 
 :root {

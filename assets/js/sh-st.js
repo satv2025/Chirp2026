@@ -90,12 +90,38 @@
     });
   }
   const mimeExt = {'video/mp4':'mp4','video/webm':'webm','image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+  // Cargar el módulo de subidas grandes solamente cuando sea necesario.
+  // Nunca bloquear DOMContentLoaded ni la aparición del feed por una CDN externa.
+  let tusLoader = null;
+  function loadTusOnDemand() {
+    if (window.tus?.Upload) return Promise.resolve(window.tus);
+    if (tusLoader) return tusLoader;
+    tusLoader = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js';
+      script.async = true;
+      let done = false;
+      const finish = (err) => {
+        if (done) return;
+        done = true;
+        clearTimeout(timeout);
+        if (err) { script.remove(); reject(err); }
+        else resolve(window.tus);
+      };
+      const timeout = setTimeout(() => finish(new Error('No se pudo iniciar la subida de video. Revisá la conexión y reintentá.')), 12000);
+      script.onload = () => window.tus?.Upload ? finish() : finish(new Error('El componente de subida no está disponible.'));
+      script.onerror = () => finish(new Error('No se pudo cargar el componente de subida.'));
+      document.head.append(script);
+    }).catch(e => { tusLoader = null; throw e; });
+    return tusLoader;
+  }
   async function uploadMedia(bucket, path, file, status) {
     // Supabase recomienda TUS para archivos superiores a 6 MB.
-    if (file.size <= 6 * 1024 * 1024 || !window.tus?.Upload) {
+    if (file.size <= 6 * 1024 * 1024) {
       getError(await sb.storage.from(bucket).upload(path, file, {contentType:file.type, upsert:false, cacheControl:'3600'}));
       return;
     }
+    await loadTusOnDemand();
     const {data:authData,error:authError} = await sb.auth.getSession();
     if (authError || !authData?.session?.access_token) throw new Error('Iniciá sesión nuevamente para subir el video.');
     await new Promise((resolve,reject) => {
@@ -338,12 +364,12 @@
 
   // --------------------- STORIES ---------------------
   async function loadStories() {
-    const result = await sb.from('st_stories').select('*').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:true}).limit(250);
+    const result = await sb.from('st_stories').select('id,author_id,caption,media_path,media_kind,duration_seconds,created_at,expires_at').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(page === 'home' ? 48 : 250);
     current.stories = getError(result) || [];
     await loadProfiles(current.stories.map(s => s.author_id));
     const map = new Map();
     current.stories.forEach(s=> {if(!map.has(s.author_id))map.set(s.author_id,[]);map.get(s.author_id).push(s);});
-    current.groups = [...map.entries()].map(([id,entries])=>({id,entries,last:entries[entries.length-1].created_at})).sort((a,b)=> b.last.localeCompare(a.last));
+    current.groups = [...map.entries()].map(([id,entries])=>{entries.sort((a,b)=>a.created_at.localeCompare(b.created_at));return {id,entries,last:entries[entries.length-1].created_at};}).sort((a,b)=> b.last.localeCompare(a.last));
     const selfIndex = current.groups.findIndex(g=>g.id===current.user.id);
     if(selfIndex>0)current.groups.unshift(current.groups.splice(selfIndex,1)[0]);
   }
@@ -478,5 +504,11 @@
       if(page==='stories'&&new URLSearchParams(location.search).get('create')==='1')createPost('story');
     }
   }
-  document.addEventListener('DOMContentLoaded',()=>start().catch(showError));
+  document.addEventListener('DOMContentLoaded', () => {
+    if (page === 'home') {
+      const run = () => start().catch(showError);
+      if ('requestIdleCallback' in window) requestIdleCallback(run, {timeout: 1500});
+      else setTimeout(run, 350);
+    } else start().catch(showError);
+  });
 })();

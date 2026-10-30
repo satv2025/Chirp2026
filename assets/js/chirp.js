@@ -3125,9 +3125,12 @@
     ];
     if (privatePages.includes(page)) {
       await requireUser();
+      if (!user) return;
       initShell();
-      await loadTrending();
-      await refreshIncomingDmBadges();
+      // Consultas auxiliares en paralelo: Home y demás páginas no esperan
+      // el ranking de hashtags ni el contador de mensajes para renderizarse.
+      void loadTrending().catch(err => console.warn('[Chirp] tendencias:', err));
+      void refreshIncomingDmBadges().catch(err => console.warn('[Chirp] mensajes:', err));
       initRealtimeCounts();
     }
 
