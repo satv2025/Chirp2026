@@ -443,6 +443,9 @@
   min-height: 112px;
   padding: 12px;
   resize: vertical;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    monospace;
   font-size: 13px;
   line-height: 1.45;
 }

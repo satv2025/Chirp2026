@@ -63,6 +63,8 @@
   function closeOverlay(id) {
     if (id === 'storyViewer') resetStoryTimer();
     const el = document.getElementById(id);
+    // Al cerrar el editor, la cámara y el micrófono se liberan inmediatamente.
+    if (id === 'shstComposer' && el?.shstDispose) el.shstDispose();
     if (el) { $$('video', el).forEach(v => v.pause()); el.remove(); }
     if (!$$('.shst-overlay').length) document.body.classList.remove('shst-no-scroll');
   }
@@ -141,62 +143,373 @@
     });
   }
 
+  // Grabador nativo del navegador: sin dependencias externas ni conexión al abrir la página.
   function createPost(kind) {
     const short = kind === 'short';
     const title = short ? 'Nuevo Short' : 'Nueva Story';
+    const maxSeconds = short ? 90 : 30;
+    const maxBytes = (short ? 100 : 50) * 1024 * 1024;
     const inputAccept = short ? 'video/mp4,video/webm' : 'image/jpeg,image/png,image/webp,video/mp4,video/webm';
-    const layer = openOverlay('shstComposer', `<section class="shst-dialog" role="dialog" aria-modal="true" aria-label="${title}">
+    const cameraIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H9l-2 3H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-3-3z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+    const galleryIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5.5-5.5L4 21"/></svg>';
+    const flipIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-9a4 4 0 0 0-4 4"/><path d="m17 4 3 3-3 3"/><path d="M4 17h9a4 4 0 0 0 4-4"/><path d="m7 14-3 3 3 3"/></svg>';
+    const micIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"/></svg>';
+    const layer = openOverlay('shstComposer', `<section class="shst-dialog shst-composer" role="dialog" aria-modal="true" aria-label="${title}">
       <header class="shst-dialog-head"><h2>${title}</h2><button type="button" class="shst-close" data-close aria-label="Cerrar">×</button></header>
-      <form id="shstUploadForm"><label class="shst-file-picker"><input id="shstFile" type="file" accept="${inputAccept}" required><span class="shst-file-symbol">＋</span><strong>Elegí ${short ? 'un video' : 'una foto o un video'}</strong><span>${short ? 'Hasta 90 segundos · 100 MB' : 'Videos hasta 30 segundos · 50 MB'}</span></label>
-      <div class="shst-upload-preview" id="shstPreview"></div>
-      <label class="shst-caption-label" for="shstCaption">Descripción</label><textarea id="shstCaption" maxlength="${short ? '500' : '250'}" rows="2" placeholder="Escribí algo..."></textarea>
-      <p class="shst-upload-status" id="shstUploadStatus" aria-live="polite"></p>
-      <button class="btn btn-primary btn-wide" type="submit" id="shstSubmit">Publicar ${short ? 'Short' : 'Story'}</button></form></section>`, 'shst-modal-compose');
+      <form id="shstUploadForm">
+        <div class="shst-source-actions">
+          <button class="shst-source-option shst-source-camera" id="shstOpenCamera" type="button">${cameraIcon}<span><strong>Usar cámara</strong><small>${short ? 'Grabá un Short' : 'Sacá una foto o grabá'}</small></span></button>
+          <label class="shst-source-option shst-source-gallery" for="shstFile">${galleryIcon}<span><strong>Subir archivo</strong><small>Desde tu dispositivo</small></span><input id="shstFile" type="file" accept="${inputAccept}"></label>
+        </div>
+        <div id="shstCamera" class="shst-camera" hidden>
+          <div class="shst-camera-stage"><video id="shstCameraLive" autoplay muted playsinline></video><div class="shst-camera-top"><span class="shst-camera-indicator" id="shstCameraIndicator">Cámara lista</span><span class="shst-camera-time" id="shstCameraTime">00:00 / ${short ? '01:30' : '00:30'}</span></div></div>
+          ${short ? '' : '<div class="shst-camera-modes" role="group" aria-label="Modo de cámara"><button type="button" id="shstModePhoto">Foto</button><button type="button" class="is-active" id="shstModeVideo">Video</button></div>'}
+          <div class="shst-camera-tools">
+            <button class="shst-camera-tool" type="button" id="shstFlip" title="Cambiar cámara" aria-label="Cambiar cámara">${flipIcon}<span>Girar</span></button>
+            <button class="shst-camera-tool" type="button" id="shstMic" title="Activar o silenciar micrófono" aria-label="Activar o silenciar micrófono">${micIcon}<span>Micrófono</span></button>
+            <button class="shst-camera-tool" type="button" id="shstCameras" aria-expanded="false">${cameraIcon}<span>Cámaras</span></button>
+          </div>
+          <div class="shst-camera-devices" id="shstCameraDevices" hidden></div>
+          <div class="shst-camera-controls">
+            <button class="shst-capture" type="button" id="shstRecord" aria-label="Empezar a grabar"><span></span></button>
+            <button class="shst-capture shst-capture-photo" type="button" id="shstSnap" hidden aria-label="Tomar fotografía"><span></span></button>
+            <button class="shst-capture shst-capture-stop" type="button" id="shstStop" hidden aria-label="Detener grabación"><span></span></button>
+          </div>
+          <button class="shst-camera-cancel" id="shstCloseCamera" type="button">Cerrar cámara</button>
+        </div>
+        <div class="shst-upload-preview" id="shstPreview" aria-live="polite"></div>
+        <button type="button" class="shst-retake" id="shstRetake" hidden>Volver a grabar</button>
+        <p class="shst-upload-hint">${short ? 'Videos hasta 90 segundos · 100 MB' : 'Videos hasta 30 segundos · 50 MB'}</p>
+        <label class="shst-caption-label" for="shstCaption">Descripción</label><textarea id="shstCaption" maxlength="${short ? '500' : '250'}" rows="2" placeholder="Escribí algo..."></textarea>
+        <p class="shst-upload-status" id="shstUploadStatus" aria-live="polite"></p>
+        <button class="btn btn-primary btn-wide" type="submit" id="shstSubmit" disabled>Publicar ${short ? 'Short' : 'Story'}</button>
+      </form></section>`, 'shst-modal-compose');
+
     const picker = $('#shstFile', layer);
     const preview = $('#shstPreview', layer);
-    let previewUrl = '';
-    function releasePreview() { if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = ''; } }
-    picker.addEventListener('change', () => {
-      releasePreview(); preview.innerHTML = '';
-      const f = picker.files?.[0]; if (!f) return;
-      previewUrl = URL.createObjectURL(f);
-      const el = document.createElement(f.type.startsWith('video/') ? 'video' : 'img');
-      el.src = previewUrl;
-      if (el.tagName === 'VIDEO') { el.muted = true; el.controls = true; el.playsInline = true; }
-      el.alt = 'Vista previa';
-      preview.append(el);
-    });
-    layer.addEventListener('click', e => { if (e.target.closest('[data-close]')) releasePreview(); });
-    $('#shstUploadForm', layer).addEventListener('submit', async e => {
-      e.preventDefault();
-      const file = picker.files?.[0]; if (!file) return;
-      const type = file.type.startsWith('video/') ? 'video' : 'image';
-      const ext = mimeExt[file.type];
-      const sizeMax = short ? 100 * 1024 * 1024 : 50 * 1024 * 1024;
-      if (!ext || (short && type !== 'video')) return notify('Formato no admitido. Usá MP4, WebM o imagen compatible.', true);
-      if (file.size > sizeMax || file.size === 0) return notify('El archivo está vacío o supera el máximo permitido.', true);
-      const button = $('#shstSubmit', layer), status = $('#shstUploadStatus', layer);
-      button.disabled = true; picker.disabled = true;
-      let bucket = short ? 'chirp-shorts' : 'chirp-stories';
-      let path = '';
+    const cameraArea = $('#shstCamera', layer);
+    const live = $('#shstCameraLive', layer);
+    const status = $('#shstUploadStatus', layer);
+    const submit = $('#shstSubmit', layer);
+    const camera = {stream: null, recorder: null, chunks: [], token: 0, busy: false, facing: 'user', deviceId: '', mode: 'video', muted: false, timer: 0, startedAt: 0, recordedDuration: 0, recordedFile: null, file: null, previewUrl: '', disposed: false, publishing: false};
+    const timeLabel = $('#shstCameraTime', layer);
+    const maxLabel = short ? '01:30' : '00:30';
+    const formatTime = seconds => `${String(Math.floor(seconds / 60)).padStart(2,'0')}:${String(seconds % 60).padStart(2,'0')}`;
+    const message = str => { if (!camera.disposed) status.textContent = str; };
+    function releasePreview() {
+      if (camera.previewUrl) URL.revokeObjectURL(camera.previewUrl);
+      camera.previewUrl = '';
+      preview.replaceChildren();
+    }
+    function endStream() {
+      if (camera.stream) camera.stream.getTracks().forEach(track => track.stop());
+      camera.stream = null;
+      live.pause();
+      live.srcObject = null;
+    }
+    function clearRecordingTimer() { if (camera.timer) clearInterval(camera.timer); camera.timer = 0; }
+    function stopAndDiscardRecording() {
+      clearRecordingTimer();
+      const recorder = camera.recorder;
+      camera.recorder = null;
+      if (recorder && recorder.state !== 'inactive') {
+        try { recorder.stop(); } catch (_) {}
+      }
+      camera.chunks = [];
+    }
+    function closeCamera() {
+      camera.token++;
+      camera.busy = false;
+      stopAndDiscardRecording();
+      endStream();
+      cameraArea.hidden = true;
+      $('#shstCameras', layer).setAttribute('aria-expanded','false');
+      $('#shstCameraDevices', layer).hidden = true;
+    }
+    layer.shstDispose = () => {
+      camera.disposed = true;
+      closeCamera();
+      releasePreview();
+    };
+    function setFile(file, fromRecorder = false, duration = 0) {
+      if (camera.disposed) return;
+      releasePreview();
+      camera.file = file;
+      camera.recordedFile = fromRecorder ? file : null;
+      camera.recordedDuration = fromRecorder ? duration : 0;
+      submit.disabled = !file;
+      $('#shstRetake',layer).hidden = !fromRecorder;
+      if (!file) return;
+      camera.previewUrl = URL.createObjectURL(file);
+      const element = document.createElement(file.type.startsWith('video/') ? 'video' : 'img');
+      element.src = camera.previewUrl;
+      if (element.tagName === 'VIDEO') {
+        element.controls = true;
+        element.muted = true;
+        element.playsInline = true;
+        element.preload = 'metadata';
+      } else element.alt = 'Vista previa de la fotografía';
+      preview.append(element);
+      message(fromRecorder ? 'Grabación lista para publicar.' : 'Archivo listo para publicar.');
+    }
+    function syncCameraButtons() {
+      const recording = camera.recorder?.state === 'recording';
+      const photo = camera.mode === 'photo';
+      $('#shstRecord',layer).hidden = photo || recording;
+      $('#shstSnap',layer).hidden = !photo || recording;
+      $('#shstStop',layer).hidden = !recording;
+      $('#shstMic',layer).hidden = photo;
+      $('#shstFlip',layer).disabled = camera.busy || recording;
+      $('#shstCameras',layer).disabled = camera.busy || recording;
+      if (!short) {
+        $('#shstModePhoto',layer).classList.toggle('is-active',photo);
+        $('#shstModeVideo',layer).classList.toggle('is-active',!photo);
+        $('#shstModePhoto',layer).disabled = recording;
+        $('#shstModeVideo',layer).disabled = recording;
+      }
+      $('#shstMic',layer).classList.toggle('is-off',camera.muted);
+      $('#shstMic',layer).setAttribute('aria-pressed',String(!camera.muted));
+      $('#shstCameraIndicator',layer).classList.toggle('is-recording',recording);
+      $('#shstCameraIndicator',layer).textContent = recording ? 'Grabando' : 'Cámara lista';
+    }
+    function cameraError(err) {
+      console.warn('[Chirp cámara]',err);
+      const names = {
+        NotAllowedError: 'No hay permiso para usar la cámara o el micrófono. Habilitalos en el navegador.',
+        PermissionDeniedError: 'El navegador bloqueó el permiso para usar la cámara.',
+        NotFoundError: 'No se encontró una cámara disponible.',
+        NotReadableError: 'La cámara está siendo utilizada por otra aplicación.',
+        OverconstrainedError: 'Esa cámara no admite la configuración seleccionada.',
+        SecurityError: 'El navegador impidió el acceso a la cámara.'
+      };
+      return names[err?.name] || err?.message || 'No se pudo abrir la cámara.';
+    }
+    async function openCamera(deviceId = '') {
+      if (camera.disposed || camera.publishing) return;
+      if (!navigator.mediaDevices?.getUserMedia || !window.isSecureContext) {
+        message('La cámara necesita HTTPS o localhost y un navegador compatible. Podés subir un archivo.');
+        return;
+      }
+      if (camera.recorder?.state === 'recording' || camera.busy) return;
+      const token = ++camera.token;
+      camera.busy = true;
+      endStream();
+      cameraArea.hidden = false;
+      $('#shstCameraDevices',layer).hidden = true;
+      $('#shstCameras', layer).setAttribute('aria-expanded','false');
+      message('Solicitando acceso a la cámara...');
+      syncCameraButtons();
+      const video = deviceId ? {deviceId: {exact: deviceId}} : {
+        facingMode: {ideal:camera.facing}, width:{ideal:1080},height:{ideal:1920},aspectRatio:{ideal:9/16}
+      };
+      let stream = null;
       try {
-        status.textContent = 'Preparando archivo...';
-        const {duration} = await fileInfo(file, type);
-        if (duration > (short ? 90 : 30)) throw new Error(`El video supera los ${short ? 90 : 30} segundos permitidos.`);
-        path = `${current.user.id}/${crypto.randomUUID()}.${ext}`;
-        status.textContent = 'Subiendo contenido...';
-        await uploadMedia(bucket, path, file, status);
-        status.textContent = 'Publicando...';
-        const payload = short ? {author_id:current.user.id, caption:$('#shstCaption', layer).value.trim(), media_path:path, duration_seconds:duration} :
-          {author_id:current.user.id, caption:$('#shstCaption', layer).value.trim(), media_path:path, media_kind:type, duration_seconds:duration};
-        const insert = await sb.from(short ? 'sh_videos' : 'st_stories').insert(payload).select('id').single();
-        if (insert.error) { await sb.storage.from(bucket).remove([path]); throw insert.error; }
-        releasePreview(); closeOverlay('shstComposer');
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({video, audio: camera.mode === 'video' ? {echoCancellation:true, noiseSuppression:true} : false});
+        } catch (error) {
+          // Si no existe o está bloqueado el micrófono, al menos habilitar la cámara.
+          if (camera.mode !== 'video' || !['NotAllowedError','NotFoundError','NotReadableError','OverconstrainedError'].includes(error.name)) throw error;
+          stream = await navigator.mediaDevices.getUserMedia({video, audio:false});
+          message('Cámara abierta sin micrófono. El video se grabará sin audio.');
+        }
+        if (camera.disposed || token !== camera.token || !layer.isConnected) { stream.getTracks().forEach(t => t.stop()); return; }
+        camera.stream = stream;
+        camera.deviceId = stream.getVideoTracks()[0]?.getSettings()?.deviceId || deviceId;
+        camera.muted = false;
+        stream.getAudioTracks().forEach(track => track.enabled = true);
+        live.srcObject = stream;
+        live.dataset.facing = stream.getVideoTracks()[0]?.getSettings()?.facingMode || (deviceId ? 'environment' : camera.facing);
+        await live.play().catch(()=>{});
+        message('');
+        timeLabel.textContent = `00:00 / ${maxLabel}`;
+      } catch (error) {
+        if (token === camera.token && !camera.disposed) {
+          endStream();
+          cameraArea.hidden = true;
+          message(cameraError(error));
+        }
+      } finally {
+        if (token === camera.token && !camera.disposed) {
+          camera.busy = false;
+          syncCameraButtons();
+        }
+      }
+    }
+    function selectMime() {
+      if (!window.MediaRecorder) throw new Error('Tu navegador no admite la grabación de video. Podés subir un archivo.');
+      const choices = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/webm;codecs=vp8,opus','video/webm;codecs=vp9,opus','video/mp4','video/webm'];
+      return choices.find(type => MediaRecorder.isTypeSupported(type)) || '';
+    }
+    function stopRecording() {
+      if (camera.recorder?.state !== 'recording') return;
+      clearRecordingTimer();
+      camera.recordedDuration = Math.min(maxSeconds, Math.max(short ? .1 : 1,(Date.now()-camera.startedAt)/1000));
+      camera.recorder.stop();
+      $('#shstStop',layer).disabled = true;
+      message('Preparando tu video...');
+    }
+    function startRecording() {
+      if (!camera.stream || camera.busy || camera.recorder?.state === 'recording') return;
+      let recorder;
+      try {
+        const mime = selectMime();
+        const opts = mime ? {mimeType:mime,videoBitsPerSecond:2_500_000} : {videoBitsPerSecond:2_500_000};
+        recorder = new MediaRecorder(camera.stream,opts);
+      } catch (error) {message(error.message || 'No se pudo comenzar a grabar.');return;}
+      const token = camera.token;
+      camera.recorder = recorder;
+      camera.chunks = [];
+      camera.startedAt = Date.now();
+      recorder.ondataavailable = e => { if (e.data?.size) camera.chunks.push(e.data); };
+      recorder.onerror = e => { message('La grabación falló. Podés volver a intentarlo.');console.warn('[Chirp grabación]',e.error || e); };
+      recorder.onstop = () => {
+        clearRecordingTimer();
+        const chunks = camera.chunks.slice();
+        camera.chunks = [];
+        const elapsed = camera.recordedDuration || (Date.now()-camera.startedAt)/1000;
+        if (camera.disposed || token !== camera.token) return;
+        const type = recorder.mimeType.split(';')[0] || 'video/webm';
+        const ext = type === 'video/mp4' ? 'mp4' : 'webm';
+        const blob = new Blob(chunks,{type});
+        camera.recorder = null;
+        endStream();
+        cameraArea.hidden = true;
+        if (!blob.size) {message('No se guardó la grabación. Probá de nuevo.');return;}
+        if (blob.size > maxBytes) {message('El video excedió el tamaño máximo. Probá una grabación más corta.');return;}
+        const file = new File([blob],`chirp-${kind}-${Date.now()}.${ext}`,{type,lastModified:Date.now()});
+        setFile(file,true,Math.min(maxSeconds,elapsed));
+      };
+      try { recorder.start(500); }
+      catch (err) {camera.recorder=null;message('No se pudo comenzar a grabar.');return;}
+      timeLabel.textContent=`00:00 / ${maxLabel}`;
+      camera.timer = setInterval(() => {
+        const time = (Date.now() - camera.startedAt) / 1000;
+        timeLabel.textContent = `${formatTime(Math.min(maxSeconds,Math.floor(time)))} / ${maxLabel}`;
+        if (time >= maxSeconds) stopRecording();
+      },200);
+      message('');
+      syncCameraButtons();
+    }
+    async function takePhoto() {
+      if (!camera.stream || camera.busy || camera.mode !== 'photo' || !live.videoWidth || !live.videoHeight) {
+        message('La cámara todavía no está lista.');return;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = 720; canvas.height = 1280;
+      const width=live.videoWidth,height=live.videoHeight,aspect=720/1280;
+      const cropWidth=Math.min(width,height*aspect),cropHeight=cropWidth/aspect;
+      const context=canvas.getContext('2d');
+      if (!context) {message('No se pudo tomar la fotografía.');return;}
+      if (live.dataset.facing === 'user') { context.translate(720,0); context.scale(-1,1); }
+      context.drawImage(live,(width-cropWidth)/2,(height-cropHeight)/2,cropWidth,cropHeight,0,0,720,1280);
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.9));
+      if (!blob) {message('No se pudo guardar la fotografía.');return;}
+      const file = new File([blob],`chirp-story-${Date.now()}.jpg`,{type:'image/jpeg'});
+      closeCamera();
+      setFile(file,true,5);
+    }
+    async function showCameras() {
+      const list=$('#shstCameraDevices',layer),button=$('#shstCameras',layer);
+      if (!list.hidden) {list.hidden=true;button.setAttribute('aria-expanded','false');return;}
+      if (!camera.stream || !navigator.mediaDevices.enumerateDevices) return;
+      try {
+        const devices=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');
+        list.replaceChildren();
+        if (!devices.length) {message('No se encontraron cámaras.');return;}
+        devices.forEach((device,index) => {
+          const b=document.createElement('button');
+          b.type='button';
+          b.className='shst-camera-device';
+          b.textContent=device.label || `Cámara ${index+1}`;
+          b.addEventListener('click',()=>{list.hidden=true;openCamera(device.deviceId);});
+          list.append(b);
+        });
+        list.hidden=false;
+        button.setAttribute('aria-expanded','true');
+      } catch (err) {message('No se pudo mostrar la lista de cámaras.');}
+    }
+    picker.addEventListener('change', () => {
+      const file=picker.files?.[0];
+      if (file) {closeCamera();setFile(file);}
+    });
+    $('#shstOpenCamera',layer).addEventListener('click',()=>openCamera());
+    $('#shstCloseCamera',layer).addEventListener('click',closeCamera);
+    $('#shstFlip',layer).addEventListener('click', () => {
+      camera.facing = camera.facing === 'user' ? 'environment' : 'user';
+      camera.deviceId = '';
+      openCamera();
+    });
+    $('#shstCameras',layer).addEventListener('click',showCameras);
+    $('#shstMic',layer).addEventListener('click',()=>{
+      if (!camera.stream || camera.recorder?.state === 'recording') return;
+      const tracks=camera.stream.getAudioTracks();
+      if (!tracks.length) {message('Esta cámara no tiene micrófono habilitado.');return;}
+      camera.muted=!camera.muted;
+      tracks.forEach(t=>t.enabled=!camera.muted);
+      syncCameraButtons();
+    });
+    $('#shstRecord',layer).addEventListener('click',startRecording);
+    $('#shstStop',layer).addEventListener('click',stopRecording);
+    $('#shstSnap',layer).addEventListener('click',takePhoto);
+    if (!short) {
+      const setMode=mode=>{
+        if (camera.recorder?.state === 'recording' || camera.busy) return;
+        camera.mode=mode;
+        syncCameraButtons();
+        if (camera.stream) openCamera(camera.deviceId);
+      };
+      $('#shstModePhoto',layer).addEventListener('click',()=>setMode('photo'));
+      $('#shstModeVideo',layer).addEventListener('click',()=>setMode('video'));
+    }
+    $('#shstRetake',layer).addEventListener('click',()=>{
+      setFile(null);
+      picker.value='';
+      openCamera();
+    });
+    $('#shstUploadForm',layer).addEventListener('submit',async event=>{
+      event.preventDefault();
+      const file=camera.file;
+      if (!file || camera.publishing) return;
+      const type=file.type.startsWith('video/') ? 'video' : 'image';
+      const ext=mimeExt[file.type];
+      if (!ext || (short && type !== 'video')) {message('Formato no admitido. Usá MP4, WebM, JPG, PNG o WebP.');return;}
+      if (!file.size || file.size>maxBytes) {message('El archivo está vacío o supera el tamaño permitido.');return;}
+      camera.publishing=true;
+      submit.disabled=true;
+      picker.disabled=true;
+      $('#shstOpenCamera',layer).disabled=true;
+      let path='';
+      const bucket=short ? 'chirp-shorts' : 'chirp-stories';
+      try {
+        message('Preparando archivo...');
+        // Algunos navegadores informan duración Infinity en WebM recién grabados.
+        // Usar el tiempo real del MediaRecorder en vez de leer esa metadata.
+        const duration=camera.recordedFile === file ? camera.recordedDuration : (await fileInfo(file,type)).duration;
+        if (type === 'video' && duration > maxSeconds+.3) throw new Error(`El video supera los ${maxSeconds} segundos permitidos.`);
+        path=`${current.user.id}/${crypto.randomUUID()}.${ext}`;
+        message('Subiendo contenido...');
+        await uploadMedia(bucket,path,file,status);
+        message('Publicando...');
+        const caption=$('#shstCaption',layer).value.trim();
+        const payload=short ? {author_id:current.user.id,caption,media_path:path,duration_seconds:duration} :
+          {author_id:current.user.id,caption,media_path:path,media_kind:type,duration_seconds:duration};
+        const insert=await sb.from(short ? 'sh_videos' : 'st_stories').insert(payload).select('id').single();
+        if (insert.error) {await sb.storage.from(bucket).remove([path]);throw insert.error;}
+        closeOverlay('shstComposer');
         notify(short ? '¡Short publicado!' : '¡Story publicada!');
-        if (short) { await resetShorts(); } else { await loadStories(); if (page === 'stories') renderStoryScreen(); else renderStoryTray($('#homeStories')); }
+        if (short) await resetShorts();
+        else {await loadStories();if(page==='stories')renderStoryScreen();else renderStoryTray($('#homeStories'));}
       } catch (err) {
         showError(err);
-      } finally { button.disabled = false; picker.disabled = false; status.textContent = ''; }
+      } finally {
+        camera.publishing=false;
+        if (layer.isConnected) {
+          submit.disabled=!camera.file;
+          picker.disabled=false;
+          $('#shstOpenCamera',layer).disabled=false;
+          message('');
+        }
+      }
     });
   }
 

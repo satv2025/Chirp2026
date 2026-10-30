@@ -8,9 +8,18 @@ Conserva la estructura original de Chirp 2026 (HTML/CSS/JavaScript, Supabase y r
 
 **Stories:** fotos JPEG/PNG/WebP y videos MP4/WebM de hasta 30 segundos y 50 MB; fila de cuentas con historias, visor de progreso, avance manual y automático, respuestas privadas al autor, estadísticas de vistas y respuestas, borrado propio y vencimiento de 24 horas. El SQL fuerza la duración de la publicación y limita la lectura de Stories vencidas.
 
+## Cámara integrada (Shorts y Stories)
+
+- **Shorts:** botón **Usar cámara**, vista previa en vivo, permisos de cámara/micrófono, cambiar cámara frontal/posterior, elegir entre varias cámaras del equipo, silenciar micrófono antes de grabar, grabar y detener; tope automático de 90 segundos, previsualizar y publicar o repetir.
+- **Stories:** los mismos controles, con pestañas **Foto** y **Video**; fotos capturadas en formato vertical JPG (recorte central, sin estirar) y grabación de videos de hasta 30 segundos.
+- Sigue existiendo **Subir archivo** en ambos módulos. La cámara **no se inicia** hasta que el usuario toca el botón. Al cerrar el editor o terminar de grabar se liberan los dispositivos.
+- Permisos de cámara y micrófono: requieren **HTTPS** o `localhost` y la autorización del usuario. Si no hay micrófono, se intenta abrir solo la cámara. El navegador elige el formato compatible entre MP4 y WebM mediante `MediaRecorder.isTypeSupported`. Según el equipo, dispositivo y navegador, puede variar la reproducción del archivo generado.
+- No hacen falta nuevas tablas SQL: los archivos grabados se publican con las mismas tablas y buckets ya creados para SH y ST. El navegador graba localmente; solo se sube el resultado cuando tocás **Publicar**.
+- Los límites del hosting/Supabase Storage siguen aplicando. Esta función no incorpora filtros, edición avanzada de clips ni transcodificación.
+
 ## Instalación
 
-1. **Hacé una copia de la base de datos** de Chirp antes de aplicar cambios.
+1. **Si ya instalaste SH/ST y ejecutaste el SQL**, no vuelvas a ejecutarlo: esta actualización de cámara solo modifica JavaScript y CSS. Si es una instalación nueva, hacé una copia de seguridad antes de aplicar el SQL.
 2. Abrí **Supabase > SQL Editor**, pegá todo `sql/chirp_shorts_stories.sql` y ejecutalo **una sola vez**. La migración crea siete tablas nuevas (`sh_videos`, `sh_likes`, `sh_comments`, `sh_views`, `st_stories`, `st_views`, `st_replies`) y dos buckets privados (`chirp-shorts`, `chirp-stories`). Reutiliza `public.profiles` y `public.follows`. Incluye políticas de acceso RLS.
 3. En **Supabase > Storage > Settings**, verificá que el límite global de carga admita el máximo que querés permitir (los límites del bucket no pueden superar el global). Si tu plan admite menos, reducí los valores en `sh-st.js` y en los buckets del SQL.
 4. Publicá el contenido del proyecto actualizado en tu alojamiento habitual (Vercel u otro servidor que sirva HTML estático); respetá la ruta de inicio `/home.html`.
